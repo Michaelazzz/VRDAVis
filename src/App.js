@@ -20,7 +20,7 @@ function App() {
 
         {/* controls */}
         <DefaultXRControllers />
-        {/* <Hands /> */}
+        <Hands />
 
         {/* log  */}
         <Text
