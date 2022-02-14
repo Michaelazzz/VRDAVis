@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { VRCanvas, DefaultXRControllers, Interactive, Hands } from '@react-three/xr'
+import { VRCanvas, DefaultXRControllers, Interactive, RayGrab, useXREvent } from '@react-three/xr'
 import { Box, Text } from '@react-three/drei'
 
 function App() {
@@ -11,16 +11,32 @@ function App() {
     setLog(...logs, log)
   }
 
+  // const { controllers } = useXR()
+
+  // XR events
+  // useXREvent('select', (e) => addLog('select event has been triggered'))
+  // useXREvent('selectstart', (e) => addLog('select event has started'))
+  // useXREvent('selectend', (e) => addLog('select event has ended'))
+  // useXREvent('squeeze', (e) => addLog('squeeze event has been triggered'))
+  // useXREvent('squeezestart', (e) => addLog('squeeze event has started'))
+  // useXREvent('squeezeeend', (e) => addLog('squeeze event has ended'))
+
+  // useXRFrame((time, xrFrame) => {
+    // do something on each frame of an active XR session
+
+    // attach menu to left controller
+  // })
+
   return (
     <>
       <VRCanvas>
         {/* lighting */}
         <ambientLight />
-        <spotLight position={[5,5,5]}/>
+        <spotLight position={[2,2,2]}/>
 
         {/* controls */}
         <DefaultXRControllers />
-        <Hands />
+        {/* <Hands /> */}
 
         {/* log  */}
         <Text
@@ -29,11 +45,22 @@ function App() {
           {logs}
         </Text>
 
-        <Interactive onSelect={() => addLog('clicked!')}>
-          <Box position={[0,0,-5]}>
+        <Interactive 
+          onSelect={() => addLog('click')} 
+          onHover={() => addLog('hover')} 
+          onBlur={() => addLog('blur')}
+        >
+          <Box position={[-1,0,-1]}>
             <meshStandardMaterial color="#e23" />
           </Box>
         </Interactive>
+
+        <RayGrab>
+          <Box position={[1,0,-1]}>
+            <meshStandardMaterial color="#e23" />
+          </Box>
+        </RayGrab>
+        
         
 
       </VRCanvas>
