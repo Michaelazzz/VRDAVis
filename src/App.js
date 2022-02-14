@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { VRCanvas, DefaultXRControllers, Interactive, RayGrab, useXREvent } from '@react-three/xr'
+import { VRCanvas, DefaultXRControllers, Interactive, RayGrab } from '@react-three/xr'
 import { Box, Text } from '@react-three/drei'
 
 function App() {
