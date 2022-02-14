@@ -5,10 +5,39 @@ import {
   Interactive, 
   RayGrab,
   useController,
-  useXRFrame,
+  // useXRFrame,
   // useXR
 } from '@react-three/xr'
+import { useFrame } from "@react-three/fiber"
 import { Box, Text } from '@react-three/drei'
+
+import * as THREE from "three"
+
+function HandMenu () {
+  const ref = useRef() // reference for hand mounted menu
+  const leftController = useController('left')
+
+  useFrame((state) => {
+    if(!leftController) {
+      return
+    }
+
+    const { grip: controller } = leftController
+    const offset = new THREE.Vector3(0,0,0)
+    // const position =  new THREE.Vector3().copy(controller.position)
+    ref.current.position.copy(controller.position).add(offset)
+    ref.current.quaternion.copy(controller.position)
+  })
+
+  return (
+    <Box 
+      ref={ref}
+      scale={[0.2,0.2,0.2]}
+    >
+      <meshStandardMaterial color="#FDC5F5" />
+    </Box>
+  )
+}
 
 function App() {
 
@@ -30,74 +59,47 @@ function App() {
     setLog([...logs, log])
   }
 
-  const HandMenu = () => {
-    const ref = useRef() // reference for hand mounted menu
-    const leftController = useController('left')
-
-    useXRFrame(() => {
-      if(leftController.controller === undefined) return;
-  
-      setLog(leftController.grip)
-  
-      setLog(ref)
-    })
-
-    return (
-      <Box 
-      ref={ref}
-        scale={[0.2,0.2,0.2]}
-      >
-        <meshStandardMaterial color="#FDC5F5" />
-      </Box>
-    )
-  }
-
-
-  
-
- 
-
-  
-  
-
   return (
-    <VRCanvas>
-      {/* lighting */}
-      <ambientLight />
-      <spotLight position={[2,2,2]}/>
+    <>
+      <VRCanvas>
+        {/* background */}
+        <color attach="background" args={["#343F3E"]} />
+        {/* lighting */}
+        <ambientLight intensity={0.5}/>
+        <spotLight position={[2,2,2]}/>
 
-      {/* controls */}
-      <DefaultXRControllers />
-      {/* <Hands /> */}
+        {/* controls */}
+        <DefaultXRControllers />
 
-      {/* log  */}
-      <Text
-        position={[-1, 2, -1]}
-      >
-        {logs}
-      </Text>
+        {/* log  */}
+        <Text
+          position={[-1, 2, -1]}
+        >
+          {logs}
+        </Text>
 
-      <Interactive 
-        onSelect={() => addLog('click')} 
-        onHover={() => addLog('hover')} 
-        onBlur={() => addLog('blur')}
-      >
-        <Box position={[-1,0,-1]}>
-          <meshStandardMaterial color="#e23" />
-        </Box>
-      </Interactive>
+        <Interactive 
+          onSelect={() => addLog('click')} 
+          onHover={() => addLog('hover')} 
+          onBlur={() => addLog('blur')}
+        >
+          <Box position={[-1,0,-1]}>
+            <meshStandardMaterial color="#e23" />
+          </Box>
+        </Interactive>
 
-      <RayGrab>
-        <Box position={[1,0,-1]}>
-          <meshStandardMaterial color="#E23" />
-        </Box>
-      </RayGrab>
+        <RayGrab>
+          <Box position={[1,0,-1]}>
+            <meshStandardMaterial color="#E23" />
+          </Box>
+        </RayGrab>
+        
       
-     
 
-      <HandMenu />
+        <HandMenu />
 
-    </VRCanvas>
+      </VRCanvas>
+    </>
   );
 }
 
