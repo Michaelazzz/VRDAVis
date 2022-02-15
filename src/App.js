@@ -17,8 +17,17 @@ function HandMenu () {
   const ref = useRef() // reference for hand mounted menu
   const leftController = useController('left')
 
+  const [logs, setLog] = useState(['Hand Menu Log:'])
+
+  // add to log
+  const addLog = (log) => {
+    console.log(log)
+    setLog([...logs, log])
+  }
+
   useFrame((state) => {
     if(!leftController) {
+      addLog('Left hand controller is unavailable')
       return
     }
 
@@ -26,17 +35,34 @@ function HandMenu () {
     const offset = new THREE.Vector3(0,0,-0.175)
     // const position =  new THREE.Vector3().copy(controller.position)
     ref.current.position.copy(controller.position).add(offset)
+    addLog(ref.current.position)
     ref.current.quaternion.copy(controller.position)
   })
 
   return (
-    <Box 
-      ref={ref}
-      position={[-0.05, 0.37, 0.3]}
-      scale={[0.5,0.5,0.5]}
-    >
-      <meshStandardMaterial color="#FDC5F5" />
-    </Box>
+    <group>
+      {/* hand menu log  */}
+      <group
+        position={[1, 2, -1]}
+      >
+        {logs.map((log, index) => (
+          <Text
+            position={[1, 2*(index+1), -1]}
+          >
+            {log}
+          </Text>
+        ))}
+        
+      </group>
+      <Box 
+        ref={ref}
+        position={[-0.05, 0.37, 0.3]}
+        scale={[0.5,0.5,0.5]}
+      >
+        <meshStandardMaterial color="#FDC5F5" />
+      </Box>
+    </group>
+    
   )
 }
 
@@ -52,7 +78,7 @@ function App() {
   // useXREvent('squeezestart', (e) => addLog('squeeze event has started'))
   // useXREvent('squeezeeend', (e) => addLog('squeeze event has ended'))
 
-  const [logs, setLog] = useState(['Log:'])
+  const [logs, setLog] = useState(['Environment Log:'])
 
   // add to log
   const addLog = (log) => {
@@ -72,12 +98,14 @@ function App() {
         {/* controls */}
         <DefaultXRControllers />
 
-        {/* log  */}
+        {/* environment log  */}
         <group
           position={[-1, 2, -1]}
         >
-          {logs.map((log) => (
-            <Text>
+          {logs.map((log, index) => (
+            <Text
+              position={[1, 2*(index+1), -1]}
+            >
               {log}
             </Text>
           ))}
