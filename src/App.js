@@ -23,7 +23,7 @@ function HandMenu () {
     }
 
     const { grip: controller } = leftController
-    const offset = new THREE.Vector3(0,0,0)
+    const offset = new THREE.Vector3(0,0,-0.175)
     // const position =  new THREE.Vector3().copy(controller.position)
     ref.current.position.copy(controller.position).add(offset)
     ref.current.quaternion.copy(controller.position)
@@ -32,7 +32,8 @@ function HandMenu () {
   return (
     <Box 
       ref={ref}
-      scale={[0.2,0.2,0.2]}
+      position={[-0.05, 0.37, 0.3]}
+      scale={[0.5,0.5,0.5]}
     >
       <meshStandardMaterial color="#FDC5F5" />
     </Box>
@@ -72,11 +73,17 @@ function App() {
         <DefaultXRControllers />
 
         {/* log  */}
-        <Text
+        <group
           position={[-1, 2, -1]}
         >
-          {logs}
-        </Text>
+          {logs.map((log) => (
+            <Text>
+              {log}
+            </Text>
+          ))}
+          
+        </group>
+        
 
         <Interactive 
           onSelect={() => addLog('click')} 
