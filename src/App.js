@@ -2,33 +2,39 @@ import { useRef, useState } from 'react'
 import { 
   VRCanvas, 
   DefaultXRControllers, 
-  Interactive, 
+  // Interactive, 
   RayGrab,
   useController,
   // useXRFrame,
   // useXR
 } from '@react-three/xr'
 import { useFrame } from "@react-three/fiber"
-import { Box, Text } from '@react-three/drei'
+import { Box, Text, Plane, OrbitControls } from '@react-three/drei'
 
 import * as THREE from "three"
+import { DoubleSide } from "three"
 
 function HandMenu () {
   const ref = useRef() // reference for hand mounted menu
-  const leftController = useController('left')
+  const leftController = useController("left")
 
   const [logs, setLog] = useState(['Hand Menu Log:'])
 
   // add to log
   const addLog = (log) => {
     console.log(log)
+    logs.slice(1).slice(-5)
     setLog([...logs, log])
   }
 
   useFrame((state) => {
     if(!leftController) {
-      addLog('Left hand controller is unavailable')
+      // addLog('Left hand controller is unavailable')
       return
+    }
+    else
+    {
+      addLog('Left hand controller is available')
     }
 
     const { grip: controller } = leftController
@@ -47,7 +53,8 @@ function HandMenu () {
       >
         {logs.map((log, index) => (
           <Text
-            position={[1, 2*(index+1), -1]}
+            key={index}
+            position={[1, 0.1*(index+1), 0]}
           >
             {log}
           </Text>
@@ -61,6 +68,8 @@ function HandMenu () {
       >
         <meshStandardMaterial color="#FDC5F5" />
       </Box>
+
+
     </group>
     
   )
@@ -83,6 +92,7 @@ function App() {
   // add to log
   const addLog = (log) => {
     console.log(log)
+    logs.slice(1).slice(-5)
     setLog([...logs, log])
   }
 
@@ -90,13 +100,14 @@ function App() {
     <>
       <VRCanvas>
         {/* background */}
-        <color attach="background" args={["#343F3E"]} />
+        <color attach="background" args={["#DBE9EE"]} />
         {/* lighting */}
         <ambientLight intensity={0.5}/>
         <spotLight position={[2,2,2]}/>
 
         {/* controls */}
         <DefaultXRControllers />
+        <OrbitControls />
 
         {/* environment log  */}
         <group
@@ -104,7 +115,8 @@ function App() {
         >
           {logs.map((log, index) => (
             <Text
-              position={[1, 2*(index+1), -1]}
+              key={index}
+              position={[1, 0.1*(index+1), 0]}
             >
               {log}
             </Text>
@@ -112,24 +124,29 @@ function App() {
           
         </group>
         
+        {/* <Interactive>
+          <Box position={[-1,0,-1]}>
+            <meshStandardMaterial color="#e23" />
+          </Box>
+        </Interactive> */}
 
-        <Interactive 
+        <RayGrab
           onSelect={() => addLog('click')} 
           onHover={() => addLog('hover')} 
           onBlur={() => addLog('blur')}
         >
-          <Box position={[-1,0,-1]}>
-            <meshStandardMaterial color="#e23" />
-          </Box>
-        </Interactive>
-
-        <RayGrab>
-          <Box position={[1,0,-1]}>
+          <Box position={[1,0.5,-1]}>
             <meshStandardMaterial color="#E23" />
           </Box>
         </RayGrab>
         
-      
+        <Plane
+          position={[0,0,0]}
+          rotation={[Math.PI / 2, 0, 0]} 
+          scale={[10, 10, 10]}
+        >
+          <meshBasicMaterial color="#C0D6DF" side={DoubleSide} />
+        </Plane>
 
         <HandMenu />
 
