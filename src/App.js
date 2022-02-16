@@ -9,7 +9,12 @@ import {
   // useXR
 } from '@react-three/xr'
 import { useFrame } from "@react-three/fiber"
-import { Box, Text, Plane, OrbitControls } from '@react-three/drei'
+import { 
+  Box, 
+  Text, 
+  Plane, 
+  // OrbitControls 
+} from '@react-three/drei'
 
 import * as THREE from "three"
 import { DoubleSide } from "three"
