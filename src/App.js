@@ -39,14 +39,15 @@ function HandMenu () {
     }
     else
     {
-      addLog('Left hand controller is available')
+      // addLog('Left hand controller is available')
     }
 
     const { grip: controller } = leftController
+    addLog(controller)
     const offset = new THREE.Vector3(0,0,-0.175)
     // const position =  new THREE.Vector3().copy(controller.position)
     ref.current.position.copy(controller.position).add(offset)
-    addLog(ref.current.position)
+    // addLog(ref.current.position)
     ref.current.quaternion.copy(controller.position)
   })
 
@@ -69,7 +70,7 @@ function HandMenu () {
       </group>
       <Box 
         ref={ref}
-        position={[-0.05, 0.37, 0.3]}
+        position={[-0.05, 0.37, -0.3]}
         scale={[0.5,0.5,0.5]}
       >
         <meshStandardMaterial color="#191716" />
