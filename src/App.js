@@ -60,6 +60,7 @@ function HandMenu () {
           <Text
             key={index}
             position={[1, 0.1*(index+1), 0]}
+            color="#191716"
           >
             {log}
           </Text>
@@ -71,7 +72,7 @@ function HandMenu () {
         position={[-0.05, 0.37, 0.3]}
         scale={[0.5,0.5,0.5]}
       >
-        <meshStandardMaterial color="#FDC5F5" />
+        <meshStandardMaterial color="#191716" />
       </Box>
 
 
@@ -122,6 +123,7 @@ function App() {
             <Text
               key={index}
               position={[1, 0.1*(index+1), 0]}
+              color="#191716"
             >
               {log}
             </Text>
@@ -141,7 +143,7 @@ function App() {
           onBlur={() => addLog('blur')}
         >
           <Box position={[1,0.5,-1]}>
-            <meshStandardMaterial color="#E23" />
+            <meshStandardMaterial color="#F0EC57" />
           </Box>
         </RayGrab>
         
