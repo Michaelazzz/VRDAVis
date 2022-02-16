@@ -107,7 +107,7 @@ function App() {
 
         {/* controls */}
         <DefaultXRControllers />
-        <OrbitControls />
+        {/* <OrbitControls /> */}
 
         {/* environment log  */}
         <group
