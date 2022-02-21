@@ -1,4 +1,8 @@
-import { useRef, useState } from 'react'
+import { 
+  // createRef, 
+  useRef, 
+  useState 
+} from 'react'
 import { 
   VRCanvas, 
   DefaultXRControllers, 
@@ -16,17 +20,16 @@ import {
   // OrbitControls 
 } from '@react-three/drei'
 
-import * as THREE from "three"
-import { DoubleSide } from "three"
+import * as THREE from 'three'
 
 function HandMenu () {
-  const ref = useRef() // reference for hand mounted menu
+  const ref = useRef<THREE.Mesh>() // reference for hand mounted menu
   const leftController = useController("left")
 
   const [logs, setLog] = useState(['Hand Menu Log:'])
 
   // add to log
-  const addLog = (log) => {
+  const addLog = (log: any) => {
     console.log(log)
     logs.slice(1).slice(-5)
     setLog([...logs, log])
@@ -34,21 +37,18 @@ function HandMenu () {
 
   useFrame((state) => {
     if(!leftController) {
-      // addLog('Left hand controller is unavailable')
       return
-    }
-    else
-    {
-      // addLog('Left hand controller is available')
     }
 
     const { grip: controller } = leftController
     addLog(controller)
     const offset = new THREE.Vector3(0,0,-0.175)
-    // const position =  new THREE.Vector3().copy(controller.position)
-    ref.current.position.copy(controller.position).add(offset)
-    // addLog(ref.current.position)
-    ref.current.quaternion.copy(controller.position)
+    if(ref.current) {
+      // const position =  new THREE.Vector3().copy(controller.position)
+      ref.current.position.copy(controller.position).add(offset)
+      // addLog(ref.current.position)
+      ref.current.quaternion.copy(controller.quaternion)
+    }
   })
 
   return (
@@ -94,14 +94,14 @@ function App() {
   // useXREvent('squeezestart', (e) => addLog('squeeze event has started'))
   // useXREvent('squeezeeend', (e) => addLog('squeeze event has ended'))
 
-  const [logs, setLog] = useState(['Environment Log:'])
+  // const [logs, setLog] = useState(['Environment Log:'])
 
   // add to log
-  const addLog = (log) => {
-    console.log(log)
-    logs.slice(1).slice(-5)
-    setLog([...logs, log])
-  }
+  // const addLog = (log: string) => {
+  //   console.log(log)
+  //   logs.slice(1).slice(-5)
+  //   setLog([...logs, log])
+  // }
 
   return (
     <>
@@ -117,7 +117,7 @@ function App() {
         {/* <OrbitControls /> */}
 
         {/* environment log  */}
-        <group
+        {/* <group
           position={[-1, 2, -1]}
         >
           {logs.map((log, index) => (
@@ -130,7 +130,7 @@ function App() {
             </Text>
           ))}
           
-        </group>
+        </group> */}
         
         {/* <Interactive>
           <Box position={[-1,0,-1]}>
@@ -138,12 +138,10 @@ function App() {
           </Box>
         </Interactive> */}
 
-        <RayGrab
-          onSelect={() => addLog('click')} 
-          onHover={() => addLog('hover')} 
-          onBlur={() => addLog('blur')}
-        >
-          <Box position={[1,0.5,-1]}>
+        <RayGrab>
+          <Box 
+            position={[1,0.5,-1]}
+          >
             <meshStandardMaterial color="#F0EC57" />
           </Box>
         </RayGrab>
@@ -153,7 +151,7 @@ function App() {
           rotation={[Math.PI / 2, 0, 0]} 
           scale={[10, 10, 10]}
         >
-          <meshBasicMaterial color="#C0D6DF" side={DoubleSide} />
+          <meshBasicMaterial color="#C0D6DF" side={THREE.DoubleSide} />
         </Plane>
 
         <HandMenu />
