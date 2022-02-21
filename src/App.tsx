@@ -43,12 +43,11 @@ function HandMenu () {
 
     const { grip: controller } = rightController
     // addLog(controller)
-    const offset = new THREE.Vector3(0,0.15,0)
+    const offset = new THREE.Vector3(0,0.15,0.15)
     if(ref.current) {
       // const position =  new THREE.Vector3().copy(controller.position)
       ref.current.position.copy(controller.position).add(offset)
-      // addLog(ref.current.position)
-      ref.current.quaternion.copy(controller.quaternion)
+      // ref.current.quaternion.copy(controller.quaternion)
     }
   })
 
