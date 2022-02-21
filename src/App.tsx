@@ -1,7 +1,7 @@
 import { 
   // createRef, 
   useRef, 
-  useState 
+  // useState 
 } from 'react'
 import { 
   VRCanvas, 
@@ -15,7 +15,7 @@ import {
 import { useFrame } from "@react-three/fiber"
 import { 
   Box, 
-  Text, 
+  // Text, 
   Plane, 
   // OrbitControls 
 } from '@react-three/drei'
