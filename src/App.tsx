@@ -24,25 +24,26 @@ import * as THREE from 'three'
 
 function HandMenu () {
   const ref = useRef<THREE.Mesh>() // reference for hand mounted menu
-  const leftController = useController("left")
+  // const leftController = useController("left")
+  const rightController = useController("right")
 
-  const [logs, setLog] = useState(['Hand Menu Log:'])
+  // const [logs, setLog] = useState(['Hand Menu Log:'])
 
   // add to log
-  const addLog = (log: any) => {
-    console.log(log)
-    logs.slice(1).slice(-5)
-    setLog([...logs, log])
-  }
+  // const addLog = (log: any) => {
+  //   console.log(log)
+  //   logs.slice(1).slice(-5)
+  //   setLog([...logs, log])
+  // }
 
   useFrame((state) => {
-    if(!leftController) {
+    if(!rightController) {
       return
     }
 
-    const { grip: controller } = leftController
-    addLog(controller)
-    const offset = new THREE.Vector3(0,0,-0.175)
+    const { grip: controller } = rightController
+    // addLog(controller)
+    const offset = new THREE.Vector3(0,0.15,0)
     if(ref.current) {
       // const position =  new THREE.Vector3().copy(controller.position)
       ref.current.position.copy(controller.position).add(offset)
@@ -54,7 +55,7 @@ function HandMenu () {
   return (
     <group>
       {/* hand menu log  */}
-      <group
+      {/* <group
         position={[1, 2, -1]}
       >
         {logs.map((log, index) => (
@@ -67,11 +68,11 @@ function HandMenu () {
           </Text>
         ))}
         
-      </group>
+      </group> */}
       <Box 
         ref={ref}
-        position={[-0.05, 0.37, -0.3]}
-        scale={[0.5,0.5,0.5]}
+        position={[0, 0, 0]}
+        scale={[0.1,0.1,0.1]}
       >
         <meshStandardMaterial color="#191716" />
       </Box>
