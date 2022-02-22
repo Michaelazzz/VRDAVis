@@ -1,39 +1,25 @@
-import { 
-  useRef, 
-  // useState
-} from 'react'
-import { 
-  useController,
-} from '@react-three/xr'
+import { useRef } from 'react'
+import { useController } from '@react-three/xr'
 import { useFrame } from "@react-three/fiber"
-import { 
-  Box, 
-  // Text,  
-} from '@react-three/drei'
+// import { 
+//   Box, 
+//   // Text,  
+// } from '@react-three/drei'
 import * as THREE from 'three'
 
+import Panel from './Panel'
 import Button from './Button'
 
-function HandMenu () {
+function HandMenu ({children, ...rest}: any) {
   const ref = useRef<THREE.Mesh>() // reference for hand mounted menu
-  const leftController = useController("right")
-
-  // const [logs, setLog] = useState(['Hand Menu Log:'])
-
-  // add to log
-  // const addLog = (log: any) => {
-  //   console.log(log)
-  //   logs.slice(1).slice(-5)
-  //   setLog([...logs, log])
-  // }
+  const leftController = useController("left")
 
   useFrame((state) => {
     if(!leftController) {
       return
     }
 
-    const { grip: controller } = leftController
-    // addLog(controller)
+    const controller = leftController.controller
     const x = 0
     const y = 0.1
     const z = -0.3
@@ -42,44 +28,49 @@ function HandMenu () {
       // const position =  new THREE.Vector3().copy(controller.position)
       ref.current.position.copy(controller.position).add(offset)
       // ref.current.quaternion.copy(controller.quaternion)
-      leftController.grip.add(ref.current)
+      leftController.controller.add(ref.current)
     }
   })
 
-  // const onButtonSelect = () => {
-  //   addLog('button selected')
+
+  // const onTabSelect = (e:any) => {
+    // console.log(e.object)
+    // ref.current?.children[0].position.setZ(0)
+    // console.log(e.object.position.setZ(0.01))
   // }
 
   return (
     <group
-      ref={ref} 
+      ref={ref} {...rest}
     >
-      {/* hand menu log  */}
-      {/* <group
-        position={[1, 2, -1]}
-      >
-        {logs.map((log, index) => (
-          <Text
-            key={index}
-            position={[1, 0.1*(index+1), 0]}
-            color="#191716"
-          >
-            {log}
-          </Text>
-        ))}
-        
-      </group> */}
-      <Box
-        position={[0, 0, 0]}
-        scale={[0.5,0.2,0.03]}
-      >
-        <meshStandardMaterial color="#191716" />
-      </Box>
-      <Button
-        text={'button'}
+      <Panel
         position={[0,0,0.01]}
-        scale={[0.1,0.1,0.03]}
-      />
+        panelPos={0}
+        colour={"#f8f6b4"}
+      >
+        <Button
+          text={'button'}
+          position={[0,0,0.5]}
+          scale={[0.1,0.1,1]}
+        />
+      </Panel>
+      <Panel
+        panelPos={1}
+        colour={"#daf7dc"}
+      ></Panel>
+      <Panel
+        panelPos={2}
+        colour={"#abc8c0"}
+      ></Panel>
+      <Panel
+        panelPos={3}
+        colour={"#70566d"}
+      ></Panel>
+      <Panel
+        panelPos={4}
+        colour={"#42273b"}
+        textColour={"white"}
+      ></Panel>
     </group>
   )
 }

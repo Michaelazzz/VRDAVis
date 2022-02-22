@@ -95,7 +95,15 @@ function App() {
           <meshBasicMaterial color="#C0D6DF" side={THREE.DoubleSide} />
         </Plane>
 
-        <HandMenu />
+        <HandMenu>
+          {/* <Box
+            position={[0, 0, 0]}
+            scale={[0.5,0.2,0.03]}
+          >
+            <meshStandardMaterial color="#191716" />
+          </Box> */}
+          
+        </HandMenu>
 
       </VRCanvas>
     </>
