@@ -5,7 +5,7 @@ import {
     Text
 } from '@react-three/drei'
 
-function Panel ({colour, textColour="black", name="name", panelPos = 0, position, children, ...rest}:any)  {
+function Panel ({colour, textColour="black", name="name", panelPos = 0, position, active = false, children, ...rest}:any)  {
     const x = -0.2+(panelPos*0.1)
     
     return (

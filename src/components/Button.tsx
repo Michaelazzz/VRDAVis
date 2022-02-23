@@ -4,7 +4,7 @@ import {
     Text,  
 } from '@react-three/drei'
 import { Interactive } from '@react-three/xr'
-import { Vector3 } from '@react-three/fiber'
+// import { Vector3 } from '@react-three/fiber'
 
 function Button ({ text = 'button', position = [0,0,0], scale = [1,1,1], onClick = () => {} }: any) {
 
