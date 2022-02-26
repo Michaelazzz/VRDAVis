@@ -1,52 +1,74 @@
-import { useState } from 'react'
-import { 
-    Box, 
-    Text,  
-} from '@react-three/drei'
-import { Interactive } from '@react-three/xr'
-// import { Vector3 } from '@react-three/fiber'
+import React, { useRef, useEffect } from 'react'
+import * as THREE from 'three'
+import { extend } from '@react-three/fiber'
+import ThreeMeshUI from 'three-mesh-ui'
 
-function Button ({ text = 'button', position = [0,0,0], scale = [1,1,1], onClick = () => {} }: any) {
+import Text from './Text'
 
-    // const ref = useRef()
+extend(ThreeMeshUI)
+
+function Button ( { onClick }: any ) {
+
+
+    const ref:any = useRef()
     // useInteraction(ref, 'onSelect', () => console.log('selected'))
 
-    const [hover, setHover] = useState(false)
-    const [colour, setColour] = useState('#F0EC57')
+    useEffect(() => {
+        ref.current.setupState({
+            state: 'hovered',
+            attributes: {
+                offset: 0.05,
+                backgroundColor: new THREE.Color(0x999999),
+                backgroundOpacity: 1,
+                fontColor: new THREE.Color(0xffffff)
+            }
+        })
 
-    const onSelect = () => {
-        setColour('#136F63')
-        onClick()
-    }
+        ref.current.setupState({
+            state: 'idle',
+            attributes: {
+                offset: 0.035,
+                backgroundColor: new THREE.Color(0x666666),
+                backgroundOpacity: 0.3,
+                fontColor: new THREE.Color(0xffffff)
+            }
+        })
+
+        ref.current.setupState({
+            state: 'selected',
+            attributes: {
+                offset: 0.02,
+                backgroundColor: new THREE.Color(0x777777),
+                fontColor: new THREE.Color(0x222222)
+            }
+        })
+
+        ref.current.setState('idle')
+    })
 
     return (
-        <Interactive
-            onSelect={onSelect}
-            onHover={() => setHover(true)}
-            onBlur={() => setHover(false)}
+        <block
+            ref={ref}
+            onPointerEnter={() => ref.current.setState('hovered')}
+            onPointerLeave={() => ref.current.setState('idle')}
+            onPointerDown={() => ref.current.setState('selected')}
+            onPointerUp={() => {
+                ref.current.setState('hovered')
+                onClick()
+            }}
+            args={[
+                {
+                    width: 0.5,
+                    height: 0.2,
+                    justifyContent: 'center',
+                    borderRadius: 0.075,
+                }
+            ]}
         >
-            <group
-                // ref={ref}
-                position={position}
-                scale={scale}
-            >
-                <Text
-                    position={[0,0,0.7]}
-                    scale={hover ? [2.5,3.5,2.5] : [2,3,2]}
-                    color="black"
-                    anchorX="center"
-                    anchorY="middle"
-                >
-                    {text}
-                </Text>
-                <Box
-                    scale={[1,0.5,1]}
-                >
-                    <meshStandardMaterial color={colour} />
-                </Box>
-            </group>
-        </Interactive>
-        
+            <text content={'click'} />
+
+            
+        </block>
     )
 }
 

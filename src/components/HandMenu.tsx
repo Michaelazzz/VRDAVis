@@ -1,14 +1,53 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useController } from '@react-three/xr'
 import { useFrame } from "@react-three/fiber"
-// import { 
-//   Box, 
-//   // Text,  
-// } from '@react-three/drei'
+import ThreeMeshUI from 'three-mesh-ui'
 import * as THREE from 'three'
 
-import Panel from './Panel'
+// import Panel from './Panel'
 import Button from './Button'
+
+function Title({ accentColor }: any) {
+
+  return (
+    <block
+      content={'title'}
+      args={[
+        {
+          width: 1,
+          height: 0.25,
+          backgroundOpacity: 0,
+          justifyContent: 'center'
+        }
+      ]}>
+      <text content={'Hello '} />
+      <text content={'click'} args={[{ fontColor: accentColor }]} />
+    </block>
+  )
+}
+
+function Panel() {
+  const [accentColor] = useState(() => new THREE.Color('red'))
+  useFrame(() => {
+    ThreeMeshUI.update()
+  })
+  return (
+    <block
+      args={[
+        {
+          width: 1,
+          height: 0.5,
+          fontSize: 0.1,
+          backgroundOpacity: 1,
+          // fontFamily: './Roboto-msdf.json',
+          // fontTexture: './Roboto-msdf.png'
+        }
+      ]}>
+      <Title accentColor={accentColor} />
+      <Button onClick={() => accentColor.offsetHSL(1 / 3, 0, 0)} />
+    </block>
+  )
+}
 
 function HandMenu ({children, ...rest}: any) {
   const ref = useRef<THREE.Mesh>() // reference for hand mounted menu
@@ -32,7 +71,6 @@ function HandMenu ({children, ...rest}: any) {
     }
   })
 
-
   // const onTabSelect = (e:any) => {
     // console.log(e.object)
     // ref.current?.children[0].position.setZ(0)
@@ -43,7 +81,10 @@ function HandMenu ({children, ...rest}: any) {
     <group
       ref={ref} {...rest}
     >
-      <Panel
+      <Panel/>
+
+
+      {/* <Panel
         position={[0,0,0.01]}
         panelPos={0}
         colour={"#f8f6b4"}
@@ -70,7 +111,7 @@ function HandMenu ({children, ...rest}: any) {
         panelPos={4}
         colour={"#42273b"}
         textColour={"white"}
-      ></Panel>
+      ></Panel> */}
     </group>
   )
 }
