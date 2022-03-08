@@ -35,7 +35,6 @@ function Panel() {
       Math.floor(Math.random() * 10) + 1, 
       Math.floor(Math.random() * 10) + 1
     ])
-    // console.log("Panel: ",data)
   }, 2000)
 
   // const ref = useRef()
@@ -63,7 +62,7 @@ function Panel() {
       <Html
         prepend
         center
-        // distanceFactor={5}
+        distanceFactor={5}
         // portal={ref}
         // transform
         // sprite
