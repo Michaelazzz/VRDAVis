@@ -25,29 +25,18 @@ function Title({ accentColor }) {
   )
 }
 
-export const data = {
-  datasets: [
-    {
-      label: 'A dataset',
-      data: [{
-        x: -10,
-        y: 0
-      }, {
-        x: 0,
-        y: 10
-      }, {
-        x: 10,
-        y: 5
-      }, {
-        x: 0.5,
-        y: 5.5
-      }],
-      backgroundColor: 'rgba(255, 99, 132, 1)',
-    },
-  ],
-};
-
 function Panel() {
+
+  const [data, setData] = useState([5,6,7])
+
+  setInterval(() => {
+    setData([
+      Math.floor(Math.random() * 10) + 1,
+      Math.floor(Math.random() * 10) + 1, 
+      Math.floor(Math.random() * 10) + 1
+    ])
+    // console.log("Panel: ",data)
+  }, 2000)
 
   // const ref = useRef()
 
@@ -74,12 +63,12 @@ function Panel() {
       <Html
         prepend
         center
-        distanceFactor={6}
+        // distanceFactor={5}
         // portal={ref}
         // transform
         // sprite
       >
-        <Chart data={data}/>
+        <Chart data={data} />
       </Html>
       
     </block>

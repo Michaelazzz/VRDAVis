@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import {
   Chart as ChartJS,
   LinearScale,
@@ -6,10 +6,11 @@ import {
   LineElement,
   Tooltip,
   Legend,
+  ArcElement
 } from 'chart.js';
-import { Scatter } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 
-ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
+ChartJS.register(ArcElement, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 export const options = {
   scales: {
@@ -19,18 +20,32 @@ export const options = {
   },
 };
 
-
-
 function Chart({data}) {
 
-  // const ref = useRef()
+  const ref = useRef()
 
-  // useEffect(() => {
-    
-  // }, [])
+  const [chartData, setChartData] = useState([5,6,7])
+
+  useEffect(() => {
+    setChartData(data)
+  }, [data])
 
   return (
-    <Scatter options={options} data={data} />
+    <Doughnut 
+      ref={ref} 
+      options={options} 
+      datasetIdKey='id'
+      data={{
+        datasets: [
+          {
+            id: 1,
+            label: 'data 1',
+            data: chartData,
+            backgroundColor: ['red', 'green', 'blue']
+          }
+        ]
+      }} 
+    />
   )
 }
 
