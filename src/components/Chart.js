@@ -20,9 +20,9 @@ export const options = {
   },
 };
 
-function Chart({data}) {
+function Chart({ setRef, data }) {
 
-  const ref = useRef()
+  // let ref = useRef()
 
   const [chartData, setChartData] = useState([5,6,7])
 
@@ -32,7 +32,7 @@ function Chart({data}) {
 
   return (
     <Doughnut 
-      ref={ref} 
+      ref={setRef} 
       options={options} 
       datasetIdKey='id'
       data={{

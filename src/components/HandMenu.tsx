@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useController } from '@react-three/xr'
 import { extend, useFrame } from "@react-three/fiber"
 import * as THREE from 'three'
@@ -7,11 +7,34 @@ import ThreeMeshUI from 'three-mesh-ui'
 extend(ThreeMeshUI)
 
 import Panel from './Panel'
+import ChartWrapper from './ChartWrapper'
+import Button from './Button'
+
+function Title({ accentColor }:any) {
+  return (
+    <block
+      args={[
+        {
+          width: 1,
+          height: 0.25,
+          backgroundOpacity: 0,
+          justifyContent: 'center'
+        }
+      ]}>
+      {/* @ts-ignore */}
+      <text content={'Hello '} />
+      {/* @ts-ignore */}
+      <text content={'world!'} args={[{ fontColor: accentColor }]} />
+    </block>
+  )
+}
 
 function HandMenu ({children, ...rest}: any) {
   const ref = useRef<THREE.Mesh>() // reference for hand mounted menu
 // const ref = useRef()
   const leftController = useController("left")
+
+  const [accentColor] = useState(() => new THREE.Color('red'))
 
   useFrame((state) => {
     if(!leftController) {
@@ -35,10 +58,14 @@ function HandMenu ({children, ...rest}: any) {
     <group
       ref={ref} {...rest}
     >
-        <Panel />
-        {/* <Box>
-          <MeshBasicMaterial color="#191716" />
-        </Box> */}
+      <Panel>
+        <Title accentColor={accentColor} /> 
+        <Button onClick={() => accentColor.offsetHSL(1 / 3, 0, 0)} />
+        <ChartWrapper />
+      </Panel>
+      {/* <Box>
+        <MeshBasicMaterial color="#191716" />
+      </Box> */}
     </group>
   )
 }

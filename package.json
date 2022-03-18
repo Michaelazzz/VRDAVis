@@ -1,5 +1,5 @@
 {
-  "name": "react-three-mesh-ui",
+  "name": "vardavis",
   "version": "1.0.0",
   "description": "",
   "keywords": [],
@@ -13,6 +13,7 @@
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.12",
     "chart.js": "^3.7.1",
+    "dom-to-image": "^2.6.0",
     "react": "17.0.2",
     "react-chartjs-2": "^4.0.1",
     "react-dom": "17.0.2",

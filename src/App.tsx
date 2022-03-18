@@ -4,6 +4,7 @@ import { Plane } from '@react-three/drei'
 import * as THREE from 'three'
 
 import HandMenu from './components/HandMenu'
+import ChartWrapper from './components/ChartWrapper'
 
 
 function App () {
