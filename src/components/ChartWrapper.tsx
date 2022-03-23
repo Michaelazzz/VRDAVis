@@ -12,9 +12,10 @@ const ChartWrapper = ({props}:any) => {
 
   let ref = useRef()
   let imageRef = useRef()
-  let texture = null
   let canvas = null
   const loader = new THREE.TextureLoader();
+
+  
 
   setInterval(() => {
     setData([

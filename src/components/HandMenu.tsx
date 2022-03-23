@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { useController } from '@react-three/xr'
+import { Interactive, useController, useInteraction } from '@react-three/xr'
 import { extend, useFrame } from "@react-three/fiber"
 import * as THREE from 'three'
 import ThreeMeshUI from 'three-mesh-ui'
@@ -31,9 +31,11 @@ function Title({ accentColor }:any) {
 
 function HandMenu ({children, ...rest}: any) {
   const ref = useRef<THREE.Mesh>() // reference for hand mounted menu
-// const ref = useRef()
+  // const ref = useRef()
   const leftController = useController("left")
 
+  const buttonRef = useRef()
+  useInteraction(buttonRef, 'onSelect', () => accentColor.offsetHSL(1 / 3, 0, 0))
   const [accentColor] = useState(() => new THREE.Color('red'))
 
   useFrame((state) => {
@@ -60,12 +62,11 @@ function HandMenu ({children, ...rest}: any) {
     >
       <Panel>
         <Title accentColor={accentColor} /> 
-        <Button onClick={() => accentColor.offsetHSL(1 / 3, 0, 0)} />
+        {/* @ts-ignore  */}
+        <Button ref={buttonRef} onClick={() => accentColor.offsetHSL(1 / 3, 0, 0)} />
+        
         <ChartWrapper />
       </Panel>
-      {/* <Box>
-        <MeshBasicMaterial color="#191716" />
-      </Box> */}
     </group>
   )
 }

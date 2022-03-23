@@ -22,11 +22,10 @@ export const options = {
 
 function Chart({ setRef, data }) {
 
-  // let ref = useRef()
-
   const [chartData, setChartData] = useState([5,6,7])
 
   useEffect(() => {
+    // console.log(setRef.current)
     setChartData(data)
   }, [data])
 

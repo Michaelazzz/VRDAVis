@@ -25,18 +25,9 @@ function Panel({ children }) {
           fontFamily: './Roboto-msdf.json',
           fontTexture: './Roboto-msdf.png'
         }
-      ]}>
-      
-      {/* <CanvasToTexture/> */}
-
-      {/* <Canvas /> */}
-
-      
-      {/* <ChartWrapper /> */}
-      
+      ]}
+    >
       {children}
-      
-      
     </block>
   )
 }
