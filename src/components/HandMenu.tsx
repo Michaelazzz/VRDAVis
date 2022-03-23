@@ -35,9 +35,8 @@ function HandMenu ({children, ...rest}: any) {
   const leftController = useController("left")
 
   const buttonRef = useRef()
-  useInteraction(buttonRef, 'onSelect', () => accentColor.offsetHSL(1 / 3, 0, 0))
   const [accentColor] = useState(() => new THREE.Color('red'))
-
+  
   useFrame((state) => {
     if(!leftController) {
       return
@@ -54,6 +53,11 @@ function HandMenu ({children, ...rest}: any) {
       // ref.current.quaternion.copy(controller.quaternion)
       leftController.controller.add(ref.current)
     }
+
+    if(buttonRef)
+    {
+      useInteraction(buttonRef, 'onSelect', () => accentColor.offsetHSL(1 / 3, 0, 0))
+    }
   })
 
   return (
@@ -63,7 +67,7 @@ function HandMenu ({children, ...rest}: any) {
       <Panel>
         <Title accentColor={accentColor} /> 
         {/* @ts-ignore  */}
-        <Button ref={buttonRef} onClick={() => accentColor.offsetHSL(1 / 3, 0, 0)} />
+        <Button ref={buttonRef} onSelect={() => accentColor.offsetHSL(1 / 3, 0, 0)} />
         
         <ChartWrapper />
       </Panel>

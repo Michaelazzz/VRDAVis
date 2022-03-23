@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react'
 import * as THREE from 'three'
 
-export default function Button({ onClick }) {
-  const button = useRef()
+const Button = React.forwardRef(({ onSelect }, button) => {
+  // const button = useRef()
 
   useEffect(() => {
     if(button.current) {
@@ -34,7 +34,6 @@ export default function Button({ onClick }) {
       })
       button.current.setState('idle')
     }
-    
   })
   return (
     <block
@@ -44,7 +43,7 @@ export default function Button({ onClick }) {
       onPointerDown={() => button.current.setState('selected')}
       onPointerUp={() => {
         button.current.setState('hovered')
-        onClick()
+        onSelect()
       }}
       args={[
         {
@@ -57,4 +56,6 @@ export default function Button({ onClick }) {
       <text content={'Click'} />
     </block>
   )
-}
+})
+
+export default Button
