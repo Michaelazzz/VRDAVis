@@ -25,7 +25,7 @@ function Chart({ setRef, data }) {
   const [chartData, setChartData] = useState([5,6,7])
 
   useEffect(() => {
-    // console.log(setRef.current)
+    // console.log(setRef)
     setChartData(data)
   }, [data])
 

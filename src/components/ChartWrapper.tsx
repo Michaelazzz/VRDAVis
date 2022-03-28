@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
+
 import * as THREE from 'three'
-import { useThree, useFrame } from '@react-three/fiber'
-import { Html, MeshDistortMaterial } from '@react-three/drei'
+// import { useThree, useFrame, render } from '@react-three/fiber'
+import { Html } from '@react-three/drei'
 
 import Chart from './Chart'
-import { MeshStandardMaterial } from 'three'
+import Portal from './Portal'
 
-const ChartWrapper = ({props}:any) => {
+const ChartWrapper = ({parentRef, props}:any) => {
 
   const [data, setData] = useState([5,6,7])
 
@@ -14,8 +15,6 @@ const ChartWrapper = ({props}:any) => {
   let imageRef = useRef()
   let canvas = null
   const loader = new THREE.TextureLoader();
-
-  
 
   setInterval(() => {
     setData([
@@ -26,6 +25,7 @@ const ChartWrapper = ({props}:any) => {
   }, 2000)
 
   useEffect(() => {
+
     if(ref.current)
     {
       // @ts-ignore 
@@ -44,7 +44,7 @@ const ChartWrapper = ({props}:any) => {
       }
     }
     
-  })    
+  })  
 
   return (
     <block
@@ -60,8 +60,11 @@ const ChartWrapper = ({props}:any) => {
         }
       ]}>
         <Html>
-          <Chart data={data} setRef={ref} {...props} />
+          <Portal>
+            <Chart data={data} setRef={ref} {...props} />
+          </Portal>
         </Html>
+        
     </block>
     
   )

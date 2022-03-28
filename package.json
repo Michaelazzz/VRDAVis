@@ -1,5 +1,5 @@
 {
-  "name": "vardavis",
+  "name": "vardavis-frontend",
   "version": "1.0.0",
   "description": "",
   "keywords": [],
@@ -16,7 +16,7 @@
     "dom-to-image": "^2.6.0",
     "react": "17.0.2",
     "react-chartjs-2": "^4.0.1",
-    "react-dom": "17.0.2",
+    "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
     "sass": "^1.49.9",
     "three": "0.138.2",

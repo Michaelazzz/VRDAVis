@@ -56,7 +56,7 @@ function HandMenu ({children, ...rest}: any) {
 
     if(buttonRef)
     {
-      useInteraction(buttonRef, 'onSelect', () => accentColor.offsetHSL(1 / 3, 0, 0))
+      // useInteraction(buttonRef, 'onSelect', () => { accentColor.offsetHSL(1 / 3, 0, 0)})
     }
   })
 
@@ -69,7 +69,7 @@ function HandMenu ({children, ...rest}: any) {
         {/* @ts-ignore  */}
         <Button ref={buttonRef} onSelect={() => accentColor.offsetHSL(1 / 3, 0, 0)} />
         
-        <ChartWrapper />
+        <ChartWrapper parentRef={ref} />
       </Panel>
     </group>
   )
