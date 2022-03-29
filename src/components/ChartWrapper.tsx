@@ -22,7 +22,7 @@ const ChartWrapper = ({parentRef, props}:any) => {
       Math.floor(Math.random() * 10) + 1, 
       Math.floor(Math.random() * 10) + 1
     ])
-  }, 2000)
+  }, 6000)
 
   useEffect(() => {
 

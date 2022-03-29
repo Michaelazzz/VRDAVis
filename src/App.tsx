@@ -26,7 +26,6 @@ function App () {
                 {/* </Interactive> */}
                 
             </VRCanvas>
-            <div id="portal-root"></div>
         </>
         
     )
