@@ -34,6 +34,8 @@ function HandMenu ({children, ...rest}: any) {
   // const ref = useRef()
   const leftController = useController("left")
 
+  const raycaster = new THREE.Raycaster()
+
   const buttonRef = useRef()
   const [accentColor] = useState(() => new THREE.Color('red'))
   

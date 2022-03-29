@@ -40,7 +40,7 @@ const Button = React.forwardRef(({ onSelect }, button) => {
       ref={button}
       onPointerEnter={() => button.current.setState('hovered')}
       onPointerLeave={() => button.current.setState('idle')}
-      onPointerDown={() => button.current.setState('selected')}
+      onSelect={() => button.current.setState('selected')}
       onPointerUp={() => {
         button.current.setState('hovered')
         onSelect()
