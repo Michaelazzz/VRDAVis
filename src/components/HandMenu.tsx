@@ -9,6 +9,7 @@ extend(ThreeMeshUI)
 import Panel from './Panel'
 import ChartWrapper from './ChartWrapper'
 import Button from './Button'
+import ChartPanel from './ChartPanel'
 
 function Title({ accentColor }:any) {
   return (
@@ -66,13 +67,17 @@ function HandMenu ({children, ...rest}: any) {
     <group
       ref={ref} {...rest}
     >
-      <Panel>
+      <Panel
+        height={1.5}
+      >
         <Title accentColor={accentColor} /> 
         {/* @ts-ignore  */}
         <Button ref={buttonRef} onSelect={() => accentColor.offsetHSL(1 / 3, 0, 0)} />
         
-        <ChartWrapper parentRef={ref} />
+        {/* <ChartWrapper parentRef={ref} /> */}
+        <ChartPanel/>
       </Panel>
+      
     </group>
   )
 }

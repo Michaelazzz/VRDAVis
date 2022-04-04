@@ -5,7 +5,7 @@ import ThreeMeshUI from 'three-mesh-ui'
 
 extend(ThreeMeshUI)
 
-function Panel({ children }) {
+function Panel({ height = 1, children }) {
 
   // let ref = useRef()
 
@@ -19,7 +19,7 @@ function Panel({ children }) {
       args={[
         {
           width: 1,
-          height: 1.5,
+          height: height,
           fontSize: 0.1,
           backgroundOpacity: 0.1,
           fontFamily: './Roboto-msdf.json',
