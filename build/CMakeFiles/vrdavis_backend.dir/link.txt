@@ -1,0 +1,1 @@
+/usr/bin/c++  -O2 -g -DNDEBUG   CMakeFiles/vrdavis_backend.dir/Main.cpp.o CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.o  -o vrdavis_backend 

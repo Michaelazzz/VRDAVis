@@ -1,0 +1,4 @@
+/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/edit_cache.dir
+/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/vrdavis_backend.dir
+/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/rebuild_cache.dir
+/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/uSockets.dir
