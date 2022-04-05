@@ -11,6 +11,8 @@ import ChartWrapper from './ChartWrapper'
 import Button from './Button'
 import ChartPanel from './ChartPanel'
 
+
+
 function Title({ accentColor }:any) {
   return (
     <block
@@ -31,6 +33,18 @@ function Title({ accentColor }:any) {
 }
 
 function HandMenu ({children, ...rest}: any) {
+
+  const [data, setData] = useState([12, 19, 3, 5, 2, 3])
+
+  setInterval(() => {
+    setData(
+      Array.from({length: 6}, () => Math.floor(Math.random() * 10))
+    )
+  }, 6000)
+
+
+
+
   const ref = useRef<THREE.Mesh>() // reference for hand mounted menu
   // const ref = useRef()
   const leftController = useController("left")
@@ -75,7 +89,9 @@ function HandMenu ({children, ...rest}: any) {
         <Button ref={buttonRef} onSelect={() => accentColor.offsetHSL(1 / 3, 0, 0)} />
         
         {/* <ChartWrapper parentRef={ref} /> */}
-        <ChartPanel/>
+        <ChartPanel
+          data={data}
+        />
       </Panel>
       
     </group>
