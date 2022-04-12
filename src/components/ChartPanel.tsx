@@ -59,8 +59,8 @@ const ChartPanel = ({data}: any) => {
             ref={ref}
             args={[
                 {
-                    width: 2,
-                    height: 1,
+                    width: 1,
+                    height: 0.5,
                     fontSize: 0.1,
                     backgroundOpacity: 1,
                     fontFamily: "./Roboto-msdf.json",

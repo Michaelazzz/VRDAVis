@@ -54,7 +54,7 @@ function HandMenu({children, ...rest}: any) {
         const controller = leftController.controller;
         const x = 0;
         const y = 0.3;
-        const z = -0.3;
+        const z = -0.5;
         const offset = new THREE.Vector3(-controller.position.x + x, -controller.position.y + y, -controller.position.z + z);
         if (ref.current) {
             // const position =  new THREE.Vector3().copy(controller.position);
@@ -62,8 +62,6 @@ function HandMenu({children, ...rest}: any) {
             // ref.current.quaternion.copy(controller.quaternion);
             leftController.controller.add(ref.current);
         }
-
-        
     });
 
     const onButtonSelect = () => {
@@ -76,7 +74,7 @@ function HandMenu({children, ...rest}: any) {
 
     return (
         <group ref={ref} {...rest}>
-            <Panel height={2}>
+            <Panel height={1}>
                 <Title accentColor={accentColor} />
                 {/* @ts-ignore  */}
                 <Button onSelect={onButtonSelect}/>

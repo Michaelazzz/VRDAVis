@@ -22,7 +22,7 @@ const ObjectControls = () => {
     const leftController = useController("left");
 
     let prevDistance = 0
-    const scaleFactor = 0.1
+    const scaleFactor = 0.01
 
     useXRFrame(() => {
         if(!leftController || !rightController) {
@@ -56,7 +56,7 @@ const ObjectControls = () => {
         }
     });
     
-    useInteraction(ref, 'onSqueezeStart', (e) => {
+    useInteraction(ref, 'onSelectStart', (e) => {
         if(e.controller.inputSource.handedness == 'right'){
             setRightSqueeze(true)
         }
@@ -66,7 +66,7 @@ const ObjectControls = () => {
         }
     });
 
-    useInteraction(ref, 'onSqueezeEnd', (e) => {
+    useInteraction(ref, 'onSelectEnd', (e) => {
         if(e.controller.inputSource.handedness == 'right'){
             setRightSqueeze(false)
         }

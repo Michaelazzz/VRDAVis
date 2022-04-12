@@ -14,7 +14,7 @@ function Panel({height = 1, children}) {
         <block
             args={[
                 {
-                    width: 2,
+                    width: 1,
                     height: height,
                     fontSize: 0.1,
                     backgroundOpacity: 0.1,
