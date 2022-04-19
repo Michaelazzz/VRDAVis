@@ -2,7 +2,7 @@ import {useInteraction, useXREvent} from "@react-three/xr";
 import React, {useRef, useEffect, useState, useCallback} from "react";
 import * as THREE from "three";
 
-const Button = ({onSelect}) => {
+const Button = ({text='Click', onSelect}) => {
 
     const button = useRef()
 
@@ -57,7 +57,7 @@ const Button = ({onSelect}) => {
                 }
             ]}
         >
-            <text content={"Click"} />
+            <text content={text} />
         </block>
     );
 };

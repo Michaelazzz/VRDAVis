@@ -1,26 +1,36 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import * as THREE from "three";
 
-import {Chart} from "chart.js";
+import Chart from "chart.js";
+import { useController, useInteraction, useXR, useXRFrame } from "@react-three/xr";
+import { useThree } from "@react-three/fiber";
 
 // Chart.register(LinearScale, BarController, PointElement, LineElement, Tooltip, Legend, ArcElement, CategoryScale, BarElement)
 
 const ChartPanel = ({data}: any) => {
     const ref = useRef();
+
+    const { gl } = useThree();
+    let referenceSpace = gl.xr.getReferenceSpace();
+
+    let hover = false;
+
+    const rightController = useController("right");
+
     const loader = new THREE.TextureLoader();
 
-    useEffect(() => {
-        var canvas = document.createElement("canvas");
-        var ctx = canvas.getContext("2d");
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext("2d");
+    canvas.width = 500;
+    canvas.height = 250;
+    let chart: Chart
+    
 
+    useEffect(() => {
         // draw on canvas
         if (ctx) {
-            // red square for testing
-            // ctx.fillStyle = '#f00'
-            // ctx.fillRect(20,10,80,50)
 
-            // chart.js
-            const chart = new Chart(ctx, {
+            chart = new Chart(ctx, {
                 type: "bar",
                 data: {
                     labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
@@ -36,22 +46,48 @@ const ChartPanel = ({data}: any) => {
                 },
                 options: {
                     responsive: false,
-                    animation: {
-                        duration: 0
-                    }
+                    // animation: {
+                    //     duration: 0
+                    // }
                 }
             });
-            chart.update();
+            // chart.update();
+        }
+    });
 
-            var dataURL = chart.toBase64Image();
+    useXRFrame((time, xFrame) => {
+        var dataURL = chart.toBase64Image();
+        if (ref) {
+            loader.load(dataURL, texture => {
+                // @ts-ignore
+                ref.current.set({backgroundTexture: texture});
+            });
 
-            if (ref) {
-                loader.load(dataURL, texture => {
-                    // @ts-ignore
-                    ref.current.set({backgroundTexture: texture});
-                });
+
+            if(hover && rightController && referenceSpace) {
+                // console.log(gl.xr);
+                
+                let targetRayPose = xFrame.getPose(rightController.inputSource.targetRaySpace, referenceSpace); // transform corresponding to the target ray
+                let targetRayOrigin = targetRayPose?.transform.position; // origin point of the ray, at the front of the controller
+                let targetRayVector = targetRayPose?.transform.orientation; // direction the ray is pointing
+                
+                // console.log(targetRayVector);
+                
             }
         }
+    });
+
+    
+
+    useInteraction(ref, 'onHover', (e) => {
+        hover = true;
+        let interX = e.intersection?.point.x;
+        // console.log( interX ? 500*interX : 'no');
+        console.log(e);
+    });
+
+    useInteraction(ref, 'onBlur', () => {
+        hover = false;
     });
 
     return (

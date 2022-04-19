@@ -33,9 +33,9 @@ function Title({accentColor}: any) {
 function HandMenu({children, ...rest}: any) {
     const [data, setData] = useState([12, 19, 3, 5, 2, 3]);
 
-    setInterval(() => {
-        setData(Array.from({length: 6}, () => Math.floor(Math.random() * 10)));
-    }, 6000);
+    // setInterval(() => {
+    //     setData(Array.from({length: 6}, () => Math.floor(Math.random() * 10)));
+    // }, 6000);
 
     const ref = useRef<THREE.Mesh>(); // reference for hand mounted menu
     // const ref = useRef();
@@ -53,9 +53,10 @@ function HandMenu({children, ...rest}: any) {
 
         const controller = leftController.controller;
         const x = 0;
-        const y = 0.3;
+        const y = 0.6;
         const z = -0.5;
         const offset = new THREE.Vector3(-controller.position.x + x, -controller.position.y + y, -controller.position.z + z);
+        
         if (ref.current) {
             // const position =  new THREE.Vector3().copy(controller.position);
             ref.current.position.copy(controller.position).add(offset);
@@ -82,8 +83,6 @@ function HandMenu({children, ...rest}: any) {
                     data={data}
                 />
             </Panel>
-            {/* <Panel>  
-            </Panel> */}
         </group>
     );
 }
