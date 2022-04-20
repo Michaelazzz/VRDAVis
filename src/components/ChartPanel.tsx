@@ -51,7 +51,7 @@ const ChartPanel = ({data}: any) => {
                     // }
                 }
             });
-            // chart.update();
+            chart.update();
         }
     });
 

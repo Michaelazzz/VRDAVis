@@ -22,6 +22,8 @@ const ObjectControls = () => {
 
     let prevDistance = 0;
     const scaleFactor = 0.01;
+    const rotationMultiplier = 5;
+    const movementMultiplier = 5;
 
     let prevRightPos = rightController?.controller.position;
     let prevLeftPos = leftController?.controller.position;
@@ -61,20 +63,19 @@ const ObjectControls = () => {
             if(leftSelect && rightSelect)
             {
                 // rotation controls
-
-                ref.current.rotateY(offsetLeft.x);
-                ref.current.rotateX(-offsetLeft.y);
+                ref.current.rotateY(offsetLeft.x*rotationMultiplier);
+                ref.current.rotateX(-offsetLeft.y*rotationMultiplier);
             }
             else if(leftSelect || rightSelect)
             {
                 // translation controls
         
                 if(leftSelect){
-                    ref.current.position.add(offsetLeft);
+                    ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
                 }
 
                 if(rightSelect){
-                    ref.current.position.add(offsetRight);
+                    ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
                 }
             }
 
