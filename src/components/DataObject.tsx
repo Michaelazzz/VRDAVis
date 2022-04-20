@@ -11,11 +11,11 @@ const ObjectControls = () => {
     const [minSize, setMinSize] = useState(0.5);
     const [maxSize, setMaxSize] = useState(2.0);
 
-    const [rightSqueeze, setRightSqueeze] = useState(false);
-    const [leftSqueeze, setLeftSqueeze] = useState(false);
+    let rightSqueeze = false;
+    let leftSqueeze = false;
 
-    const [rightSelect, setRightSelect] = useState(false);
-    const [leftSelect, setLeftSelect] = useState(false);
+    let rightSelect = false;
+    let leftSelect = false;
 
     const rightController = useController("right");
     const leftController = useController("left");
@@ -86,44 +86,42 @@ const ObjectControls = () => {
     
     useInteraction(ref, 'onSqueezeStart', (e) => {
         if(e.controller.inputSource.handedness == 'right'){
-            setRightSqueeze(true);
+            rightSqueeze = true;
         }
 
         if(e.controller.inputSource.handedness == 'left'){
-            setLeftSqueeze(true);
+            leftSqueeze = true;
         }
     });
 
-    useInteraction(ref, 'onSqueezeEnd', (e) => {
-        if(e.controller.inputSource.handedness == 'right'){
-            setRightSqueeze(false);
-        }
+    useXREvent('squeezeend', () => {
+        rightSqueeze = false;
+    }, {handedness: 'right'});
 
-        if(e.controller.inputSource.handedness == 'left'){
-            setLeftSqueeze(false);
-        }
-    });
+    useXREvent('squeezeend', () => {
+        leftSqueeze = false;
+    }, {handedness: 'left'});
 
 
     useInteraction(ref, 'onSelectStart', (e) => {
         if(e.controller.inputSource.handedness == 'right'){
-            setRightSelect(true);
+            rightSelect = true;
         }
 
         if(e.controller.inputSource.handedness == 'left'){
-            setLeftSelect(true);
+            leftSelect = true;
         }
     });
 
-    useInteraction(ref, 'onSelectEnd', (e) => {
-        if(e.controller.inputSource.handedness == 'right'){
-            setRightSelect(false);
-        }
+    useXREvent('selectend', () => { 
+        rightSelect = false; 
+    }, {handedness: 'right'});
 
-        if(e.controller.inputSource.handedness == 'left'){
-            setLeftSelect(false);
-        }
-    });
+    useXREvent('selectend', () => {
+        leftSelect = false;
+    }, {handedness: 'left'});
+
+   
     
 
     return (

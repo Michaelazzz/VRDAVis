@@ -52,13 +52,16 @@ const ChartPanel = ({data}: any) => {
                 }
             });
             chart.update();
+            loader.load(chart.toBase64Image(), texture => {
+                // @ts-ignore
+                ref.current.set({backgroundTexture: texture});
+            });
         }
     });
 
     useXRFrame((time, xFrame) => {
-        var dataURL = chart.toBase64Image();
         if (ref) {
-            loader.load(dataURL, texture => {
+            loader.load(chart.toBase64Image(), texture => {
                 // @ts-ignore
                 ref.current.set({backgroundTexture: texture});
             });
