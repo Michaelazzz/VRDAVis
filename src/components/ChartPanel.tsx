@@ -116,40 +116,9 @@ const ChartPanel = ({data}: any) => {
 
 
     useXRFrame((time, xFrame) => {
-        if (!ref.current) 
-            return;
 
         chart.update();
 
-        loader.load(chart.toBase64Image(), texture => {
-            // @ts-ignore
-            ref.current.set({backgroundTexture: texture});
-        });
-
-        if(!hover || !rightController || !referenceSpace ) 
-            return;
-        
-        let targetRayPose = xFrame.getPose(rightController.inputSource.targetRaySpace, referenceSpace); // transform corresponding to the target ray
-        let targetRayOrigin = new Vector3(targetRayPose?.transform.position.x, targetRayPose?.transform.position.y, targetRayPose?.transform.position.z); // origin point of the ray, at the front of the controller
-        let targetRayVector = new Vector3(targetRayPose?.transform.orientation.x, targetRayPose?.transform.orientation.y, targetRayPose?.transform.orientation.z); // direction the ray is pointing
-        targetRayVector.add(new Vector3(0,0,-1));
-
-        raycaster.set(targetRayOrigin, targetRayVector);
-    
-        let intersection = raycaster.intersectObject(ref.current as Object3D);
-
-        if(! intersection[0])
-        {
-            sphere.position.copy(new Vector3(0,0,0));
-            return;
-        }
-            
-        sphere.position.copy(intersection[0].point);
-        localPos.copy(ref.current.clone().worldToLocal(intersection[0].point)); // converts point in world space to local space
-        localCoord.setX(canvas.height*(localPos.x + 0.5));
-        localCoord.setY(canvas.height*Math.abs(localPos.y + 0.25));
-
-        // console.log(localCoord);
         if(hover)
         {
             const event = new MouseEvent('mousemove', {
@@ -159,6 +128,37 @@ const ChartPanel = ({data}: any) => {
     
             chart.canvas.dispatchEvent(event);
         }
+
+        if (!ref.current) 
+            return;
+
+        loader.load(chart.toBase64Image(), texture => {
+            // @ts-ignore
+            ref.current.set({backgroundTexture: texture});
+        });
+
+        if(!hover || !rightController || !referenceSpace ) 
+            return;
+        
+        let targetRayPose = xFrame.getPose(rightController.inputSource.targetRaySpace, referenceSpace); // transform corresponding to the target ray pose
+        let targetRayOrigin = new Vector3(targetRayPose?.transform.position.x, targetRayPose?.transform.position.y, targetRayPose?.transform.position.z); // origin point of the ray, at the front of the controller
+        let targetRayVector = new Vector3(targetRayPose?.transform.orientation.x, targetRayPose?.transform.orientation.y, targetRayPose?.transform.orientation.z); // direction the ray is pointing
+        // targetRayVector.add(new Vector3(0,0,-1));
+
+        raycaster.set(targetRayOrigin, targetRayVector);
+    
+        let intersection = raycaster.intersectObject(ref.current as Object3D);
+
+        if(!intersection[0])
+        {
+            sphere.position.copy(targetRayOrigin);
+            return;
+        }
+            
+        sphere.position.copy(intersection[0].point);
+        localPos.copy(ref.current.clone().worldToLocal(intersection[0].point)); // converts point in world space to local space
+        localCoord.setX(canvas.height*localPos.x);
+        localCoord.setY(canvas.height*localPos.y);
     });
 
     useInteraction(ref, 'onSelect', (e) => {
@@ -166,6 +166,8 @@ const ChartPanel = ({data}: any) => {
         chart.ctx.beginPath();
         chart.ctx.arc(localCoord.x, localCoord.y, 8, 0, 2 * Math.PI);
         chart.ctx.fill();
+
+        console.log(localCoord)
 
         const event = new MouseEvent('click', {
             clientX: localCoord.x,
