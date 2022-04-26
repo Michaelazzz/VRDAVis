@@ -95,6 +95,10 @@ const ChartPanel = ({data}: any) => {
                 },
                 onClick: (e) => {
                     // console.log(e);
+                    chart.ctx.fillStyle = "#000000";
+                    chart.ctx.beginPath();
+                    chart.ctx.arc(localCoord.x, localCoord.y, 8, 0, 2 * Math.PI);
+                    chart.ctx.fill();
                     // chart.update();
                 },
                 onHover: (e) => {
@@ -171,13 +175,7 @@ const ChartPanel = ({data}: any) => {
         }
     });
 
-    useInteraction(ref, 'onSelect', (e) => {
-        chart.ctx.fillStyle = "#000000";
-        chart.ctx.beginPath();
-        chart.ctx.arc(localCoord.x, localCoord.y, 8, 0, 2 * Math.PI);
-        chart.ctx.fill();
-
-        // console.log(localCoord)
+    useInteraction(ref, 'onSelect', () => {
 
         const event = new MouseEvent('click', {
             clientX: localCoord.x,
