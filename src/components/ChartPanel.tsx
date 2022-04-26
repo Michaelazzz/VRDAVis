@@ -161,10 +161,10 @@ const ChartPanel = ({data}: any) => {
             {
                 sphere.position.copy(intersection[0].point);
                 localPos.copy(ref.current.clone().worldToLocal(intersection[0].point)); // converts point in world space to local space
-                localCoord.setX(canvas.height*localPos.x);
-                localCoord.setY(canvas.height*localPos.y);
+                localCoord.setX(canvas.width*(localPos.x+0.5));
+                localCoord.setY(canvas.height*(localPos.y-0.25));
 
-                // console.log(localCoord);
+                console.log(localCoord);
             }  
         }
         else {
