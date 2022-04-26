@@ -12,7 +12,7 @@ const ChartPanel = ({data}: any) => {
     const ref = useRef<Object3D>();
 
     const { gl, scene } = useThree();
-    let referenceSpace = gl.xr.getReferenceSpace();
+    // let referenceSpace = gl.xr.getReferenceSpace();
 
     let hover = false;
 
@@ -137,28 +137,41 @@ const ChartPanel = ({data}: any) => {
             ref.current.set({backgroundTexture: texture});
         });
 
-        if(!hover || !rightController || !referenceSpace ) 
-            return;
-        
-        let targetRayPose = xFrame.getPose(rightController.inputSource.targetRaySpace, referenceSpace); // transform corresponding to the target ray pose
-        let targetRayOrigin = new Vector3(targetRayPose?.transform.position.x, targetRayPose?.transform.position.y, targetRayPose?.transform.position.z); // origin point of the ray, at the front of the controller
-        let targetRayVector = new Vector3(targetRayPose?.transform.orientation.x, targetRayPose?.transform.orientation.y, targetRayPose?.transform.orientation.z); // direction the ray is pointing
-        // targetRayVector.add(new Vector3(0,0,-1));
-
-        raycaster.set(targetRayOrigin, targetRayVector);
-    
-        let intersection = raycaster.intersectObject(ref.current as Object3D);
-
-        if(!intersection[0])
+        if(hover && rightController) 
         {
-            sphere.position.copy(targetRayOrigin);
-            return;
+            // let targetRayPose = xFrame.getPose(rightController.inputSource.targetRaySpace, referenceSpace); // transform corresponding to the target ray pose
+            // let targetRayOrigin = new Vector3(targetRayPose?.transform.position.x, targetRayPose?.transform.position.y, targetRayPose?.transform.position.z); // origin point of the ray, at the front of the controller
+            // let targetRayVector = new Vector3(targetRayPose?.transform.orientation.x, targetRayPose?.transform.orientation.y, targetRayPose?.transform.orientation.z); // direction the ray is pointing
+            // targetRayVector.add(new Vector3(0,0,-1));
+
+            let targetRay = new Vector3();
+            rightController.controller.getWorldDirection(targetRay).negate();
+            let position = new Vector3();
+            rightController.controller.getWorldPosition(position);
+
+            raycaster.set(position, targetRay);
+        
+            let intersection = raycaster.intersectObject(ref.current as Object3D);
+
+            if(!intersection[0])
+            {
+                sphere.position.copy(new Vector3(0,0,0));
+            }
+            else 
+            {
+                sphere.position.copy(intersection[0].point);
+                localPos.copy(ref.current.clone().worldToLocal(intersection[0].point)); // converts point in world space to local space
+                localCoord.setX(canvas.height*localPos.x);
+                localCoord.setY(canvas.height*localPos.y);
+
+                // console.log(localCoord);
+            }  
         }
-            
-        sphere.position.copy(intersection[0].point);
-        localPos.copy(ref.current.clone().worldToLocal(intersection[0].point)); // converts point in world space to local space
-        localCoord.setX(canvas.height*localPos.x);
-        localCoord.setY(canvas.height*localPos.y);
+        else {
+            sphere.position.copy(new Vector3(0,0,0));
+        }
+        
+        
     });
 
     useInteraction(ref, 'onSelect', (e) => {
