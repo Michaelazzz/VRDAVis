@@ -95,11 +95,11 @@ const ChartPanel = ({data}: any) => {
                 },
                 onClick: (e) => {
                     // console.log(e);
-                    chart.update();
+                    // chart.update();
                 },
                 onHover: (e) => {
                     // console.log(e);
-                    chart.update();
+                    // chart.update();
                 },
                 events: ['mousemove', 'click']
             }
@@ -117,7 +117,7 @@ const ChartPanel = ({data}: any) => {
 
     useXRFrame((time, xFrame) => {
 
-        chart.update();
+        // chart.update();
 
         if(hover)
         {
@@ -161,10 +161,10 @@ const ChartPanel = ({data}: any) => {
             {
                 sphere.position.copy(intersection[0].point);
                 localPos.copy(ref.current.clone().worldToLocal(intersection[0].point)); // converts point in world space to local space
-                localCoord.setX(canvas.width*(localPos.x+0.5));
-                localCoord.setY(canvas.height*(localPos.y-0.25));
+                localCoord.setX(500*(localPos.x+0.5));
+                localCoord.setY(250*Math.abs(localPos.y-0.25));
 
-                console.log(localCoord);
+                // console.log(localCoord);
             }  
         }
         else {
