@@ -87,4 +87,6 @@ function HandMenu({children, ...rest}: any) {
     );
 }
 
+HandMenu.displayName = "Hand Menu";
+
 export default HandMenu;

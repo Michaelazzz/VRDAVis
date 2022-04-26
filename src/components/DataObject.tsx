@@ -1,6 +1,5 @@
 import { Box, useIntersect } from '@react-three/drei';
 import { RayGrab, useController, useInteraction, useXR, useXREvent, useXRFrame } from '@react-three/xr';
-import { controllers } from 'chart.js';
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from "three";
 
