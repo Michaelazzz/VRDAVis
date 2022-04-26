@@ -162,16 +162,13 @@ const ChartPanel = ({data}: any) => {
                 sphere.position.copy(intersection[0].point);
                 localPos.copy(ref.current.clone().worldToLocal(intersection[0].point)); // converts point in world space to local space
                 localCoord.setX(500*(localPos.x+0.5));
-                localCoord.setY(250*Math.abs(localPos.y-0.25));
-
-                // console.log(localCoord);
+                localCoord.setY(canvas.height*Math.abs(localPos.y-0.25));
             }  
         }
-        else {
+        else 
+        {
             sphere.position.copy(new Vector3(0,0,0));
         }
-        
-        
     });
 
     useInteraction(ref, 'onSelect', (e) => {
@@ -180,7 +177,7 @@ const ChartPanel = ({data}: any) => {
         chart.ctx.arc(localCoord.x, localCoord.y, 8, 0, 2 * Math.PI);
         chart.ctx.fill();
 
-        console.log(localCoord)
+        // console.log(localCoord)
 
         const event = new MouseEvent('click', {
             clientX: localCoord.x,
