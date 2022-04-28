@@ -1,31 +1,45 @@
 import React, {useEffect, useRef, useState} from "react";
 import * as THREE from "three";
 
-import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, BasePlatform, Tooltip } from "chart.js";
+import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, BasePlatform, Tooltip, Legend } from "chart.js";
 import { useController, useInteraction, useXR, useXRFrame } from "@react-three/xr";
 import { extend, useThree } from "@react-three/fiber";
-import { Object3D, Raycaster, Vector2, Vector3 } from "three";
+import { Object3D, Raycaster, Texture, Vector2, Vector3 } from "three";
 
-import ThreeMeshUI from "three-mesh-ui";
-
-extend(ThreeMeshUI);
-
-Chart.register(BarController, BarElement, LinearScale, CategoryScale, Tooltip, Title);
+Chart.register(BarController, BarElement, LinearScale, CategoryScale, Tooltip, Legend, Title);
 
 const ChartObject = ({onMount}: any) => {
 
     const ref = useRef<Object3D>();
 
-    const [textureData, setTextureData] = useState("");
+    const [textureData, setTextureData]: any = useState();
 
+    let texture: Texture = new Texture();
+    const image = new Image();
     const loader = new THREE.TextureLoader();
 
     useEffect(() => {
         onMount([textureData, setTextureData]);
-        loader.load(textureData, texture => {
-            // @ts-ignore
-            ref.current.set({backgroundTexture: texture});
-        });
+
+        if(textureData){
+            image.src = textureData;
+
+            // texture = loader.load(textureData);
+             
+            texture.image = image;
+            // texture.needsUpdate = true;
+            image.onload = () => {
+                texture.needsUpdate = true;
+            };
+            
+            if(texture) {
+                // console.log(textureData);
+                // @ts-ignore
+                ref.current.set({backgroundTexture: texture});
+            }
+        }
+       console.log('texture update')
+        
     }, [onMount, textureData]);
 
     return (
@@ -107,19 +121,24 @@ const ChartPanel = ({data}: any) => {
                     padding: 30
                 },
                 responsive: false,
-                // animation: {
-                //     duration: 0
-                // },
+                animation: {
+                    duration: 0
+                },
                 scales: {
                     y: {
                         beginAtZero: true
                     }
                 },
                 plugins: {
-                    legend: {
-                        display: true,
-                        labels: {
-                            color: 'rgb(255, 99, 132)'
+                    // legend: {
+                    //     display: true,
+                    //     labels: {
+                    //         color: 'rgb(255, 99, 132)'
+                    //     }
+                    // },
+                    tooltip: {
+                        animation: {
+                            duration: 0
                         }
                     }
                 },
@@ -176,7 +195,7 @@ const ChartPanel = ({data}: any) => {
         }
 
         setTextureData(chart.toBase64Image());
-        ThreeMeshUI.update();
+        // setTextureData(chart.canvas);
     });
 
     useInteraction(ref, 'onSelect', () => {
