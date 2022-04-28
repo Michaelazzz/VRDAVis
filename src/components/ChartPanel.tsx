@@ -3,8 +3,12 @@ import * as THREE from "three";
 
 import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, BasePlatform } from "chart.js";
 import { useController, useInteraction, useXR, useXRFrame } from "@react-three/xr";
-import { useThree } from "@react-three/fiber";
+import { extend, useThree } from "@react-three/fiber";
 import { Object3D, Raycaster, Vector2, Vector3 } from "three";
+
+import ThreeMeshUI from "three-mesh-ui";
+
+extend(ThreeMeshUI);
 
 Chart.register(BarController, BarElement, LinearScale, CategoryScale, Title);
 
@@ -22,7 +26,7 @@ const ChartObject = ({onMount}: any) => {
             // @ts-ignore
             ref.current.set({backgroundTexture: texture});
         });
-        console.log('texture update');
+        // console.log('texture update');
     }, [onMount, textureData]);
 
     return (
@@ -104,9 +108,9 @@ const ChartPanel = ({data}: any) => {
                     padding: 30
                 },
                 responsive: false,
-                animation: {
-                    duration: 0
-                },
+                // animation: {
+                //     duration: 0
+                // },
                 scales: {
                     y: {
                         beginAtZero: true
@@ -173,6 +177,8 @@ const ChartPanel = ({data}: any) => {
         }
 
         setTextureData(chart.toBase64Image());
+        ThreeMeshUI.update();
+        // console.log(ThreeMeshUI)
     });
 
     useInteraction(ref, 'onSelect', () => {
@@ -207,7 +213,6 @@ const ChartPanel = ({data}: any) => {
             ]}
         >
             <ChartObject
-                // textureData={textureData}
                 onMount={onChildMount}
             ></ChartObject>
         </block>
