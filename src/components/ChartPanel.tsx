@@ -1,66 +1,85 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {forwardRef, useEffect, useRef, useState} from "react";
 import * as THREE from "three";
 
 import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, BasePlatform, Tooltip, Legend } from "chart.js";
 import { useController, useInteraction, useXR, useXRFrame } from "@react-three/xr";
 import { extend, useThree } from "@react-three/fiber";
-import { Object3D, Raycaster, Texture, Vector2, Vector3 } from "three";
+import { CanvasTexture, Material, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D, Raycaster, ShaderMaterial, Texture, Vector2, Vector3 } from "three";
+import ThreeMeshUI from "three-mesh-ui";
+import { Plane } from "@react-three/drei";
+
+extend(ThreeMeshUI);
 
 Chart.register(BarController, BarElement, LinearScale, CategoryScale, Tooltip, Legend, Title);
 
-const ChartObject = ({onMount}: any) => {
+const ChartObject = forwardRef(({onMount}: any, ref) => {
 
-    const ref = useRef<Object3D>();
+    const materialRef = useRef<MeshStandardMaterial>();
 
     const [textureData, setTextureData]: any = useState();
 
-    let texture: Texture = new Texture();
-    const image = new Image();
+    let material = new MeshStandardMaterial();
+
     const loader = new THREE.TextureLoader();
 
     useEffect(() => {
         onMount([textureData, setTextureData]);
 
         if(textureData){
-            image.src = textureData;
+            // material.color = new THREE.Color("red");
 
-            // texture = loader.load(textureData);
-             
-            texture.image = image;
-            // texture.needsUpdate = true;
-            image.onload = () => {
-                texture.needsUpdate = true;
-            };
             
-            if(texture) {
-                // console.log(textureData);
+            // console.log(textureData)
+            
+            loader.load(textureData, (texture) => {
                 // @ts-ignore
-                ref.current.set({backgroundTexture: texture});
-            }
+                // ref.current?.set({backgroundTexture: texture});
+                material = new MeshStandardMaterial({
+                    map: texture,
+                    alphaTest: 0.5,
+                });
+                // texture.needsUpdate = true;
+            });
         }
        console.log('texture update')
         
     }, [onMount, textureData]);
 
+    useXRFrame(() => {
+        if(material.map)
+            material.map.needsUpdate = true;
+
+        // material.color = material.color.offsetHSL(1 / 3, 0, 0);
+        materialRef.current?.copy(material);
+    });
+
     return (
-        <block
+        // <block
+        //     ref={ref}
+        //     args={[
+        //         {
+        //             width: 1,
+        //             height: 0.5,
+        //             fontSize: 0.1,
+        //             backgroundOpacity: 1,
+        //             fontFamily: "./Roboto-msdf.json",
+        //             fontTexture: "./Roboto-msdf.png",
+        //         }
+        //     ]}
+        // ></block>
+        <Plane 
             ref={ref}
-            args={[
-                {
-                    width: 1,
-                    height: 0.5,
-                    fontSize: 0.1,
-                    backgroundOpacity: 1,
-                    fontFamily: "./Roboto-msdf.json",
-                    fontTexture: "./Roboto-msdf.png"
-                }
-            ]}
-        ></block>
+            position={[0, 0, 0]} 
+            scale={[1, 0.5, 0]}
+        >
+            <meshStandardMaterial ref={materialRef} attach="material" />
+        </Plane>
     );
-};
+});
 
 const ChartPanel = ({data}: any) => {
     const ref = useRef<Object3D>();
+    const chartRef = useRef<Object3D>();
     const { gl, scene } = useThree();
     const rightController = useController("right");
     let textureData = null;
@@ -152,6 +171,7 @@ const ChartPanel = ({data}: any) => {
             }
         });
         chart.update();
+        
     });
 
 
@@ -230,6 +250,7 @@ const ChartPanel = ({data}: any) => {
             ]}
         >
             <ChartObject
+                ref={chartRef}
                 onMount={onChildMount}
             ></ChartObject>
         </block>
