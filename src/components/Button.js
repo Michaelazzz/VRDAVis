@@ -40,8 +40,6 @@ const Button = ({text='Click', onSelect}) => {
 
     useInteraction(button, 'onSelectStart', () => {button.current.setState("selected"); onSelect();});
     useInteraction(button, 'onSelectEnd', () => button.current.setState("hovered"));
-    // useInteraction(button, 'onSqueezeStart', () => {button.current.setState("selected"); onSelect();});
-    // useInteraction(button, 'onSqueezeEnd', () => button.current.setState("hovered"));
     useInteraction(button, "onHover", () => button.current.setState("hovered"));
     useInteraction(button, "onBlur", () => button.current.setState("idle"));
 

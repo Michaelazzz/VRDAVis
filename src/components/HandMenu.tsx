@@ -1,4 +1,4 @@
-import {useRef, useState} from "react";
+import {forwardRef, useRef, useState} from "react";
 import {Interactive, useController, useInteraction, useXREvent} from "@react-three/xr";
 import {extend, useFrame} from "@react-three/fiber";
 import * as THREE from "three";
@@ -10,7 +10,7 @@ import Panel from "./Panel";
 import Button from "./Button";
 import ChartPanel from "./ChartPanel";
 
-function Title({accentColor}: any) {
+const Title = forwardRef(({accentColor, text}: any, ref) => {
     return (
         <block
             args={[
@@ -25,10 +25,10 @@ function Title({accentColor}: any) {
             {/* @ts-ignore */}
             <text content={"Hello "} />
             {/* @ts-ignore */}
-            <text content={"world!"} args={[{fontColor: accentColor}]} />
+            <text ref={ref} content={text+"!"} args={[{fontColor: accentColor}]} />
         </block>
     );
-}
+});
 
 function HandMenu({children, ...rest}: any) {
     const [data, setData] = useState([12, 19, 3, 5, 2, 3]);
@@ -45,6 +45,8 @@ function HandMenu({children, ...rest}: any) {
 
     // const buttonRef = useRef();
     const [accentColor] = useState(() => new THREE.Color("red"));
+
+    const titleRef = useRef();
 
     useFrame(state => {
         if (!leftController) {
@@ -63,10 +65,18 @@ function HandMenu({children, ...rest}: any) {
             // ref.current.quaternion.copy(controller.quaternion);
             leftController.controller.add(ref.current);
         }
+
+        ThreeMeshUI.update();
     });
 
     const onButtonSelect = () => {
-        accentColor.offsetHSL(1 / 3, 0, 0)
+        accentColor.offsetHSL(1 / 3, 0, 0);
+        if(titleRef.current) {
+            // @ts-ignore
+            titleRef.current.set({ content: 'Michaela!'});
+        }
+            
+        
     }
 
     // useXREvent("squeeze", () => accentColor.offsetHSL(1 / 3, 0, 0));
@@ -76,7 +86,7 @@ function HandMenu({children, ...rest}: any) {
     return (
         <group ref={ref} {...rest}>
             <Panel height={1}>
-                <Title accentColor={accentColor} />
+                <Title ref={titleRef} accentColor={accentColor} text={'World'} />
                 {/* @ts-ignore  */}
                 <Button onSelect={onButtonSelect}/>
                 <ChartPanel
