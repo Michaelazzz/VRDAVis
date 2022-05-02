@@ -121,17 +121,17 @@ const ChartPanel = ({data}: any) => {
                 }
             },
             onClick: (e) => {
-                // console.log(e);
+                sphere.material.copy(new THREE.MeshBasicMaterial( { color: 0xff0000 } ))
             },
             onHover: (e) => {
                 setTextureData(chart.toBase64Image());
+                
             },
             events: ['mousemove', 'click']
         }
     });
     chart.update();
 
-    
 
     useXRFrame((time, xFrame) => {
 
@@ -185,7 +185,6 @@ const ChartPanel = ({data}: any) => {
 
     useInteraction(ref, 'onHover', () => {
         hover = true;
-        setTextureData(chart.toBase64Image());
     });
 
     useInteraction(ref, 'onBlur', () => {
