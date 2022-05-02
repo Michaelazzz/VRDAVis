@@ -7,8 +7,8 @@ const ObjectControls = () => {
 
     const ref = useRef<THREE.Mesh>();
 
-    const [minSize, setMinSize] = useState(0.5);
-    const [maxSize, setMaxSize] = useState(2.0);
+    const [minSize] = useState(0.5);
+    const [maxSize] = useState(2.0);
 
     let rightSqueeze = false;
     let leftSqueeze = false;
@@ -62,8 +62,8 @@ const ObjectControls = () => {
             if(leftSelect && rightSelect)
             {
                 // rotation controls
-                ref.current.rotateY(offsetLeft.x*rotationMultiplier);
-                ref.current.rotateX(-offsetLeft.y*rotationMultiplier);
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
             }
             else if(leftSelect || rightSelect)
             {
@@ -81,6 +81,7 @@ const ObjectControls = () => {
             prevRightPos = rightPos.clone();
             prevLeftPos = leftPos.clone();
         }
+
     });
     
     useInteraction(ref, 'onSqueezeStart', (e) => {

@@ -1,85 +1,49 @@
-import React, {forwardRef, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import * as THREE from "three";
 
-import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, BasePlatform, Tooltip, Legend } from "chart.js";
+import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, Tooltip, Legend, BasePlatform } from "chart.js";
 import { useController, useInteraction, useXR, useXRFrame } from "@react-three/xr";
-import { extend, useThree } from "@react-three/fiber";
-import { CanvasTexture, Material, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D, Raycaster, ShaderMaterial, Texture, Vector2, Vector3 } from "three";
-import ThreeMeshUI from "three-mesh-ui";
-import { Plane } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
+import { Object3D, Raycaster, Vector2, Vector3 } from "three";
 
-extend(ThreeMeshUI);
+Chart.register(BarController, BarElement, LinearScale, CategoryScale,Tooltip, Legend, Title);
 
-Chart.register(BarController, BarElement, LinearScale, CategoryScale, Tooltip, Legend, Title);
+const ChartObject = ({onMount}: any) => {
 
-const ChartObject = forwardRef(({onMount}: any, ref) => {
+    const ref = useRef<Object3D>();
 
-    const materialRef = useRef<MeshStandardMaterial>();
-
-    const [textureData, setTextureData]: any = useState();
-
-    let material = new MeshStandardMaterial();
+    const [textureData, setTextureData] = useState("");
 
     const loader = new THREE.TextureLoader();
 
     useEffect(() => {
         onMount([textureData, setTextureData]);
-
-        if(textureData){
-            // material.color = new THREE.Color("red");
-
-            
-            // console.log(textureData)
-            
-            loader.load(textureData, (texture) => {
-                // @ts-ignore
-                // ref.current?.set({backgroundTexture: texture});
-                material = new MeshStandardMaterial({
-                    map: texture,
-                    alphaTest: 0.5,
-                });
-                // texture.needsUpdate = true;
-            });
-        }
-       console.log('texture update')
-        
+        loader.load(textureData, texture => {
+            // @ts-ignore
+            ref.current.set({backgroundTexture: texture});
+        });
+        console.log('texture update');
     }, [onMount, textureData]);
 
-    useXRFrame(() => {
-        if(material.map)
-            material.map.needsUpdate = true;
-
-        // material.color = material.color.offsetHSL(1 / 3, 0, 0);
-        materialRef.current?.copy(material);
-    });
-
     return (
-        // <block
-        //     ref={ref}
-        //     args={[
-        //         {
-        //             width: 1,
-        //             height: 0.5,
-        //             fontSize: 0.1,
-        //             backgroundOpacity: 1,
-        //             fontFamily: "./Roboto-msdf.json",
-        //             fontTexture: "./Roboto-msdf.png",
-        //         }
-        //     ]}
-        // ></block>
-        <Plane 
+        <block
             ref={ref}
-            position={[0, 0, 0]} 
-            scale={[1, 0.5, 0]}
-        >
-            <meshStandardMaterial ref={materialRef} attach="material" />
-        </Plane>
+            args={[
+                {
+                    width: 1,
+                    height: 0.5,
+                    fontSize: 0.1,
+                    backgroundOpacity: 1,
+                    fontFamily: "./Roboto-msdf.json",
+                    fontTexture: "./Roboto-msdf.png"
+                }
+            ]}
+        ></block>
     );
-});
+};
 
 const ChartPanel = ({data}: any) => {
     const ref = useRef<Object3D>();
-    const chartRef = useRef<Object3D>();
     const { gl, scene } = useThree();
     const rightController = useController("right");
     let textureData = null;
@@ -149,15 +113,10 @@ const ChartPanel = ({data}: any) => {
                     }
                 },
                 plugins: {
-                    // legend: {
-                    //     display: true,
-                    //     labels: {
-                    //         color: 'rgb(255, 99, 132)'
-                    //     }
-                    // },
-                    tooltip: {
-                        animation: {
-                            duration: 0
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: 'rgb(255, 99, 132)'
                         }
                     }
                 },
@@ -171,7 +130,6 @@ const ChartPanel = ({data}: any) => {
             }
         });
         chart.update();
-        
     });
 
 
@@ -215,7 +173,6 @@ const ChartPanel = ({data}: any) => {
         }
 
         setTextureData(chart.toBase64Image());
-        // setTextureData(chart.canvas);
     });
 
     useInteraction(ref, 'onSelect', () => {
@@ -250,7 +207,7 @@ const ChartPanel = ({data}: any) => {
             ]}
         >
             <ChartObject
-                ref={chartRef}
+                // textureData={textureData}
                 onMount={onChildMount}
             ></ChartObject>
         </block>
