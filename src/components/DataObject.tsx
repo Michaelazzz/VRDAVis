@@ -126,10 +126,13 @@ const ObjectControls = () => {
 
     return (
         <Box 
+            castShadow
+            receiveShadow
             ref={ref} 
             position={[0,1.5,-2.5]}
         >
-            <meshBasicMaterial attach='material' color={new THREE.Color(0xf92a82)} />
+            {/* <meshBasicMaterial attach='material' color={new THREE.Color(0xf92a82)} /> */}
+            <meshPhongMaterial attach='material' color={new THREE.Color(0xf92a82)} />
         </Box>
     )
 };

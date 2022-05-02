@@ -31,10 +31,10 @@ const Title = forwardRef(({accentColor, text}: any, ref) => {
 });
 
 function HandMenu({children, ...rest}: any) {
-    const [data, setData] = useState([12, 19, 3, 5, 2, 3]);
+    const [data, setData] = useState([65, 59, 80, 81, 56, 55, 60]);
 
     // setInterval(() => {
-    //     setData(Array.from({length: 6}, () => Math.floor(Math.random() * 10)));
+    //     setData(Array.from({length: 7}, () => Math.floor(Math.random() * 10)));
     // }, 6000);
 
     const ref = useRef<THREE.Mesh>(); // reference for hand mounted menu

@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, Tooltip, Legend, BasePlatform } from "chart.js";
 import { useController, useInteraction, useXR, useXRFrame } from "@react-three/xr";
 import { useThree } from "@react-three/fiber";
-import { Object3D, Raycaster, Vector2, Vector3 } from "three";
+import { Object3D, Raycaster, Vector2, Vector3, XRRay } from "three";
 
 Chart.register(BarController, BarElement, LinearScale, CategoryScale,Tooltip, Legend, Title);
 
@@ -13,15 +13,17 @@ const ChartObject = ({onMount}: any) => {
     const ref = useRef<Object3D>();
 
     const [textureData, setTextureData] = useState("");
-
     const loader = new THREE.TextureLoader();
+    let t: THREE.CanvasTexture
 
     useEffect(() => {
         onMount([textureData, setTextureData]);
+
         loader.load(textureData, texture => {
             // @ts-ignore
             ref.current.set({backgroundTexture: texture});
         });
+
         console.log('texture update');
     }, [onMount, textureData]);
 
@@ -69,69 +71,67 @@ const ChartPanel = ({data}: any) => {
         setTextureData = dataFromChild[1];
     };
 
-    useEffect(() => {
-
-        chart = new Chart(canvas, {
-            type: "bar",
-            data: {
-                labels: ["Red", "Orage", "Yellow", "Green", "Blue", "Purple", "Grey"],
-                datasets: [{
-                    label: 'My First Dataset',
-                    data: [65, 59, 80, 81, 56, 55, 60],
-                    backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
-                    'rgba(255, 205, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(201, 203, 207, 0.2)'
-                    ],
-                    borderColor: [
-                    'rgb(255, 99, 132)',
-                    'rgb(255, 159, 64)',
-                    'rgb(255, 205, 86)',
-                    'rgb(75, 192, 192)',
-                    'rgb(54, 162, 235)',
-                    'rgb(153, 102, 255)',
-                    'rgb(201, 203, 207)'
-                    ],
-                    borderWidth: 1
-                }]
+    chart = new Chart(canvas, {
+        type: "bar",
+        data: {
+            labels: ["Red", "Orage", "Yellow", "Green", "Blue", "Purple", "Grey"],
+            datasets: [{
+                label: 'My First Dataset',
+                data: data,
+                backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 205, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(201, 203, 207, 0.2)'
+                ],
+                borderColor: [
+                'rgb(255, 99, 132)',
+                'rgb(255, 159, 64)',
+                'rgb(255, 205, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(54, 162, 235)',
+                'rgb(153, 102, 255)',
+                'rgb(201, 203, 207)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            layout: {
+                padding: 30
             },
-            options: {
-                layout: {
-                    padding: 30
-                },
-                responsive: false,
-                animation: {
-                    duration: 0
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
+            responsive: false,
+            animation: {
+                duration: 0
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: 'rgb(255, 99, 132)'
                     }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        labels: {
-                            color: 'rgb(255, 99, 132)'
-                        }
-                    }
-                },
-                onClick: (e) => {
-                    // console.log(e);
-                },
-                onHover: (e) => {
-                    // console.log(e);
-                },
-                events: ['mousemove', 'click']
-            }
-        });
-        chart.update();
+                }
+            },
+            onClick: (e) => {
+                // console.log(e);
+            },
+            onHover: (e) => {
+                setTextureData(chart.toBase64Image());
+            },
+            events: ['mousemove', 'click']
+        }
     });
+    chart.update();
 
+    
 
     useXRFrame((time, xFrame) => {
 
@@ -148,7 +148,6 @@ const ChartPanel = ({data}: any) => {
             raycaster.set(position, targetRay);
         
             let intersection = raycaster.intersectObject(ref.current as Object3D);
-           
 
             if(!intersection[0])
             {
@@ -172,7 +171,7 @@ const ChartPanel = ({data}: any) => {
             sphere.position.copy(new Vector3(0,0,0));
         }
 
-        setTextureData(chart.toBase64Image());
+        // setTextureData(chart.toBase64Image());
     });
 
     useInteraction(ref, 'onSelect', () => {
@@ -186,6 +185,7 @@ const ChartPanel = ({data}: any) => {
 
     useInteraction(ref, 'onHover', () => {
         hover = true;
+        setTextureData(chart.toBase64Image());
     });
 
     useInteraction(ref, 'onBlur', () => {
