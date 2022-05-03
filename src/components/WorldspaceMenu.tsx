@@ -11,7 +11,8 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
 
     const { player } = useXR();
 
-    const [range] = useState(2);
+    const [xRange] = useState([-2, 2]);
+    const [yRange] = useState([0, 2]);
 
     let rightSqueeze = false;
     let leftSqueeze = false;
@@ -22,7 +23,6 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
     const rightController = useController("right");
     const leftController = useController("left");
 
-    const rotationMultiplier = 5;
     const movementMultiplier = 5;
 
     let prevRightPos = rightController?.controller.position;
@@ -43,10 +43,12 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
             
             // translation controls
             if(leftSelect){
-                ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
+                // if((ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1]) && (ref.current.position.y >= yRange[0] || ref.current.position.y <= yRange[1]))
+                    ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
             }
             else if(rightSelect){
-                ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
+                // if(ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1])
+                    ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
             }
 
             prevRightPos = rightPos.clone();
