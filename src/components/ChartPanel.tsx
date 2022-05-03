@@ -24,7 +24,7 @@ const ChartObject = ({onMount}: any) => {
             ref.current.set({backgroundTexture: texture});
         });
 
-        console.log('texture update');
+        // console.log('texture update');
     }, [onMount, textureData]);
 
     return (
@@ -62,16 +62,8 @@ const ChartPanel = ({data}: any) => {
     canvas.height = 250;
     const localCoord = new Vector2(0,0);
 
-    let chart: Chart
-
-    scene.add( sphere );
-
-    const onChildMount = (dataFromChild: any) => {
-        textureData = dataFromChild[0];
-        setTextureData = dataFromChild[1];
-    };
-
-    chart = new Chart(canvas, {
+    // let chart: Chart
+    const [chart, setChart] = useState(new Chart(canvas, {
         type: "bar",
         data: {
             labels: ["Red", "Orage", "Yellow", "Green", "Blue", "Purple", "Grey"],
@@ -120,17 +112,91 @@ const ChartPanel = ({data}: any) => {
                     }
                 }
             },
-            onClick: (e) => {
-                sphere.material.copy(new THREE.MeshBasicMaterial( { color: 0xff0000 } ))
-            },
-            onHover: (e) => {
-                setTextureData(chart.toBase64Image());
+            // onClick: (e) => {
                 
-            },
-            events: ['mousemove', 'click']
+            // },
+            // onHover: (e) => {
+                // setTextureData(chart.toBase64Image());
+            // },
+            // events: ['mousemove', 'click']
+        }
+    }))
+
+    scene.add( sphere );
+
+    const onChildMount = (dataFromChild: any) => {
+        textureData = dataFromChild[0];
+        setTextureData = dataFromChild[1];
+    };
+
+    // chart = new Chart(canvas, {
+    //     type: "bar",
+    //     data: {
+    //         labels: ["Red", "Orage", "Yellow", "Green", "Blue", "Purple", "Grey"],
+    //         datasets: [{
+    //             label: 'My First Dataset',
+    //             data: data,
+    //             backgroundColor: [
+    //             'rgba(255, 99, 132, 0.2)',
+    //             'rgba(255, 159, 64, 0.2)',
+    //             'rgba(255, 205, 86, 0.2)',
+    //             'rgba(75, 192, 192, 0.2)',
+    //             'rgba(54, 162, 235, 0.2)',
+    //             'rgba(153, 102, 255, 0.2)',
+    //             'rgba(201, 203, 207, 0.2)'
+    //             ],
+    //             borderColor: [
+    //             'rgb(255, 99, 132)',
+    //             'rgb(255, 159, 64)',
+    //             'rgb(255, 205, 86)',
+    //             'rgb(75, 192, 192)',
+    //             'rgb(54, 162, 235)',
+    //             'rgb(153, 102, 255)',
+    //             'rgb(201, 203, 207)'
+    //             ],
+    //             borderWidth: 1
+    //         }]
+    //     },
+    //     options: {
+    //         layout: {
+    //             padding: 30
+    //         },
+    //         responsive: false,
+    //         animation: {
+    //             duration: 0
+    //         },
+    //         scales: {
+    //             y: {
+    //                 beginAtZero: true
+    //             }
+    //         },
+    //         plugins: {
+    //             legend: {
+    //                 display: true,
+    //                 labels: {
+    //                     color: 'rgb(255, 99, 132)'
+    //                 }
+    //             }
+    //         },
+    //         // onClick: (e) => {
+    //         //     sphere.material.copy(new THREE.MeshBasicMaterial( { color: 0xff0000 } ))
+    //         // },
+    //         // onHover: (e) => {
+    //         //     setTextureData(chart.toBase64Image());
+    //         // },
+    //         events: ['mousemove', 'click']
+    //     }
+    // });
+    
+    
+
+    useEffect(() => {
+        chart.update();
+        chart.options.onClick = () => {
+            // console.log('click received');
+            // sphere.material.copy(new THREE.MeshBasicMaterial( { color: 0xff0000 } ));
         }
     });
-    chart.update();
 
 
     useXRFrame((time, xFrame) => {
@@ -171,7 +237,7 @@ const ChartPanel = ({data}: any) => {
             sphere.position.copy(new Vector3(0,0,0));
         }
 
-        // setTextureData(chart.toBase64Image());
+        setTextureData(chart.toBase64Image());
     });
 
     useInteraction(ref, 'onSelect', () => {
@@ -181,6 +247,7 @@ const ChartPanel = ({data}: any) => {
         });
 
         chart.canvas.dispatchEvent(event);
+        // console.log('click sent')
     });
 
     useInteraction(ref, 'onHover', () => {

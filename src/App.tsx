@@ -32,9 +32,7 @@ function App() {
 
                 <HandMenu />
 
-                <RayGrab>
-                    <WorldspaceMenu position={[1,1.5,-1.5]} />
-                </RayGrab>
+                <WorldspaceMenu position={[1,1.5,-1.5]} />
                 
 
                 <DataObject/>

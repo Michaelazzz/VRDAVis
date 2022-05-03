@@ -54,8 +54,6 @@ const ObjectControls = () => {
         }
 
         if(ref.current && (prevLeftPos && prevRightPos)) {
-
-            
             let offsetLeft = leftPos.clone().sub(prevLeftPos);
             let offsetRight = rightPos.clone().sub(prevRightPos);
 
@@ -65,17 +63,13 @@ const ObjectControls = () => {
                 ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
                 ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
             }
-            else if(leftSelect || rightSelect)
+            else if(leftSelect) // translation controls
             {
-                // translation controls
-        
-                if(leftSelect){
-                    ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
-                }
-
-                if(rightSelect){
-                    ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
-                }
+                ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
+            }
+            else if(rightSelect)
+            {
+                ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
             }
 
             prevRightPos = rightPos.clone();
@@ -120,9 +114,6 @@ const ObjectControls = () => {
     useXREvent('selectend', () => {
         leftSelect = false;
     }, {handedness: 'left'});
-
-   
-    
 
     return (
         <Box 
