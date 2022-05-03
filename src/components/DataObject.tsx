@@ -63,6 +63,16 @@ const ObjectControls = () => {
                 ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
                 ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
             }
+            else if(leftSqueeze)
+            {
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
+            }
+            else if(rightSqueeze)
+            {
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetRight.x*rotationMultiplier);
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetRight.y*rotationMultiplier);
+            }
             else if(leftSelect) // translation controls
             {
                 ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
