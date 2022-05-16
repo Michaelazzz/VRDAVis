@@ -8,6 +8,19 @@ import DataObject from "./components/DataObject";
 import WorldspaceMenu from "./components/WorldspaceMenu";
 
 function App() {
+
+    let height = 128;
+    let width = 128;
+    let depth = 128;
+
+    let size = height*width*depth;
+    let data = new Float32Array(size);
+
+    for(let i = 0; i < size; i++)
+    {
+        data[i] = Math.random();
+    }
+
     return (
         <>
             <VRCanvas>
@@ -16,8 +29,8 @@ function App() {
                     args={["#DBE9EE"]} 
                 />
 
-                <ambientLight intensity={0.5} />
-                <pointLight position={[10, 10, 10]} />
+                <ambientLight intensity={1} />
+                {/* <pointLight position={[10, 10, 10]} /> */}
                 
                 <Plane 
                     
@@ -25,7 +38,7 @@ function App() {
                     rotation={[Math.PI / 2, 0, 0]} 
                     scale={[10, 10, 10]}
                 >
-                    <meshPhongMaterial color="#C0D6DF" side={THREE.DoubleSide} />
+                    <meshStandardMaterial color="#C0D6DF" side={THREE.DoubleSide} />
                 </Plane>
 
                 <DefaultXRControllers />
@@ -35,7 +48,7 @@ function App() {
                 <WorldspaceMenu position={[1,1.5,-1.5]} />
                 
 
-                <DataObject/>
+                <DataObject data={data} height={height} width={width} depth={depth} />
                 
             </VRCanvas>
         </>
