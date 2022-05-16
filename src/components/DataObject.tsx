@@ -1,9 +1,15 @@
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, useIntersect } from '@react-three/drei';
 import { RayGrab, useController, useInteraction, useXR, useXREvent, useXRFrame } from '@react-three/xr';
-import React, { useEffect, useRef, useState } from 'react';
-import * as THREE from "three";
 
-const ObjectControls = () => {
+import cm_viridis from '../colour-maps/cm_viridis.png'
+
+import * as THREE from 'three';
+
+import { VolumeShader } from '../shaders/VolumeShader';
+import createColormap from 'colormap';
+
+const DataObject = ({data, width, height, depth}: any) => {
 
     const ref = useRef<THREE.Mesh>();
 
@@ -27,8 +33,73 @@ const ObjectControls = () => {
     let prevRightPos = rightController?.controller.position;
     let prevLeftPos = leftController?.controller.position;
 
+    // @ts-ignore
+    let texture: THREE.Data3DTexture;
+    let colormap: THREE.DataTexture;
+    let material: THREE.ShaderMaterial;
+    let geometry = new THREE.BoxGeometry(1,1,1);
+    let dataCube: THREE.Mesh;
+
+    let colourMaps = {
+        viridis: new THREE.TextureLoader().load('../colour-maps/cm_viridis.png'),
+        // gray: new THREE.TextureLoader().load( 'textures/cm_gray.png', render )
+    };
+
+    let cm = createColormap({
+        colormap: 'jet',
+        nshades: 100,
+        format: 'float',
+        alpha: 1
+    });
+
+    let cmData = new Float32Array(100*4);
+
+    for(let i=0; i<100; i++){
+        const stride = i * 4;
+        cmData[stride] = cm[i][0];
+        cmData[stride+1] = cm[i][1];
+        cmData[stride+2] = cm[i][2];
+        cmData[stride+3] = cm[i][3];
+    }
+
+    useEffect(() => {
+        if(!ref.current)
+            return;
+
+        // @ts-ignore
+        texture = new THREE.Data3DTexture(data, width, height, depth);
+        texture.format = THREE.RedFormat;
+        texture.type = THREE.FloatType;
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.unpackAlignment = 1;
+        texture.needsUpdate = true;
+
+        colormap = new THREE.DataTexture(cmData, 100, 1);
+        colormap.type = THREE.FloatType;
+        colormap.needsUpdate = true;
+
+        material = new THREE.ShaderMaterial({
+            uniforms: {
+                u_textureData: { value: texture },
+                // u_threshold: { value: 0.25 },
+                // u_range: { value: 0.1 },
+                // u_steps: { value: 100 },
+                u_colourMap: { value: colormap },
+            },
+            vertexShader: VolumeShader.vertexShader,
+            fragmentShader: VolumeShader.fradgmentShader,
+            side: THREE.BackSide,
+            transparent: true
+        });
+        // material.map = texture;
+        dataCube = new THREE.Mesh(geometry, material);
+        dataCube.frustumCulled = false;
+        ref.current.add(dataCube);
+    },[data]);
+    
+
     useXRFrame(() => {
-        
         if(!leftController || !rightController) {
             return;
         }
@@ -126,16 +197,28 @@ const ObjectControls = () => {
     }, {handedness: 'left'});
 
     return (
-        <Box 
-            castShadow
-            receiveShadow
-            ref={ref} 
+        // <Box 
+        //     castShadow
+        //     receiveShadow
+        //     ref={ref} 
+        //     position={[0,1.5,-2.5]}
+        // >
+        //     <meshPhongMaterial attach='material' color={new THREE.Color(0xf92a82)} />
+        // </Box>
+        // <mesh
+        //     ref={ref}
+        //     position={[0,1.5,-2.5]}
+        // >
+        //     <boxGeometry args={[1, 1, 1]} />
+        //     <meshBasicMaterial color={'hotpink'} />
+        // </mesh>
+        <group 
+            ref={ref}
             position={[0,1.5,-2.5]}
         >
-            {/* <meshBasicMaterial attach='material' color={new THREE.Color(0xf92a82)} /> */}
-            <meshPhongMaterial attach='material' color={new THREE.Color(0xf92a82)} />
-        </Box>
+
+        </group>
     )
 };
 
-export default ObjectControls;
+export default DataObject;
