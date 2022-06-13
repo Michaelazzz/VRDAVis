@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/michaela/Desktop/Masters/vrdavis-backend
+CMAKE_SOURCE_DIR = /home/ubuntu/Desktop/VRDAVis/vrdavis-backend
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/michaela/Desktop/Masters/vrdavis-backend/build
+CMAKE_BINARY_DIR = /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/vrdavis_backend.dir/depend.make
@@ -57,45 +57,81 @@ include CMakeFiles/vrdavis_backend.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/vrdavis_backend.dir/flags.make
 
-CMakeFiles/vrdavis_backend.dir/Main.cpp.o: CMakeFiles/vrdavis_backend.dir/flags.make
-CMakeFiles/vrdavis_backend.dir/Main.cpp.o: ../Main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/vrdavis_backend.dir/Main.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/vrdavis_backend.dir/Main.cpp.o -c /home/michaela/Desktop/Masters/vrdavis-backend/Main.cpp
+CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.o: CMakeFiles/vrdavis_backend.dir/flags.make
+CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.o: ../src/HttpServer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.o -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/HttpServer.cpp
 
-CMakeFiles/vrdavis_backend.dir/Main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/vrdavis_backend.dir/Main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/michaela/Desktop/Masters/vrdavis-backend/Main.cpp > CMakeFiles/vrdavis_backend.dir/Main.cpp.i
+CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/HttpServer.cpp > CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.i
 
-CMakeFiles/vrdavis_backend.dir/Main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/vrdavis_backend.dir/Main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/michaela/Desktop/Masters/vrdavis-backend/Main.cpp -o CMakeFiles/vrdavis_backend.dir/Main.cpp.s
+CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/HttpServer.cpp -o CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.s
 
-CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.o: CMakeFiles/vrdavis_backend.dir/flags.make
-CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.o: ../WebSocketServer.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.o -c /home/michaela/Desktop/Masters/vrdavis-backend/WebSocketServer.cpp
+CMakeFiles/vrdavis_backend.dir/src/Main.cpp.o: CMakeFiles/vrdavis_backend.dir/flags.make
+CMakeFiles/vrdavis_backend.dir/src/Main.cpp.o: ../src/Main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/vrdavis_backend.dir/src/Main.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/vrdavis_backend.dir/src/Main.cpp.o -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/Main.cpp
 
-CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/michaela/Desktop/Masters/vrdavis-backend/WebSocketServer.cpp > CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.i
+CMakeFiles/vrdavis_backend.dir/src/Main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/vrdavis_backend.dir/src/Main.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/Main.cpp > CMakeFiles/vrdavis_backend.dir/src/Main.cpp.i
 
-CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/michaela/Desktop/Masters/vrdavis-backend/WebSocketServer.cpp -o CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.s
+CMakeFiles/vrdavis_backend.dir/src/Main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/vrdavis_backend.dir/src/Main.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/Main.cpp -o CMakeFiles/vrdavis_backend.dir/src/Main.cpp.s
+
+CMakeFiles/vrdavis_backend.dir/src/Session.cpp.o: CMakeFiles/vrdavis_backend.dir/flags.make
+CMakeFiles/vrdavis_backend.dir/src/Session.cpp.o: ../src/Session.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/vrdavis_backend.dir/src/Session.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/vrdavis_backend.dir/src/Session.cpp.o -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/Session.cpp
+
+CMakeFiles/vrdavis_backend.dir/src/Session.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/vrdavis_backend.dir/src/Session.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/Session.cpp > CMakeFiles/vrdavis_backend.dir/src/Session.cpp.i
+
+CMakeFiles/vrdavis_backend.dir/src/Session.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/vrdavis_backend.dir/src/Session.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/Session.cpp -o CMakeFiles/vrdavis_backend.dir/src/Session.cpp.s
+
+CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.o: CMakeFiles/vrdavis_backend.dir/flags.make
+CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.o: ../src/SessionManager.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.o -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/SessionManager.cpp
+
+CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/SessionManager.cpp > CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.i
+
+CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/SessionManager.cpp -o CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.s
 
 # Object files for target vrdavis_backend
 vrdavis_backend_OBJECTS = \
-"CMakeFiles/vrdavis_backend.dir/Main.cpp.o" \
-"CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.o"
+"CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.o" \
+"CMakeFiles/vrdavis_backend.dir/src/Main.cpp.o" \
+"CMakeFiles/vrdavis_backend.dir/src/Session.cpp.o" \
+"CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.o"
 
 # External object files for target vrdavis_backend
 vrdavis_backend_EXTERNAL_OBJECTS =
 
-vrdavis_backend: CMakeFiles/vrdavis_backend.dir/Main.cpp.o
-vrdavis_backend: CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.o
+vrdavis_backend: CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.o
+vrdavis_backend: CMakeFiles/vrdavis_backend.dir/src/Main.cpp.o
+vrdavis_backend: CMakeFiles/vrdavis_backend.dir/src/Session.cpp.o
+vrdavis_backend: CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.o
 vrdavis_backend: CMakeFiles/vrdavis_backend.dir/build.make
+vrdavis_backend: /usr/lib/gcc/x86_64-linux-gnu/9/libgomp.so
+vrdavis_backend: /usr/lib/x86_64-linux-gnu/libpthread.so
+vrdavis_backend: /usr/lib/x86_64-linux-gnu/libzfp.so.0.5.5
+vrdavis_backend: libuSockets.a
+vrdavis_backend: /usr/lib/gcc/x86_64-linux-gnu/9/libgomp.so
+vrdavis_backend: /usr/lib/x86_64-linux-gnu/libpthread.so
 vrdavis_backend: CMakeFiles/vrdavis_backend.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable vrdavis_backend"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable vrdavis_backend"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/vrdavis_backend.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -108,6 +144,6 @@ CMakeFiles/vrdavis_backend.dir/clean:
 .PHONY : CMakeFiles/vrdavis_backend.dir/clean
 
 CMakeFiles/vrdavis_backend.dir/depend:
-	cd /home/michaela/Desktop/Masters/vrdavis-backend/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/michaela/Desktop/Masters/vrdavis-backend /home/michaela/Desktop/Masters/vrdavis-backend /home/michaela/Desktop/Masters/vrdavis-backend/build /home/michaela/Desktop/Masters/vrdavis-backend/build /home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/vrdavis_backend.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ubuntu/Desktop/VRDAVis/vrdavis-backend /home/ubuntu/Desktop/VRDAVis/vrdavis-backend /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/vrdavis_backend.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/vrdavis_backend.dir/depend
 

@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/vrdavis_backend.dir/Main.cpp.o"
-  "CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.o"
+  "CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.o"
+  "CMakeFiles/vrdavis_backend.dir/src/Main.cpp.o"
+  "CMakeFiles/vrdavis_backend.dir/src/Session.cpp.o"
+  "CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.o"
   "vrdavis_backend"
   "vrdavis_backend.pdb"
 )

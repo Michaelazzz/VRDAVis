@@ -1,0 +1,9 @@
+[submodule "uWebSockets"]
+	path = uWebSockets
+	url = git@github.com:uNetworking/uWebSockets.git
+[submodule "third-party/uSockets"]
+	path = third-party/uSockets
+	url = git@github.com:uNetworking/uSockets.git
+[submodule "third-party/spdlog"]
+	path = third-party/spdlog
+	url = https://github.com/gabime/spdlog.git

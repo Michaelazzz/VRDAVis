@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/michaela/Desktop/Masters/vrdavis-backend
+CMAKE_SOURCE_DIR = /home/ubuntu/Desktop/VRDAVis/vrdavis-backend
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/michaela/Desktop/Masters/vrdavis-backend/build
+CMAKE_BINARY_DIR = /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles /home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -136,59 +136,126 @@ uSockets/fast:
 	$(MAKE) -f CMakeFiles/uSockets.dir/build.make CMakeFiles/uSockets.dir/build
 .PHONY : uSockets/fast
 
-Main.o: Main.cpp.o
+#=============================================================================
+# Target rules for targets named spdlog
 
-.PHONY : Main.o
+# Build rule for target.
+spdlog: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 spdlog
+.PHONY : spdlog
 
-# target to build an object file
-Main.cpp.o:
-	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/Main.cpp.o
-.PHONY : Main.cpp.o
+# fast build rule for target.
+spdlog/fast:
+	$(MAKE) -f third-party/spdlog/CMakeFiles/spdlog.dir/build.make third-party/spdlog/CMakeFiles/spdlog.dir/build
+.PHONY : spdlog/fast
 
-Main.i: Main.cpp.i
+src/HttpServer.o: src/HttpServer.cpp.o
 
-.PHONY : Main.i
-
-# target to preprocess a source file
-Main.cpp.i:
-	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/Main.cpp.i
-.PHONY : Main.cpp.i
-
-Main.s: Main.cpp.s
-
-.PHONY : Main.s
-
-# target to generate assembly for a file
-Main.cpp.s:
-	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/Main.cpp.s
-.PHONY : Main.cpp.s
-
-WebSocketServer.o: WebSocketServer.cpp.o
-
-.PHONY : WebSocketServer.o
+.PHONY : src/HttpServer.o
 
 # target to build an object file
-WebSocketServer.cpp.o:
-	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.o
-.PHONY : WebSocketServer.cpp.o
+src/HttpServer.cpp.o:
+	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.o
+.PHONY : src/HttpServer.cpp.o
 
-WebSocketServer.i: WebSocketServer.cpp.i
+src/HttpServer.i: src/HttpServer.cpp.i
 
-.PHONY : WebSocketServer.i
+.PHONY : src/HttpServer.i
 
 # target to preprocess a source file
-WebSocketServer.cpp.i:
-	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.i
-.PHONY : WebSocketServer.cpp.i
+src/HttpServer.cpp.i:
+	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.i
+.PHONY : src/HttpServer.cpp.i
 
-WebSocketServer.s: WebSocketServer.cpp.s
+src/HttpServer.s: src/HttpServer.cpp.s
 
-.PHONY : WebSocketServer.s
+.PHONY : src/HttpServer.s
 
 # target to generate assembly for a file
-WebSocketServer.cpp.s:
-	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.s
-.PHONY : WebSocketServer.cpp.s
+src/HttpServer.cpp.s:
+	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.s
+.PHONY : src/HttpServer.cpp.s
+
+src/Main.o: src/Main.cpp.o
+
+.PHONY : src/Main.o
+
+# target to build an object file
+src/Main.cpp.o:
+	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/src/Main.cpp.o
+.PHONY : src/Main.cpp.o
+
+src/Main.i: src/Main.cpp.i
+
+.PHONY : src/Main.i
+
+# target to preprocess a source file
+src/Main.cpp.i:
+	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/src/Main.cpp.i
+.PHONY : src/Main.cpp.i
+
+src/Main.s: src/Main.cpp.s
+
+.PHONY : src/Main.s
+
+# target to generate assembly for a file
+src/Main.cpp.s:
+	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/src/Main.cpp.s
+.PHONY : src/Main.cpp.s
+
+src/Session.o: src/Session.cpp.o
+
+.PHONY : src/Session.o
+
+# target to build an object file
+src/Session.cpp.o:
+	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/src/Session.cpp.o
+.PHONY : src/Session.cpp.o
+
+src/Session.i: src/Session.cpp.i
+
+.PHONY : src/Session.i
+
+# target to preprocess a source file
+src/Session.cpp.i:
+	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/src/Session.cpp.i
+.PHONY : src/Session.cpp.i
+
+src/Session.s: src/Session.cpp.s
+
+.PHONY : src/Session.s
+
+# target to generate assembly for a file
+src/Session.cpp.s:
+	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/src/Session.cpp.s
+.PHONY : src/Session.cpp.s
+
+src/SessionManager.o: src/SessionManager.cpp.o
+
+.PHONY : src/SessionManager.o
+
+# target to build an object file
+src/SessionManager.cpp.o:
+	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.o
+.PHONY : src/SessionManager.cpp.o
+
+src/SessionManager.i: src/SessionManager.cpp.i
+
+.PHONY : src/SessionManager.i
+
+# target to preprocess a source file
+src/SessionManager.cpp.i:
+	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.i
+.PHONY : src/SessionManager.cpp.i
+
+src/SessionManager.s: src/SessionManager.cpp.s
+
+.PHONY : src/SessionManager.s
+
+# target to generate assembly for a file
+src/SessionManager.cpp.s:
+	$(MAKE) -f CMakeFiles/vrdavis_backend.dir/build.make CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.s
+.PHONY : src/SessionManager.cpp.s
 
 third-party/uWebSockets/uSockets/src/bsd.o: third-party/uWebSockets/uSockets/src/bsd.c.o
 
@@ -443,12 +510,19 @@ help:
 	@echo "... vrdavis_backend"
 	@echo "... rebuild_cache"
 	@echo "... uSockets"
-	@echo "... Main.o"
-	@echo "... Main.i"
-	@echo "... Main.s"
-	@echo "... WebSocketServer.o"
-	@echo "... WebSocketServer.i"
-	@echo "... WebSocketServer.s"
+	@echo "... spdlog"
+	@echo "... src/HttpServer.o"
+	@echo "... src/HttpServer.i"
+	@echo "... src/HttpServer.s"
+	@echo "... src/Main.o"
+	@echo "... src/Main.i"
+	@echo "... src/Main.s"
+	@echo "... src/Session.o"
+	@echo "... src/Session.i"
+	@echo "... src/Session.s"
+	@echo "... src/SessionManager.o"
+	@echo "... src/SessionManager.i"
+	@echo "... src/SessionManager.s"
 	@echo "... third-party/uWebSockets/uSockets/src/bsd.o"
 	@echo "... third-party/uWebSockets/uSockets/src/bsd.i"
 	@echo "... third-party/uWebSockets/uSockets/src/bsd.s"

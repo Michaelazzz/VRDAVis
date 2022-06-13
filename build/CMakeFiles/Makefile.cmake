@@ -12,6 +12,13 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.16.3/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.16.3/CMakeSystem.cmake"
   "../third-party/install/uWebSockets.cmake"
+  "../third-party/spdlog/CMakeLists.txt"
+  "../third-party/spdlog/cmake/ide.cmake"
+  "../third-party/spdlog/cmake/utils.cmake"
+  "/usr/lib/x86_64-linux-gnu/cmake/zfp/zfp-config-version.cmake"
+  "/usr/lib/x86_64-linux-gnu/cmake/zfp/zfp-config.cmake"
+  "/usr/lib/x86_64-linux-gnu/cmake/zfp/zfp-targets-relwithdebinfo.cmake"
+  "/usr/lib/x86_64-linux-gnu/cmake/zfp/zfp-targets.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeCInformation.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeCXXInformation.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake"
@@ -19,18 +26,30 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.16/Modules/CMakeGenericSystem.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeInitializeConfigs.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeLanguageInformation.cmake"
+  "/usr/share/cmake-3.16/Modules/CMakeParseImplicitLinkInfo.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeSystemSpecificInformation.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeSystemSpecificInitialize.cmake"
+  "/usr/share/cmake-3.16/Modules/CheckCSourceCompiles.cmake"
+  "/usr/share/cmake-3.16/Modules/CheckIncludeFile.cmake"
+  "/usr/share/cmake-3.16/Modules/CheckLibraryExists.cmake"
   "/usr/share/cmake-3.16/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
   "/usr/share/cmake-3.16/Modules/Compiler/GNU-C.cmake"
   "/usr/share/cmake-3.16/Modules/Compiler/GNU-CXX.cmake"
   "/usr/share/cmake-3.16/Modules/Compiler/GNU.cmake"
+  "/usr/share/cmake-3.16/Modules/FindCURL.cmake"
+  "/usr/share/cmake-3.16/Modules/FindOpenMP.cmake"
+  "/usr/share/cmake-3.16/Modules/FindPackageHandleStandardArgs.cmake"
+  "/usr/share/cmake-3.16/Modules/FindPackageMessage.cmake"
+  "/usr/share/cmake-3.16/Modules/FindPkgConfig.cmake"
+  "/usr/share/cmake-3.16/Modules/FindThreads.cmake"
+  "/usr/share/cmake-3.16/Modules/GNUInstallDirs.cmake"
   "/usr/share/cmake-3.16/Modules/Internal/CMakeCheckCompilerFlag.cmake"
   "/usr/share/cmake-3.16/Modules/Platform/Linux-GNU-C.cmake"
   "/usr/share/cmake-3.16/Modules/Platform/Linux-GNU-CXX.cmake"
   "/usr/share/cmake-3.16/Modules/Platform/Linux-GNU.cmake"
   "/usr/share/cmake-3.16/Modules/Platform/Linux.cmake"
   "/usr/share/cmake-3.16/Modules/Platform/UnixPaths.cmake"
+  "/usr/share/cmake-3.16/Modules/SelectLibraryConfigurations.cmake"
   )
 
 # The corresponding makefile is:
@@ -42,10 +61,12 @@ set(CMAKE_MAKEFILE_OUTPUTS
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
+  "third-party/spdlog/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/vrdavis_backend.dir/DependInfo.cmake"
   "CMakeFiles/uSockets.dir/DependInfo.cmake"
+  "third-party/spdlog/CMakeFiles/spdlog.dir/DependInfo.cmake"
   )

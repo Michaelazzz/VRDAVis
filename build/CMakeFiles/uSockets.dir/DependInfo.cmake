@@ -4,15 +4,15 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/bsd.c" "/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.o"
-  "/home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/context.c" "/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.o"
-  "/home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/openssl.c" "/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.o"
-  "/home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c" "/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.o"
-  "/home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c" "/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.o"
-  "/home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/gcd.c" "/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.o"
-  "/home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/libuv.c" "/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.o"
-  "/home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/loop.c" "/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.o"
-  "/home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/socket.c" "/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/bsd.c" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/context.c" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/openssl.c" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/gcd.c" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/libuv.c" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/loop.c" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/socket.c" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

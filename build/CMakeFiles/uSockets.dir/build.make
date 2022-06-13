@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/michaela/Desktop/Masters/vrdavis-backend
+CMAKE_SOURCE_DIR = /home/ubuntu/Desktop/VRDAVis/vrdavis-backend
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/michaela/Desktop/Masters/vrdavis-backend/build
+CMAKE_BINARY_DIR = /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/uSockets.dir/depend.make
@@ -59,120 +59,120 @@ include CMakeFiles/uSockets.dir/flags.make
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.o: CMakeFiles/uSockets.dir/flags.make
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.o: ../third-party/uWebSockets/uSockets/src/crypto/openssl.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.o   -c /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/openssl.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.o   -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/openssl.c
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/openssl.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/openssl.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.i
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/openssl.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/openssl.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/openssl.c.s
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.o: CMakeFiles/uSockets.dir/flags.make
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.o: ../third-party/uWebSockets/uSockets/src/crypto/wolfssl.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.o   -c /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.o   -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.i
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/crypto/wolfssl.c.s
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.o: CMakeFiles/uSockets.dir/flags.make
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.o: ../third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.o   -c /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.o   -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.i
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/epoll_kqueue.c.s
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.o: CMakeFiles/uSockets.dir/flags.make
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.o: ../third-party/uWebSockets/uSockets/src/eventing/gcd.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.o   -c /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/gcd.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.o   -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/gcd.c
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/gcd.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/gcd.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.i
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/gcd.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/gcd.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/gcd.c.s
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.o: CMakeFiles/uSockets.dir/flags.make
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.o: ../third-party/uWebSockets/uSockets/src/eventing/libuv.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.o   -c /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/libuv.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.o   -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/libuv.c
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/libuv.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/libuv.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.i
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/libuv.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/eventing/libuv.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/eventing/libuv.c.s
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.o: CMakeFiles/uSockets.dir/flags.make
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.o: ../third-party/uWebSockets/uSockets/src/bsd.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.o   -c /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/bsd.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.o   -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/bsd.c
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/bsd.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/bsd.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.i
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/bsd.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/bsd.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/bsd.c.s
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.o: CMakeFiles/uSockets.dir/flags.make
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.o: ../third-party/uWebSockets/uSockets/src/context.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.o   -c /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/context.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.o   -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/context.c
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/context.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/context.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.i
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/context.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/context.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/context.c.s
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.o: CMakeFiles/uSockets.dir/flags.make
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.o: ../third-party/uWebSockets/uSockets/src/loop.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.o   -c /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/loop.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.o   -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/loop.c
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/loop.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/loop.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.i
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/loop.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/loop.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop.c.s
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.o: CMakeFiles/uSockets.dir/flags.make
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.o: ../third-party/uWebSockets/uSockets/src/socket.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.o   -c /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/socket.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.o   -c /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/socket.c
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/socket.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/socket.c > CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.i
 
 CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/michaela/Desktop/Masters/vrdavis-backend/third-party/uWebSockets/uSockets/src/socket.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/third-party/uWebSockets/uSockets/src/socket.c -o CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.s
 
 # Object files for target uSockets
 uSockets_OBJECTS = \
@@ -200,7 +200,7 @@ libuSockets.a: CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/loop
 libuSockets.a: CMakeFiles/uSockets.dir/third-party/uWebSockets/uSockets/src/socket.c.o
 libuSockets.a: CMakeFiles/uSockets.dir/build.make
 libuSockets.a: CMakeFiles/uSockets.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking C static library libuSockets.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking C static library libuSockets.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/uSockets.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/uSockets.dir/link.txt --verbose=$(VERBOSE)
 
@@ -214,6 +214,6 @@ CMakeFiles/uSockets.dir/clean:
 .PHONY : CMakeFiles/uSockets.dir/clean
 
 CMakeFiles/uSockets.dir/depend:
-	cd /home/michaela/Desktop/Masters/vrdavis-backend/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/michaela/Desktop/Masters/vrdavis-backend /home/michaela/Desktop/Masters/vrdavis-backend /home/michaela/Desktop/Masters/vrdavis-backend/build /home/michaela/Desktop/Masters/vrdavis-backend/build /home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/uSockets.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ubuntu/Desktop/VRDAVis/vrdavis-backend /home/ubuntu/Desktop/VRDAVis/vrdavis-backend /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build /home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/uSockets.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/uSockets.dir/depend
 

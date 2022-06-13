@@ -4,8 +4,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/michaela/Desktop/Masters/vrdavis-backend/Main.cpp" "/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/vrdavis_backend.dir/Main.cpp.o"
-  "/home/michaela/Desktop/Masters/vrdavis-backend/WebSocketServer.cpp" "/home/michaela/Desktop/Masters/vrdavis-backend/build/CMakeFiles/vrdavis_backend.dir/WebSocketServer.cpp.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/HttpServer.cpp" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/vrdavis_backend.dir/src/HttpServer.cpp.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/Main.cpp" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/vrdavis_backend.dir/src/Main.cpp.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/Session.cpp" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/vrdavis_backend.dir/src/Session.cpp.o"
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/src/SessionManager.cpp" "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/vrdavis_backend.dir/src/SessionManager.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -19,6 +21,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
+  "/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/uSockets.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.
