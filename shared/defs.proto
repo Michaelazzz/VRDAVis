@@ -3,6 +3,6 @@ package VRDAVis;
 
 import "enums.proto";
 
-message VolumeData {
+message VolumeDataCube {
     bytes volume_data = 6;
 }
