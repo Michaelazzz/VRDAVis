@@ -4,7 +4,7 @@
 #include <chrono>
 #include <string>
 
-#include <uWebSockets/App.h>
+#include "uWebSockets/App.h"
 #include <nlohmann/json.hpp>
 
 #include "SessionManager.h"
@@ -24,17 +24,9 @@ typedef uWS::HttpResponse<false> Res;
 class HttpServer {
 public:
     HttpServer(std::shared_ptr<SessionManager> session_manager);
-    // HttpServer();
-    void RunApp();
-    // void OnConnect(uWS::WebSocket<false, true, vrdavis::HttpServer::PerSocketData> *ws);
-    // void OnMessage(uWS::WebSocket<false, true, vrdavis::HttpServer::PerSocketData> *ws, std::string_view message, uWS::OpCode opCode);
 
-    /* ws->getUserData returns one of these */
-    struct PerSocketData {
-        /* Fill with user data */
-    };
 private:
-    // void WaitForData(Res* res, Req* req, const std::function<void(const std::string&)>& callback);
+    void WaitForData(Res* res, Req* req, const std::function<void(const std::string&)>& callback);
 
     std::shared_ptr<SessionManager> _session_manager;
 };

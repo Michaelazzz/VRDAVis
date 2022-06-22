@@ -1,4 +1,4 @@
-#include "HttpServer.h"
+// #include "HttpServer.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -6,9 +6,8 @@
 #include <vector>
 
 #include <nlohmann/json.hpp>
-// #include <uWebSockets/App.h>
 
-// #include "HttpServer.h"
+#include "HttpServer.h"
 #include "SessionManager.h"
 
 using namespace vrdavis;
@@ -16,7 +15,6 @@ using namespace vrdavis;
 using json = nlohmann::json;
 
 int main(int argc, char* argv[]) {
-
     // HttpServer http_server;
     // http_server.RunApp();
 
@@ -34,8 +32,6 @@ int main(int argc, char* argv[]) {
         // if (settings.init_wait_time >= 0) {
         //     Session::SetInitExitTimeout(settings.init_wait_time);
         // }
-
-        std::string auth_token = "";
 
         // Session manager
         session_manager = std::make_shared<SessionManager>();

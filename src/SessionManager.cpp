@@ -1,4 +1,5 @@
 #include "SessionManager.h"
+#include "Message.h"
 
 using json = nlohmann::json;
 
@@ -59,7 +60,6 @@ void SessionManager::OnUpgrade(uWS::HttpResponse<false>* http_response, uWS::Htt
 }
 
 void SessionManager::OnConnect(WSType* ws) {
-    std::cout << "Client Connected" << std::endl;
     auto socket_data = ws->getUserData();
     if (!socket_data) {
         std::cout << "Error handling WebSocket connection: Socket data does not exist" << std::endl;
@@ -112,18 +112,66 @@ void SessionManager::OnDrain(WSType* ws) {
     // }
 }
 
-void SessionManager::OnMessage(WSType* ws, std::string_view message, uWS::OpCode op_code) {
-    std::cout << "Message" << std::endl;
-    // uint32_t session_id = static_cast<PerSocketData*>(ws->getUserData())->session_id;
-    // Session* session = _sessions[session_id];
-    // if (!session) {
-    //     std::cout << "Missing session!" << std::endl;
-    //     return;
-    // }
+void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpCode op_code) {
+    std::cout << "SessionManager OnMessage" << std::endl;
 
-    // if (op_code == uWS::OpCode::BINARY) {
-    //     session->UpdateLastMessageTimestamp();
-    // }
+    uint32_t session_id = static_cast<PerSocketData*>(ws->getUserData())->session_id;
+    Session* session = _sessions[session_id];
+    if (!session) {
+        std::cout << "Missing session!" << std::endl;
+        return;
+    }
+
+    if (op_code == uWS::OpCode::BINARY) {
+        if (sv_message.length() >= sizeof(EventHeader)) {
+            session->UpdateLastMessageTimestamp();
+
+            EventHeader head = *reinterpret_cast<const EventHeader*>(sv_message.data());
+            const char* event_buf = sv_message.data() + sizeof(EventHeader);
+            int event_length = sv_message.length() - sizeof(EventHeader);
+
+            VRDAVis::EventType event_type = static_cast<VRDAVis::EventType>(head.type);
+
+            auto event_type_name = VRDAVis::EventType_Name(VRDAVis::EventType(event_type));
+
+            bool message_parsed(false);
+
+            // thread manager task
+            // OnMessageTask* tsk = nullptr;
+
+            switch (event_type) {
+                case VRDAVis::EventType::REGISTER_VIEWER: {
+                    std::cout << "Register viewer" << std::endl;
+                    VRDAVis::RegisterViewer message;
+                    if (message.ParseFromArray(event_buf, event_length)) {
+                        session->OnRegisterViewer(message, head.icd_version, head.request_id);
+                        message_parsed = true;
+                    }
+                    break;
+                }
+                default: {
+                    std::cout << "Bad event type " << event_type << "!" << std::endl;
+                    break;
+                }
+            }
+
+            if (!message_parsed) {
+                std::cout << "Bad " << event_type_name << " message!" << std::endl;
+            }
+        }
+    } else if (op_code == uWS::OpCode::TEXT) {
+        if (sv_message == "PING") {
+            auto t_session = session->GetLastMessageTimestamp();
+            auto t_now = std::chrono::high_resolution_clock::now();
+            auto dt = std::chrono::duration_cast<std::chrono::seconds>(t_now - t_session);
+            // if ((_settings.idle_session_wait_time > 0) && (dt.count() >= _settings.idle_session_wait_time)) {
+            //     std::cout << "Client " << session->GetId() << " has been idle for " << dt.count() << " seconds. Disconnecting.." <<std::endl;
+            //     ws->close();
+            // } else {
+            //     ws->send("PONG", uWS::OpCode::TEXT);
+            // }
+        }
+    }
 
     // json jsonObject = json::parse(message);
     // std::cout << message << std::endl;
@@ -167,17 +215,18 @@ uWS::App& SessionManager::App() {
 }
 
 void SessionManager::RunApp() {
-    std::cout << "Starting Server..." << std::endl;
+    // std::cout << "Starting Server..." << std::endl;
     _app.ws<PerSocketData>("/*", (uWS::App::WebSocketBehavior<PerSocketData>){
         // Settings
         .compression = uWS::DEDICATED_COMPRESSOR_256KB,
         .maxPayloadLength = 256 * 1024 * 1024,
         .maxBackpressure = 0,
         // Handlers
-        .upgrade = nullptr,
+        .upgrade = [=](uWS::HttpResponse<false>* res, uWS::HttpRequest* req,
+            struct us_socket_context_t* ctx) { OnUpgrade(res, req, ctx); },
         .open = [=](WSType* ws) { OnConnect(ws); },
         .message = [=](WSType* ws, std::string_view msg, uWS::OpCode code) { OnMessage(ws, msg, code); },
-        .drain = [=](WSType* ws) { /*OnDrain(ws);*/ },
+        .drain = [=](WSType* ws) { OnDrain(ws); },
         .close = [=](WSType* ws, int code, std::string_view msg) { OnDisconnect(ws, code, msg); }
     })
     .run();

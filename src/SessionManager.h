@@ -17,7 +17,9 @@ public:
     SessionManager();
     void DeleteSession(uint32_t session_id);
     void OnUpgrade(uWS::HttpResponse<false>* http_response, uWS::HttpRequest* http_request, struct us_socket_context_t* context);
+    // Called on connection. Creates session objects and assigns UUID to it
     void OnConnect(WSType* ws);
+    // Called on disconnect. Cleans up sessions.
     void OnDisconnect(WSType* ws, int code, std::string_view message);
     void OnDrain(WSType* ws);
     void OnMessage(WSType* ws, std::string_view sv_message, uWS::OpCode op_code);

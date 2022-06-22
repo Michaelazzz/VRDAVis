@@ -11,8 +11,11 @@
 #include <utility>
 #include <vector>
 
+#include <spdlog/fmt/fmt.h>
 #include <uWebSockets/App.h>
 #include <nlohmann/json.hpp>
+
+#include <vrdavis-protobuf/register_viewer.pb.h>
 
 #include "SessionContext.h"
 
@@ -28,7 +31,8 @@ public:
     Session(uWS::WebSocket<false, true, PerSocketData>* ws, uWS::Loop* loop, uint32_t id, std::string address);
     ~Session();
 
-    void SendVolumeData();
+    // VRDAVis ICD
+    void OnRegisterViewer(const VRDAVis::RegisterViewer& message, uint16_t icd_version, uint32_t request_id);
 
     int IncreaseRefCount() {
         return ++_ref_count;
@@ -62,8 +66,11 @@ public:
     void UpdateLastMessageTimestamp();
     std::chrono::high_resolution_clock::time_point GetLastMessageTimestamp();
 protected:
+    // Send data streams
+    void SendVolumeData();
+
     // Send protobuf messages
-    // void SendEvent(std::string_view message);
+    void SendEvent(VRDAVis::EventType event_type, u_int32_t event_id, const google::protobuf::MessageLite& message);
 
     // uWebSockets
     uWS::WebSocket<false, true, PerSocketData>* _socket;
