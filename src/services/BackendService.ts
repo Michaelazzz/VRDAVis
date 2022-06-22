@@ -2,6 +2,8 @@ import {action, makeObservable, observable, runInAction} from "mobx";
 import {VRDAVis} from "vrdavis-protobuf";
 import {Subject, throwError} from "rxjs";
 
+// adapted from CARTA
+
 export enum ConnectionStatus {
     CLOSED = 0,
     PENDING = 1,
@@ -48,6 +50,7 @@ export class BackendService {
         return BackendService.staticInstance;
     }
 
+    private static readonly IcdVersion = 28;
     private static readonly MaxConnectionAttempts = 15;
     private static readonly ConnectionAttemptDelay = 1000;
 
@@ -57,6 +60,7 @@ export class BackendService {
     @observable endToEndPing: number;
 
     public sessionId: number;
+    public serverUrl: string;
 
     private connection: WebSocket;
     private lastPingTime: number;
@@ -64,7 +68,203 @@ export class BackendService {
     private deferredMap: Map<number, Deferred<IBackendResponse>>;
     private eventCounter: number;
 
-    readonly VolumeDataStream: Subject<VRDAVis.VolumeData>;
+    readonly volumeDataStream: Subject<VRDAVis.VolumeData>;
     private readonly decoderMap: Map<VRDAVis.EventType, {messageClass: any; handler: HandlerFunction}>;
-    
+
+    private constructor() {
+        makeObservable(this);
+        this.loggingEnabled = true;
+        this.deferredMap = new Map<number, Deferred<IBackendResponse>>();
+
+        this.eventCounter = 1;
+        this.sessionId = 0;
+        this.endToEndPing = NaN;
+        this.connectionStatus = ConnectionStatus.CLOSED;
+        this.volumeDataStream = new Subject<VRDAVis.VolumeData>();
+
+        // Construct handler and decoder maps
+        this.decoderMap = new Map<VRDAVis.EventType, {messageClass: any; handler: HandlerFunction}>([
+            [VRDAVis.EventType.REGISTER_VIEWER_ACK, {messageClass: VRDAVis.RegisterViewerAck, handler: this.onRegisterViewerAck}],
+            [VRDAVis.EventType.VOLUME_DATA, {messageClass: VRDAVis.VolumeData, handler: this.onStreamedVolumeData}],
+        ]);
+
+        // check ping every 5 seconds
+        setInterval(this.sendPing, 5000);
+    }
+
+    @action("connect")
+    async connect(url: string): Promise<VRDAVis.IRegisterViewerAck> {
+        // if (this.connection) {
+        //     this.connection.onclose = null;
+        //     this.connection.close();
+        // }
+
+        // const isReconnection: boolean = url === this.serverUrl;
+        // let connectionAttempts = 0;
+        // this.connectionDropped = false;
+        this.connectionStatus = ConnectionStatus.PENDING;
+        this.serverUrl = url;
+        this.connection = new WebSocket(this.serverUrl);
+        console.log("Connection established");
+        this.connection.binaryType = "arraybuffer";
+        this.connection.onmessage = this.messageHandler.bind(this);
+        // this.connection.onclose = (ev: CloseEvent) =>
+        //     runInAction(() => {
+        //         // Only change to closed connection if the connection was originally active or this is a reconnection
+        //         if (this.connectionStatus === ConnectionStatus.ACTIVE || isReconnection || connectionAttempts >= BackendService.MaxConnectionAttempts) {
+        //             this.connectionStatus = ConnectionStatus.CLOSED;
+        //         } else {
+        //             connectionAttempts++;
+        //             setTimeout(() => {
+        //                 const newConnection = new WebSocket("ws://localhost:9000/");
+        //                 newConnection.binaryType = "arraybuffer";
+        //                 newConnection.onopen = this.connection.onopen;
+        //                 newConnection.onerror = this.connection.onerror;
+        //                 newConnection.onclose = this.connection.onclose;
+        //                 newConnection.onmessage = this.connection.onmessage;
+        //                 this.connection = newConnection;
+        //             }, BackendService.ConnectionAttemptDelay);
+        //         }
+        //     });
+        this.deferredMap.clear();
+        this.eventCounter = 1;
+        const requestId = this.eventCounter;
+
+        const deferredResponse = new Deferred<VRDAVis.IRegisterViewerAck>();
+        this.deferredMap.set(requestId, deferredResponse);
+
+        this.connection.onopen = action(() => {
+            console.log("connection open");
+            if (this.connectionStatus === ConnectionStatus.CLOSED) {
+                this.connectionDropped = true;
+            }
+            this.connectionStatus = ConnectionStatus.ACTIVE;
+            const message = VRDAVis.RegisterViewer.create({sessionId: this.sessionId});
+            // observer map is cleared, so that old subscriptions don't get incorrectly fired
+            // this.logEvent(VRDAVis.EventType.REGISTER_VIEWER, requestId, message, false);
+            if (this.sendEvent(VRDAVis.EventType.REGISTER_VIEWER, VRDAVis.RegisterViewer.encode(message).finish())) {
+                this.deferredMap.set(requestId, deferredResponse);
+            } else {
+                throw new Error("Could not send event");
+            }
+           
+        });
+
+        // this.connection.onerror = ev => {
+        //     // AppStore.Instance.logStore.addInfo(`Connecting to server ${url} failed.`, ["network"]);
+        //     console.log(ev);
+        // };
+
+        return await deferredResponse.promise;
+    }
+
+    sendPing = () => {
+        if (this.connection && this.connectionStatus === ConnectionStatus.ACTIVE) {
+            this.lastPingTime = performance.now();
+            this.connection.send("PING");
+        }
+    };
+
+    @action updateEndToEndPing = () => {
+        this.endToEndPing = this.lastPongTime - this.lastPingTime;
+    };
+
+    private messageHandler(event: MessageEvent) {
+
+        console.log("Message...");
+
+        if (event.data === "PONG") {
+            this.lastPongTime = performance.now();
+            this.updateEndToEndPing();
+            return;
+        } else if (event.data.byteLength < 8) {
+            console.log("Unknown event format");
+            return;
+        }
+
+        const eventHeader16 = new Uint16Array(event.data, 0, 2);
+        const eventHeader32 = new Uint32Array(event.data, 4, 1);
+        const eventData = new Uint8Array(event.data, 8);
+
+        const eventType: VRDAVis.EventType = eventHeader16[0];
+        const eventIcdVersion = eventHeader16[1];
+        const eventId = eventHeader32[0];
+
+        if (eventIcdVersion !== BackendService.IcdVersion) {
+            console.warn(`Server event has ICD version ${eventIcdVersion}, which differs from frontend version ${BackendService.IcdVersion}. Errors may occur`);
+        }
+        try {
+            const decoderEntry = this.decoderMap.get(eventType);
+            if (decoderEntry) {
+                const parsedMessage = decoderEntry.messageClass.decode(eventData);
+                if (parsedMessage) {
+                    this.logEvent(eventType, eventId, parsedMessage);
+                    decoderEntry.handler.call(this, eventId, parsedMessage);
+                } else {
+                    console.log(`Unsupported event response ${eventType}`);
+                }
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    private onDeferredResponse(eventId: number, response: IBackendResponse) {
+        const def = this.deferredMap.get(eventId);
+        if (def) {
+            if (response.success) {
+                def.resolve(response);
+            } else {
+                def.reject(response.message);
+            }
+        } else {
+            console.log(`Can't find deferred for request ${eventId}`);
+        }
+    }
+
+    private onRegisterViewerAck(eventId: number, ack: VRDAVis.RegisterViewerAck) {
+        this.sessionId = ack.sessionId;
+        this.onDeferredResponse(eventId, ack);
+    }
+
+    private onStreamedVolumeData(_eventId: number, volumeData: VRDAVis.VolumeData) {
+        this.volumeDataStream.next(volumeData);
+    }
+
+    private sendEvent(eventType: VRDAVis.EventType, payload: Uint8Array): boolean {
+        if (this.connection.readyState === WebSocket.OPEN) {
+            const eventData = new Uint8Array(8 + payload.byteLength);
+            const eventHeader16 = new Uint16Array(eventData.buffer, 0, 2);
+            const eventHeader32 = new Uint32Array(eventData.buffer, 4, 1);
+            eventHeader16[0] = eventType;
+            // eventHeader16[1] = BackendService.IcdVersion;
+            eventHeader32[0] = this.eventCounter;
+
+            eventData.set(payload, 8);
+            this.connection.send(eventData);
+            this.eventCounter++;
+            return true;
+        } else {
+            console.log("Error sending event");
+            this.eventCounter++;
+            return false;
+        }
+    }
+
+    private logEvent(eventType: VRDAVis.EventType, eventId: number, message: any, incoming: boolean = true) {
+        const eventName = VRDAVis.EventType[eventType];
+        if (this.loggingEnabled) {
+            if (incoming) {
+                if (eventId === 0) {
+                    console.log(`<== ${eventName} [Stream]`);
+                } else {
+                    console.log(`<== ${eventName} [${eventId}]`);
+                }
+            } else {
+                console.log(`${eventName} [${eventId}] ==>`);
+            }
+            console.log(message);
+            console.log("\n");
+        }
+    }
 }
