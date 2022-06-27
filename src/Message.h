@@ -4,7 +4,7 @@
 #include <vrdavis-protobuf/register_viewer.pb.h>
 
 namespace vrdavis {
-const uint16_t ICD_VERSION = 28;
+const uint16_t ICD_VERSION = 1;
 struct EventHeader {
     uint16_t type;
     uint16_t icd_version;

@@ -23,7 +23,7 @@ public:
     void OnDisconnect(WSType* ws, int code, std::string_view message);
     void OnDrain(WSType* ws);
     void OnMessage(WSType* ws, std::string_view sv_message, uWS::OpCode op_code);
-    void Listen(std::string host, std::vector<int> ports, int default_port, int& port);
+    void Listen(std::string host, int port);
     uWS::App& App();
     void RunApp();
 

@@ -40,9 +40,7 @@ int main(int argc, char* argv[]) {
         // HTTP server
         http_server = std::make_unique<HttpServer>(session_manager);
 
-        int port(-1);
-        std::vector<int> portVector;
-        session_manager->Listen("0.0.0.0", portVector, 9000, port);
+        session_manager->Listen("0.0.0.0", 9000);
 
         session_manager->RunApp();
 

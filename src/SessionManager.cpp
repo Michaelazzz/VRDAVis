@@ -60,6 +60,9 @@ void SessionManager::OnUpgrade(uWS::HttpResponse<false>* http_response, uWS::Htt
 }
 
 void SessionManager::OnConnect(WSType* ws) {
+    // std::cout << "Client connected" << std::endl;
+    // std::cout << ws->getRemoteAddressAsText() << std::endl;
+
     auto socket_data = ws->getUserData();
     if (!socket_data) {
         std::cout << "Error handling WebSocket connection: Socket data does not exist" << std::endl;
@@ -68,6 +71,8 @@ void SessionManager::OnConnect(WSType* ws) {
 
     uint32_t session_id = socket_data->session_id;
     std::string address = socket_data->address;
+
+    std::cout << "Session::onConnect => session_id: " << socket_data->session_id << std::endl;
 
     // get the uWebsockets loop
     auto* loop = uWS::Loop::get();
@@ -113,7 +118,7 @@ void SessionManager::OnDrain(WSType* ws) {
 }
 
 void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpCode op_code) {
-    std::cout << "SessionManager OnMessage" << std::endl;
+    // std::cout << "SessionManager OnMessage" << std::endl;
 
     uint32_t session_id = static_cast<PerSocketData*>(ws->getUserData())->session_id;
     Session* session = _sessions[session_id];
@@ -141,7 +146,7 @@ void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpC
 
             switch (event_type) {
                 case VRDAVis::EventType::REGISTER_VIEWER: {
-                    std::cout << "Register viewer" << std::endl;
+                    // std::cout << "Session Register viewer message received" << std::endl;
                     VRDAVis::RegisterViewer message;
                     if (message.ParseFromArray(event_buf, event_length)) {
                         session->OnRegisterViewer(message, head.icd_version, head.request_id);
@@ -194,11 +199,11 @@ void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpC
     //}
 }
 
-void SessionManager::Listen(std::string host, std::vector<int> ports, int default_port, int& port) {
+void SessionManager::Listen(std::string host, int port) {
     bool port_ok(false);
 
     // port = ports[0];
-    port = default_port;
+    // port = default_port;
     _app.listen(host, port, LIBUS_LISTEN_EXCLUSIVE_PORT, [&](auto* token) {
         if (token) {
             port_ok = true;
@@ -230,60 +235,6 @@ void SessionManager::RunApp() {
         .close = [=](WSType* ws, int code, std::string_view msg) { OnDisconnect(ws, code, msg); }
     })
     .run();
-
-    // uWS::App().ws<PerSocketData>("/*", {
-    //     /* Settings */
-    //     .compression = uWS::CompressOptions(uWS::DEDICATED_COMPRESSOR_256KB ),
-    //     .maxPayloadLength = 256 * 1024 * 1024,
-    //     .maxBackpressure = 0,
-    //     .closeOnBackpressureLimit = false,
-    //     .resetIdleTimeoutOnSend = false,
-    //     .sendPingsAutomatically = true,
-    //     /* Handlers */
-    //     .upgrade = nullptr,
-    //     .open = [](auto */*ws*/) {
-    //         std::cout << "Client Connected" << std::endl;
-    //     },
-    //     .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
-    //         json jsonObject = json::parse(message);
-    //         std::cout << message << std::endl;
-    //         std::string type = jsonObject["type"].dump();
-    //         type = type.substr(1, (type.length() - 2));
-    //         std::cout << type << std::endl;
-
-    //         if (type == "data") {
-    //             // generate data
-    //             int size = 128 * 128 * 128; 
-
-    //             json dataMessage;
-    //             dataMessage["data"] = {};
-    //             for (int i = 0; i < (size); i++) {
-    //                 float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    //                 dataMessage["data"].push_back(r);
-    //             }
-    //             dataMessage["type"] = "data";
-    //             ws->send(dataMessage.dump(), uWS::OpCode::TEXT, false);
-    //         }
-    //     },
-    //     .drain = [](auto */*ws*/) {
-    //         /* Check ws->getBufferedAmount() here */
-    //     },
-    //     .ping = [](auto */*ws*/, std::string_view) {
-    //         std::cout << "ping" << std::endl;
-    //     },
-    //     .pong = [](auto */*ws*/, std::string_view) {
-    //         std::cout << "pong" << std::endl;
-    //     },
-    //     .close = [](auto */*ws*/, int /*code*/, std::string_view /*message*/) {
-    //         /* You may access ws->getUserData() here */
-    //     }
-    // })
-    // .listen(9000, [](auto *listen_socket) {
-    //     if (listen_socket) {
-    //         std::cout << "Listening on port " << 9000 << std::endl;
-    //     }
-    // })
-    // .run();
 }
 
 std::string SessionManager::IPAsText(std::string_view binary) {
