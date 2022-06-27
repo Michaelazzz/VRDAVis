@@ -1,45 +1,23 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {VRCanvas, DefaultXRControllers, Interactive, RayGrab} from "@react-three/xr";
 import {Box, Plane} from "@react-three/drei";
 import * as THREE from "three";
+import { observer } from "mobx-react";
 
 import HandMenu from "./components/HandMenu";
 import DataObject from "./components/DataObject";
 import WorldspaceMenu from "./components/WorldspaceMenu";
+import { AppContext } from "./AppContext";
 
-import {BackendService} from "./services/BackendService";
-
-function App() {
+function AppView() {
 
     // Backend services
-    const backendService: BackendService = BackendService.Instance;
+    const {appStore} = useContext(AppContext);
 
-    const connectToServer = async () => {
-        let wsUrl = "ws://localhost:9000/";
-        console.log(`Connecting to URL: ${wsUrl}`);
-
-        try {
-            console.log("Waiting for acknowlegment...");
-            const ack = await backendService.connect(wsUrl);
-            console.log("Acknowlegment received!")
-            console.log(`Connected with session ID ${ack.sessionId}`);
-            console.log(`Connected to server ${wsUrl} with session ID ${ack.sessionId}`, ["network"]);
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    const initVRDAVis = async () => {
-        try {
-            await connectToServer();
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    // initialise VRDAVis
-    initVRDAVis();
-
+    useEffect(() => {
+        appStore.initVRDAVis();
+    });
+    
     let height = 128;
     let width = 128;
     let depth = 128;
@@ -85,5 +63,7 @@ function App() {
         </>
     );
 }
+
+const App = observer(AppView);
 
 export default App;

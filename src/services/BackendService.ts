@@ -1,4 +1,4 @@
-import {action, makeObservable, observable, runInAction} from "mobx";
+import {action, makeObservable, observable, runInAction, makeAutoObservable} from "mobx";
 import {VRDAVis} from "vrdavis-protobuf";
 import {Subject, throwError} from "rxjs";
 
@@ -50,7 +50,7 @@ export class BackendService {
         return BackendService.staticInstance;
     }
 
-    private static readonly IcdVersion = 28;
+    private static readonly IcdVersion = 1;
     private static readonly MaxConnectionAttempts = 15;
     private static readonly ConnectionAttemptDelay = 1000;
 
@@ -72,8 +72,8 @@ export class BackendService {
     private readonly decoderMap: Map<VRDAVis.EventType, {messageClass: any; handler: HandlerFunction}>;
 
     private constructor() {
-        makeObservable(this);
-        this.loggingEnabled = true;
+        makeAutoObservable(this);
+        // this.loggingEnabled = true;
         this.deferredMap = new Map<number, Deferred<IBackendResponse>>();
 
         this.eventCounter = 1;
@@ -85,7 +85,7 @@ export class BackendService {
         // Construct handler and decoder maps
         this.decoderMap = new Map<VRDAVis.EventType, {messageClass: any; handler: HandlerFunction}>([
             [VRDAVis.EventType.REGISTER_VIEWER_ACK, {messageClass: VRDAVis.RegisterViewerAck, handler: this.onRegisterViewerAck}],
-            [VRDAVis.EventType.VOLUME_DATA, {messageClass: VRDAVis.VolumeData, handler: this.onStreamedVolumeData}],
+            // [VRDAVis.EventType.VOLUME_DATA, {messageClass: VRDAVis.VolumeData, handler: this.onStreamedVolumeData}],
         ]);
 
         // check ping every 5 seconds
@@ -93,39 +93,38 @@ export class BackendService {
     }
 
     @action("connect")
-    async connect(url: string): Promise<VRDAVis.IRegisterViewerAck> {
+    async connect(url: string): Promise<VRDAVis.IRegisterViewerAck> 
+    {
         // if (this.connection) {
         //     this.connection.onclose = null;
         //     this.connection.close();
         // }
 
-        // const isReconnection: boolean = url === this.serverUrl;
-        // let connectionAttempts = 0;
-        // this.connectionDropped = false;
+        const isReconnection: boolean = url === this.serverUrl;
+        let connectionAttempts = 0;
+        this.connectionDropped = false;
         this.connectionStatus = ConnectionStatus.PENDING;
         this.serverUrl = url;
         this.connection = new WebSocket(this.serverUrl);
-        console.log("Connection established");
         this.connection.binaryType = "arraybuffer";
         this.connection.onmessage = this.messageHandler.bind(this);
-        // this.connection.onclose = (ev: CloseEvent) =>
-        //     runInAction(() => {
-        //         // Only change to closed connection if the connection was originally active or this is a reconnection
-        //         if (this.connectionStatus === ConnectionStatus.ACTIVE || isReconnection || connectionAttempts >= BackendService.MaxConnectionAttempts) {
-        //             this.connectionStatus = ConnectionStatus.CLOSED;
-        //         } else {
-        //             connectionAttempts++;
-        //             setTimeout(() => {
-        //                 const newConnection = new WebSocket("ws://localhost:9000/");
-        //                 newConnection.binaryType = "arraybuffer";
-        //                 newConnection.onopen = this.connection.onopen;
-        //                 newConnection.onerror = this.connection.onerror;
-        //                 newConnection.onclose = this.connection.onclose;
-        //                 newConnection.onmessage = this.connection.onmessage;
-        //                 this.connection = newConnection;
-        //             }, BackendService.ConnectionAttemptDelay);
-        //         }
-        //     });
+        // this.connection.onclose = (ev: CloseEvent) => runInAction(() => {
+        //     // Only change to closed connection if the connection was originally active or this is a reconnection
+        //     if (this.connectionStatus === ConnectionStatus.ACTIVE || isReconnection || connectionAttempts >= BackendService.MaxConnectionAttempts) {
+        //         this.connectionStatus = ConnectionStatus.CLOSED;
+        //     } else {
+        //         connectionAttempts++;
+        //         setTimeout(() => {
+        //             const newConnection = new WebSocket(this.serverUrl);
+        //             newConnection.binaryType = "arraybuffer";
+        //             newConnection.onopen = this.connection.onopen;
+        //             newConnection.onerror = this.connection.onerror;
+        //             newConnection.onclose = this.connection.onclose;
+        //             newConnection.onmessage = this.connection.onmessage;
+        //             this.connection = newConnection;
+        //         }, BackendService.ConnectionAttemptDelay);
+        //     }
+        // });
         this.deferredMap.clear();
         this.eventCounter = 1;
         const requestId = this.eventCounter;
@@ -134,7 +133,6 @@ export class BackendService {
         this.deferredMap.set(requestId, deferredResponse);
 
         this.connection.onopen = action(() => {
-            console.log("connection open");
             if (this.connectionStatus === ConnectionStatus.CLOSED) {
                 this.connectionDropped = true;
             }
@@ -142,10 +140,14 @@ export class BackendService {
             const message = VRDAVis.RegisterViewer.create({sessionId: this.sessionId});
             // observer map is cleared, so that old subscriptions don't get incorrectly fired
             // this.logEvent(VRDAVis.EventType.REGISTER_VIEWER, requestId, message, false);
+            
+            // console.log("session id: " + this.sessionId);
+            // console.log(message);
+
             if (this.sendEvent(VRDAVis.EventType.REGISTER_VIEWER, VRDAVis.RegisterViewer.encode(message).finish())) {
                 this.deferredMap.set(requestId, deferredResponse);
             } else {
-                throw new Error("Could not send event");
+                throw new Error("Could not send REGISTER_VIEWER event");
             }
            
         });
@@ -170,14 +172,12 @@ export class BackendService {
     };
 
     private messageHandler(event: MessageEvent) {
-
-        console.log("Message...");
-
         if (event.data === "PONG") {
             this.lastPongTime = performance.now();
             this.updateEndToEndPing();
             return;
-        } else if (event.data.byteLength < 8) {
+        } 
+        else if (event.data.byteLength < 8) {
             console.log("Unknown event format");
             return;
         }
@@ -187,18 +187,22 @@ export class BackendService {
         const eventData = new Uint8Array(event.data, 8);
 
         const eventType: VRDAVis.EventType = eventHeader16[0];
+        console.log("Event type: " + eventType)
         const eventIcdVersion = eventHeader16[1];
+        console.log("ICD version: " + eventIcdVersion)
         const eventId = eventHeader32[0];
+        console.log("Event ID: " + eventId)
 
         if (eventIcdVersion !== BackendService.IcdVersion) {
             console.warn(`Server event has ICD version ${eventIcdVersion}, which differs from frontend version ${BackendService.IcdVersion}. Errors may occur`);
         }
         try {
             const decoderEntry = this.decoderMap.get(eventType);
+            
             if (decoderEntry) {
                 const parsedMessage = decoderEntry.messageClass.decode(eventData);
                 if (parsedMessage) {
-                    this.logEvent(eventType, eventId, parsedMessage);
+                    // this.logEvent(eventType, eventId, parsedMessage);
                     decoderEntry.handler.call(this, eventId, parsedMessage);
                 } else {
                     console.log(`Unsupported event response ${eventType}`);
@@ -232,12 +236,13 @@ export class BackendService {
     }
 
     private sendEvent(eventType: VRDAVis.EventType, payload: Uint8Array): boolean {
+
         if (this.connection.readyState === WebSocket.OPEN) {
             const eventData = new Uint8Array(8 + payload.byteLength);
             const eventHeader16 = new Uint16Array(eventData.buffer, 0, 2);
             const eventHeader32 = new Uint32Array(eventData.buffer, 4, 1);
             eventHeader16[0] = eventType;
-            // eventHeader16[1] = BackendService.IcdVersion;
+            eventHeader16[1] = BackendService.IcdVersion;
             eventHeader32[0] = this.eventCounter;
 
             eventData.set(payload, 8);
