@@ -1,4 +1,4 @@
-import {action, makeObservable, observable, runInAction, makeAutoObservable} from "mobx";
+import {action, makeObservable, observable, runInAction, makeAutoObservable, toJS} from "mobx";
 import {VRDAVis} from "vrdavis-protobuf";
 import {Subject, throwError} from "rxjs";
 
@@ -69,7 +69,7 @@ export class BackendService {
     private eventCounter: number;
 
     readonly volumeDataStream: Subject<VRDAVis.VolumeData>;
-    private readonly decoderMap: Map<VRDAVis.EventType, {messageClass: any; handler: HandlerFunction}>;
+    private readonly decoderMap: Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>;
 
     private constructor() {
         makeAutoObservable(this);
@@ -83,8 +83,8 @@ export class BackendService {
         this.volumeDataStream = new Subject<VRDAVis.VolumeData>();
 
         // Construct handler and decoder maps
-        this.decoderMap = new Map<VRDAVis.EventType, {messageClass: any; handler: HandlerFunction}>([
-            [VRDAVis.EventType.REGISTER_VIEWER_ACK, {messageClass: VRDAVis.RegisterViewerAck, handler: this.onRegisterViewerAck}],
+        this.decoderMap = new Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>([
+            [VRDAVis.EventType.REGISTER_VIEWER_ACK, {decoder: VRDAVis.RegisterViewerAck.decode, handler: this.onRegisterViewerAck}],
             // [VRDAVis.EventType.VOLUME_DATA, {messageClass: VRDAVis.VolumeData, handler: this.onStreamedVolumeData}],
         ]);
 
@@ -187,11 +187,11 @@ export class BackendService {
         const eventData = new Uint8Array(event.data, 8);
 
         const eventType: VRDAVis.EventType = eventHeader16[0];
-        console.log("Event type: " + eventType)
+        // console.log("Event type: " + eventType)
         const eventIcdVersion = eventHeader16[1];
-        console.log("ICD version: " + eventIcdVersion)
+        // console.log("ICD version: " + eventIcdVersion)
         const eventId = eventHeader32[0];
-        console.log("Event ID: " + eventId)
+        // console.log("Event ID: " + eventId)
 
         if (eventIcdVersion !== BackendService.IcdVersion) {
             console.warn(`Server event has ICD version ${eventIcdVersion}, which differs from frontend version ${BackendService.IcdVersion}. Errors may occur`);
@@ -200,7 +200,7 @@ export class BackendService {
             const decoderEntry = this.decoderMap.get(eventType);
             
             if (decoderEntry) {
-                const parsedMessage = decoderEntry.messageClass.decode(eventData);
+                const parsedMessage = decoderEntry.decoder(eventData);
                 if (parsedMessage) {
                     // this.logEvent(eventType, eventId, parsedMessage);
                     decoderEntry.handler.call(this, eventId, parsedMessage);
@@ -226,10 +226,10 @@ export class BackendService {
         }
     }
 
-    private onRegisterViewerAck(eventId: number, ack: VRDAVis.RegisterViewerAck) {
+    private onRegisterViewerAck =(eventId: number, ack: VRDAVis.RegisterViewerAck) => {
         this.sessionId = ack.sessionId;
         this.onDeferredResponse(eventId, ack);
-    }
+    };
 
     private onStreamedVolumeData(_eventId: number, volumeData: VRDAVis.VolumeData) {
         this.volumeDataStream.next(volumeData);

@@ -30,13 +30,10 @@ export class AppStore {
     async connectToServer() {
         try {
             let wsUrl = "ws://localhost:9000";
-            console.log(`Connecting to URL: ${wsUrl}`);
-            // const connection = new WebSocket(wsUrl);
-            // console.log(connection);
             const ack = await this.backendService.connect(wsUrl);
             // console.log("Acknowlegment received!")
             // console.log(`Connected with session ID ${ack.sessionId}`);
-            // console.log(`Connected to server ${wsUrl} with session ID ${ack.sessionId}`, ["network"]);
+            console.log(`Connected to server ${wsUrl} with session ID ${ack.sessionId}`);
         } catch (err) {
             console.error(err);
         }
