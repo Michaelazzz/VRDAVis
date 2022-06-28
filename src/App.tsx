@@ -1,14 +1,23 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {VRCanvas, DefaultXRControllers, Interactive, RayGrab} from "@react-three/xr";
 import {Box, Plane} from "@react-three/drei";
 import * as THREE from "three";
+import { observer } from "mobx-react";
 
 import HandMenu from "./components/HandMenu";
 import DataObject from "./components/DataObject";
 import WorldspaceMenu from "./components/WorldspaceMenu";
+import { AppContext } from "./AppContext";
 
-function App() {
+function AppView() {
 
+    // Backend services
+    const {appStore} = useContext(AppContext);
+
+    useEffect(() => {
+        appStore.initVRDAVis();
+    });
+    
     let height = 128;
     let width = 128;
     let depth = 128;
@@ -54,5 +63,7 @@ function App() {
         </>
     );
 }
+
+const App = observer(AppView);
 
 export default App;
