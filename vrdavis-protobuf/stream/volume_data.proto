@@ -1,0 +1,9 @@
+syntax = "proto3";
+package VRDAVis;
+
+import "enums.proto";
+import "defs.proto";
+
+message VolumeData {
+    repeated VolumeDataCube cubes = 7;
+}
