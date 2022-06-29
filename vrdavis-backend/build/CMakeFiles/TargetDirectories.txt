@@ -1,7 +1,0 @@
-/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/edit_cache.dir
-/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/vrdavis_backend.dir
-/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/rebuild_cache.dir
-/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/CMakeFiles/uSockets.dir
-/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/third-party/spdlog/CMakeFiles/edit_cache.dir
-/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/third-party/spdlog/CMakeFiles/rebuild_cache.dir
-/home/ubuntu/Desktop/VRDAVis/vrdavis-backend/build/third-party/spdlog/CMakeFiles/spdlog.dir
