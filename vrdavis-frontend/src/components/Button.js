@@ -4,7 +4,7 @@ import * as THREE from "three";
 
 const Button = ({text='Click', onSelect}) => {
 
-    const button = useRef()
+    const button = useRef();
 
     useEffect(() => {
         if (button.current) {

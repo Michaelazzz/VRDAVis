@@ -2,6 +2,8 @@ import {action, makeObservable, observable, runInAction, makeAutoObservable, toJ
 import {VRDAVis} from "vrdavis-protobuf";
 import {Subject, throwError} from "rxjs";
 
+import { WebRTCService } from "../services/WebRTCService";
+
 // adapted from CARTA
 
 export enum ConnectionStatus {
@@ -42,6 +44,7 @@ export class Deferred<T> {
 
 export class BackendService {
     private static staticInstance: BackendService;
+    
 
     static get Instance() {
         if (!BackendService.staticInstance) {
@@ -54,6 +57,7 @@ export class BackendService {
     private static readonly MaxConnectionAttempts = 15;
     private static readonly ConnectionAttemptDelay = 1000;
 
+    private webRTCService: WebRTCService;
     @observable connectionStatus: ConnectionStatus;
     readonly loggingEnabled: boolean;
     @observable connectionDropped: boolean;
@@ -85,7 +89,7 @@ export class BackendService {
         // Construct handler and decoder maps
         this.decoderMap = new Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>([
             [VRDAVis.EventType.REGISTER_VIEWER_ACK, {decoder: VRDAVis.RegisterViewerAck.decode, handler: this.onRegisterViewerAck}],
-            // [VRDAVis.EventType.VOLUME_DATA, {messageClass: VRDAVis.VolumeData, handler: this.onStreamedVolumeData}],
+            [VRDAVis.EventType.VOLUME_DATA, {decoder: VRDAVis.VolumeData.decode, handler: this.onStreamedVolumeData}],
         ]);
 
         // check ping every 5 seconds
@@ -270,6 +274,12 @@ export class BackendService {
             }
             console.log(message);
             console.log("\n");
+        }
+    }
+
+    requestData() {
+        if (this.connectionStatus === ConnectionStatus.ACTIVE) {
+            // const message = VRDAVis.create({fileId, tiles, compressionQuality: quality, compressionType: CARTA.CompressionType.ZFP});
         }
     }
 }

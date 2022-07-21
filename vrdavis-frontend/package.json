@@ -27,7 +27,8 @@
     "sass": "^1.49.9",
     "three": "^0.138.2",
     "three-mesh-ui": "6.3.1",
-    "typescript": "^4.6.2"
+    "typescript": "^4.6.2",
+    "worker-plugin": "^5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

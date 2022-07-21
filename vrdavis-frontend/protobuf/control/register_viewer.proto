@@ -8,7 +8,6 @@ import "enums.proto";
 // Responds with REGISTER_VIEWER_ACK
 message RegisterViewer {
     fixed32 session_id = 1;
-    // string ice_credentials = 2;
     // string api_key = 2;
 }
 

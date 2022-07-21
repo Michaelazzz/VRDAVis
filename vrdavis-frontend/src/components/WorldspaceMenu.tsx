@@ -55,7 +55,7 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
             prevLeftPos = leftPos.clone();
         }
 
-        ref.current.lookAt(player.position);
+        ref.current.lookAt(player.position.y, ref.current.position.y, player.position.z);
     });
 
     useInteraction(ref, 'onSqueezeStart', (e) => {
