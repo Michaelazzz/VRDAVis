@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import { BackendService } from "../services/BackendService";
 // import { CubeService } from "../services/CubeService";
-import { WebRTCService } from "../services/WebRTCService";
+import { WebRTCService } from "../services/webRTC.service";
 
 export class AppStore {
     private static staticInstance: AppStore;
@@ -12,7 +12,7 @@ export class AppStore {
 
     private backendService: BackendService;
     // private cubeService: CubeService;
-    private webRTCService: WebRTCService;
+    // private webRTCService: WebRTCService;
 
     constructor() {
         makeAutoObservable(this);
@@ -21,7 +21,7 @@ export class AppStore {
         // Assign service instances
         this.backendService = BackendService.Instance;
         // this.cubeService = CubeService.Instance;
-        this.webRTCService = WebRTCService.Instance;
+        // this.webRTCService = WebRTCService.Instance;
 
         // Subscribe to frontend streams
         // this.cubeService.volumeDataStream.subscribe(this.handleDataStream)
@@ -34,7 +34,7 @@ export class AppStore {
             // await this.requestData();
 
             // RTC connection
-            this.webRTCService.createPeerConnection();
+            // this.webRTCService.createPeerConnection();
         } catch (err) {
             console.error(err);
         }

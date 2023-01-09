@@ -2,8 +2,8 @@ import React, {useEffect, useRef, useState} from "react";
 import * as THREE from "three";
 
 import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, Tooltip, Legend, BasePlatform } from "chart.js";
-import { useController, useInteraction, useXR, useXRFrame } from "@react-three/xr";
-import { useThree } from "@react-three/fiber";
+import { useController, useInteraction, useXR } from "@react-three/xr";
+import { useThree, useFrame } from "@react-three/fiber";
 import { Object3D, Raycaster, Vector2, Vector3, XRRay } from "three";
 
 Chart.register(BarController, BarElement, LinearScale, CategoryScale,Tooltip, Legend, Title);
@@ -139,7 +139,7 @@ const ChartPanel = ({data}: any) => {
     });
 
 
-    useXRFrame((time, xFrame) => {
+    useFrame((state, delta) => {
 
         if (!ref.current) 
             return;

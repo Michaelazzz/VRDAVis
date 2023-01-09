@@ -1,172 +1,274 @@
-// WebSocket signaling server
-// Implemented using Node.js
+import { join, dirname } from 'path';
+import { Low, JSONFileSync } from 'lowdb';
+import { fileURLToPath } from 'url'
 
-// adapted from https://github.com/mdn/samples-server/blob/master/s/webrtc-from-chat/chatserver.js
+import WebSocket, { WebSocketServer } from 'ws';
+import express from 'express';
+import http from 'http';
 
-"use strict";
+// Database - LowDB
+const directory = dirname(fileURLToPath(import.meta.url));
 
-var http = require('http');
-var https = require('https');
-var fs = require('fs');
-var WebSocketServer = require('websocket').server;
+const file = join(directory, 'db.json');
+const adapter = new JSONFileSync(file);
+const db = new Low(adapter);
+await db.read();
 
-var connectionArray = [];
-var nextID = Date.now();
-var appendToMakeUnique = 1;
+if(db) log('[info] Database connected');
+
+const PORT = 8080;
+const server = http.createServer(express);
+const wss = new WebSocketServer({ server });
+
+wss.on('connection', function connection(ws) {
+    const pairingCodes = new Array();
+    let pairingDeviceId;
+
+    ws.on('message', async function message(data) {
+        log(`[received] ${data}`);
+
+        let msg = JSON.parse(data);
+
+        switch (msg.type) {
+            case 'open':
+                // check if device is paired
+                ws.id = msg.data.id;
+                ws.vr = msg.data.vr;
+                if(await isPaired(msg.data.id))
+                {
+                    // console.log(await getPairedDevice(msg.data.id));
+                    ws.send(JSON.stringify({
+                        type: 'paired',
+                        data: {
+                            paired: true,
+                            pairId: await getPairedDevice(msg.data.id)
+                        }
+                    }));
+                    log('[send] Device is already paired');
+                    await requestIceCredentials(ws.id);
+                }
+                else {
+                    // start pairing process
+                    ws.send(JSON.stringify({
+                        type: 'devices',
+                        data: {
+                            devices: await getAvailableVRDevices()
+                        }
+                    }));
+                    log('[send] Available devices');
+                }
+                break;
+            case 'pair-code':
+                pairingDeviceId = msg.data.device;
+                pairingCodes.push(msg.data.code);
+                requestPairConfirmation(msg.data.device);
+                break;
+            case 'pair-code-confrimation-response':
+                pairingCodes.push(msg.data.code)
+                if(pairingCodes[0] === pairingCodes[1]) {
+                    await db.read();
+                    log('[info] Pairing codes match');
+                    const { pairs } = db.data
+                    pairs.push({
+                        vrDevice: pairingDeviceId,
+                        desktopDevice: ws.id
+                    })
+                    await db.write();
+                    log('[info] Pair added to db');
+                    ws.send(JSON.stringify({
+                        type: 'paired',
+                        data: {
+                            paired: true,
+                            pairId: pairingDeviceId
+                        }
+                    }));
+                    log('[send] Pairing confirmation');
+                } 
+                else log(`[error] Pairing codes do not match`)
+                break;
+            case 'ice-credentials-response':
+                // ws.ice = msg.data.ice
+                log('[info] ICE credentials received')
+                // send ice credentials to paired device
+                const offer = msg.data.offer;
+                // const pairedId = await getPairedDevice(ws.id);
+                await sendOffer(msg.data.pairedId, offer);
+                break;
+            case 'rtc-answer':
+                log('[info] Web RTC answer received')
+                const answer = msg.data.answer;
+                await sendAnswer(msg.data.pairedId, answer);
+                break;
+            default:
+                log(`[error] unknown message type "${msg.type}"`);
+                break;
+        }
+
+        wss.clients.forEach(function each(client) {
+            if(client != ws && client.readyState == WebSocket.OPEN) {
+                // client.send(data);
+                // console.log()
+            }
+        });
+    });
+});
+
+const getAvailableVRDevices = async () => {
+    const devices = new Array();
+    wss.clients.forEach(function each(client) {
+        // if(client != ws && client.readyState == WebSocket.OPEN) {
+        if(client.readyState == WebSocket.OPEN && client.vr) {
+            devices.push(client.id);
+        }
+    });
+    return devices;
+};
+
+const requestPairConfirmation = (id) => {
+    wss.clients.forEach(function each(client) {
+        if(client.id === id) {
+            client.send(JSON.stringify({
+                type: 'pair-code-confirmation-request',
+                data: {}
+            }));
+            log('[send] Pair code confirmation request');
+        }
+    });
+}
+
+const isPaired = async (id) => {
+    await db.read();
+    const { pairs } = db.data;
+    let flag = false;
+    if(pairs.length > 0) {
+        pairs.forEach(pair => {
+            if(pair.vrDevice === id || pair.desktopDevice === id)
+                flag = true;
+        });
+    }
+    return flag;
+}
+
+const getDevicePair = async (id) => {
+    await db.read();
+    const { pairs } = db.data;
+    if(pairs.length > 0) {
+        pairs.forEach(pair => {
+            if(pair.desktopDevice === id || pair.vrDevice === id)
+                // console.log(pair)
+                return Jpair;
+        });
+    }
+    return null;
+}
+
+const getPairedDevice = async (id) => {
+    await db.read();
+    const { pairs } = db.data;
+    let pairedId = '';
+    if(pairs.length > 0) {
+        pairs.forEach(pair => {
+            if(pair.desktopDevice === id)
+                pairedId = pair.desktopDevice;
+            else if (pair.vrDevice === id)
+                pairedId = pair.vrDevice;
+        });
+    }
+    else return null;
+    return pairedId;
+}
+
+const sendOffer = async (id, offer) => {
+    wss.clients.forEach(function each(client) {
+        if(client.id === id) {
+            client.send(JSON.stringify({
+                type: 'rtc-offer',
+                data: {
+                    offer: offer
+                }
+            }));
+            log('[send] Web RTC offer');
+            return;
+        }
+    });
+}
+
+const sendAnswer = async (id, answer) => {
+    wss.clients.forEach(function each(client) {
+        if(client.id === id) {
+            client.send(JSON.stringify({
+                type: 'rtc-answer',
+                data: {
+                    answer: answer
+                }
+            }));
+            log('[send] Web RTC answer');
+            return;
+        }
+    });
+}
+
+const requestIceCredentials = async (id) => {
+    await db.read();
+    const { pairs } = db.data;
+    let devicePair = null;
+    if(pairs.length > 0) {
+        pairs.forEach(pair => {
+            if(pair.desktopDevice === id || pair.vrDevice === id)
+                devicePair = pair
+        });
+    }
+    wss.clients.forEach(function each(client) {
+        
+        if(client.id === devicePair.desktopDevice || client.id === devicePair.vrDevice) {
+            client.send(JSON.stringify({
+                type: 'ice-credentials-request',
+                data: {}
+            }));
+            log('[send] ICE credentials request');
+        }
+    });
+}
+
+server.listen(PORT, function() {
+    log(`Server is listening on port ${PORT}`);
+})
+
+// if(wss)
+//     log("Signaling server listening on port " + PORT);
+// else
+//     log("ERROR: Unable to create WebSocket server!");
+
+// wss.on('connection', function connection(ws) {
+//     log('[open] Client connected');
+
+//     ws.on('message', function message(data) {
+//         console.log('received: %s', data);
+
+    //     let jsonObject = JSON.parse(data)
+
+        // switch (jsonObject.type) {
+        //     case 'open':
+        //         log(JSON.stringify(jsonObject.data));
+        //         ws.send(JSON.stringify({
+        //             type: 'devices',
+        //             data: {
+        //                 devices: ['device1', 'device2', 'device3']
+        //             }
+        //         }));
+        //         break;
+        //     default:
+        //         log('unknown message type');
+        //         break;
+        // }
+//     });
+
+    
+
+    
+// });
 
 function log(text) {
     var time = new Date();
     console.log("[" + time.toLocaleTimeString() + "] " + text);
 }
-
-// block specific origins
-// currently allows everything
-function originIsAllowed(origin) {
-    return true;    // We will accept all connections
-}
-
-// scans the list of users and see if the specified name is unique
-// only let unique users join
-// if client id is already on the list ignore requests to connect
-// prevents two tabs from a single client connecting to one paired VR headset
-function isUsernameUnique(name) {
-    var isUnique = true;
-    var i;
-  
-    for (i=0; i<connectionArray.length; i++) {
-      if (connectionArray[i].username === name) {
-        isUnique = false;
-        break;
-      }
-    }
-    return isUnique;
-}
-
-// send message to a single user
-function sendToOneUser(target, msgString) {
-    var isUnique = true;
-    var i;
-  
-    for (i=0; i<connectionArray.length; i++) {
-      if (connectionArray[i].username === target) {
-        connectionArray[i].sendUTF(msgString);
-        break;
-      }
-    }
-}
-
-// Scan the list of connections and return the one for the specified clientID
-function getConnectionForID(id) {
-    var connect = null;
-    var i;
-  
-    for (i=0; i<connectionArray.length; i++) {
-      if (connectionArray[i].clientID === id) {
-        connect = connectionArray[i];
-        break;
-      }
-    }
-  
-    return connect;
-}
-
-// sends list of users 
-// adapt to send list of clients that are detected to be on the same network to a specific user
-function sendUserListToAll() {
-    var userListMsg = makeUserListMessage();
-    var userListMsgStr = JSON.stringify(userListMsg);
-    var i;
-  
-    for (i=0; i<connectionArray.length; i++) {
-      connectionArray[i].sendUTF(userListMsgStr);
-    }
-}
-
-var webServer = null;
-var port = 6503;
-
-// any http request get a 404
-function handleWebRequest(request, response) {
-    log ("Received request for " + request.url);
-    response.writeHead(404);
-    response.end();
-}
-
-webServer = https.createServer();
-
-webServer.listen(port, function() {
-    log("Server is listening on port " + port);
-});
-
-// create the WebSocket server by converting the HTTPS server into one.
-var wsServer = new WebSocketServer({
-    httpServer: webServer,
-    autoAcceptConnections: false
-});
-
-if (!wsServer) {
-    log("ERROR: Unable to create WbeSocket server!");
-}
-
-wsServer.on('request', function(request) {
-    if (!originIsAllowed(request.origin)) {
-      request.reject();
-      log("Connection from " + request.origin + " rejected.");
-      return;
-    }
-
-    // accept the request and get a connection.
-    var connection = request.accept("json", request.origin);
-
-    // add the new connection to our list of connections.
-    log("Connection accepted from " + connection.remoteAddress + ".");
-    connectionArray.push(connection);
-
-    connection.clientID = nextID;
-    nextID++;
-
-    // Send the new client its token
-    var msg = {
-        type: "id",
-        id: connection.clientID
-      };
-    connection.sendUTF(JSON.stringify(msg));
-
-    // message handler
-    connection.on('message', function(message) {
-        if (message.type === 'utf8') {
-            log("Received Message: " + message.utf8Data);
-      
-            // process incoming data
-            var sendToClients = true;
-            msg = JSON.parse(message.utf8Data);
-            var connect = getConnectionForID(msg.id);
-
-            // check if user is one of the connection cases
-            //  1. first connection / looking to pair
-            //      if id is not in the database
-            //  2. reconnect / has been paired already
-            //      if id assigned to ICE credentials are in the database with a paired device
-
-            // switch(msg.type) {
-            //     case "message":
-            // }
-        }
-    });
-
-    // handle closing a websocket connection
-    connection.on('close', function(reason, description) {
-        // First, remove the connection from the list of connections.
-        connectionArray = connectionArray.filter(function(el, idx, ar) {
-            return el.connected;
-        });
-
-        var logMessage = "Connection closed: " + connection.remoteAddress + " (" + reason;
-        if (description !== null && description.length !== 0) {
-        logMessage += ": " + description;
-        }
-        logMessage += ")";
-        log(logMessage);
-    });
-});
-
