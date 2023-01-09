@@ -2,22 +2,26 @@ import React, { useContext, useEffect, useState } from "react";
 import {VRCanvas, DefaultXRControllers, Interactive, RayGrab} from "@react-three/xr";
 import {Box, Plane} from "@react-three/drei";
 import * as THREE from "three";
-import { observer } from "mobx-react";
+import CssBaseline from '@mui/material/CssBaseline';
 
 import HandMenu from "./components/HandMenu";
 import DataObject from "./components/DataObject";
 import WorldspaceMenu from "./components/WorldspaceMenu";
-import { AppContext } from "./AppContext";
+import { PairingMenu } from "./components/PairingMenu";
+import BrowserMenu from "./components/BrowserMenu";
+import { RootContext } from "./store.context";
+import { observer } from "mobx-react";
 
-function AppView() {
+const AppView: React.FC = () => {
 
-    // Backend services
-    const {appStore} = useContext(AppContext);
+    const { signallingStore } = useContext(RootContext);
+    const paired = signallingStore.getPaired();
+    const pairedDeviceId = signallingStore.getPairedDeviceId();
 
     useEffect(() => {
-        appStore.initVRDAVis();
-    });
-    
+        signallingStore.start();
+    }, []);
+
     let height = 128;
     let width = 128;
     let depth = 128;
@@ -32,6 +36,18 @@ function AppView() {
 
     return (
         <>
+            <CssBaseline />
+            <BrowserMenu>
+                <h1>VRDAVis</h1>
+                {!paired && <PairingMenu />}
+                {paired && 
+                    <>
+                        <p>This device is paired to:</p>
+                        <p>{pairedDeviceId}</p>
+                    </>
+                }
+            </BrowserMenu>
+            
             <VRCanvas>
                 <color 
                     attach="background" 
@@ -52,9 +68,9 @@ function AppView() {
 
                 <DefaultXRControllers />
 
-                <HandMenu />
+                {/* <HandMenu /> */}
 
-                <WorldspaceMenu position={[1,1.5,-1.5]} />
+                {/* <WorldspaceMenu position={[1,1.5,-1.5]} /> */}
                 
 
                 <DataObject data={data} height={height} width={width} depth={depth} />
@@ -65,5 +81,4 @@ function AppView() {
 }
 
 const App = observer(AppView);
-
 export default App;

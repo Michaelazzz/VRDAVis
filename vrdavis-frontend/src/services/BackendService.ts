@@ -2,6 +2,8 @@ import {action, makeObservable, observable, runInAction, makeAutoObservable, toJ
 import {VRDAVis} from "vrdavis-protobuf";
 import {Subject, throwError} from "rxjs";
 
+import { WebRTCService } from "./webRTC.service";
+
 // adapted from CARTA
 
 export enum ConnectionStatus {
@@ -54,10 +56,11 @@ export class BackendService {
     private static readonly MaxConnectionAttempts = 15;
     private static readonly ConnectionAttemptDelay = 1000;
 
-    @observable connectionStatus: ConnectionStatus;
+    // private webRTCService: WebRTCService;
+    connectionStatus: ConnectionStatus;
     readonly loggingEnabled: boolean;
-    @observable connectionDropped: boolean;
-    @observable endToEndPing: number;
+    connectionDropped: boolean;
+    endToEndPing: number;
 
     public sessionId: number;
     public serverUrl: string;
@@ -69,10 +72,10 @@ export class BackendService {
     private eventCounter: number;
 
     readonly volumeDataStream: Subject<VRDAVis.VolumeData>;
+    
     private readonly decoderMap: Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>;
 
     private constructor() {
-        makeAutoObservable(this);
         // this.loggingEnabled = true;
         this.deferredMap = new Map<number, Deferred<IBackendResponse>>();
 
@@ -85,14 +88,13 @@ export class BackendService {
         // Construct handler and decoder maps
         this.decoderMap = new Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>([
             [VRDAVis.EventType.REGISTER_VIEWER_ACK, {decoder: VRDAVis.RegisterViewerAck.decode, handler: this.onRegisterViewerAck}],
-            // [VRDAVis.EventType.VOLUME_DATA, {messageClass: VRDAVis.VolumeData, handler: this.onStreamedVolumeData}],
+            [VRDAVis.EventType.VOLUME_DATA, {decoder: VRDAVis.VolumeData.decode, handler: this.onStreamedVolumeData}],
         ]);
 
         // check ping every 5 seconds
         setInterval(this.sendPing, 5000);
     }
 
-    @action("connect")
     async connect(url: string): Promise<VRDAVis.IRegisterViewerAck> 
     {
         // if (this.connection) {
@@ -167,7 +169,7 @@ export class BackendService {
         }
     };
 
-    @action updateEndToEndPing = () => {
+    updateEndToEndPing = () => {
         this.endToEndPing = this.lastPongTime - this.lastPingTime;
     };
 
@@ -226,7 +228,7 @@ export class BackendService {
         }
     }
 
-    private onRegisterViewerAck =(eventId: number, ack: VRDAVis.RegisterViewerAck) => {
+    private onRegisterViewerAck = (eventId: number, ack: VRDAVis.RegisterViewerAck) => {
         this.sessionId = ack.sessionId;
         this.onDeferredResponse(eventId, ack);
     };
@@ -236,7 +238,6 @@ export class BackendService {
     }
 
     private sendEvent(eventType: VRDAVis.EventType, payload: Uint8Array): boolean {
-
         if (this.connection.readyState === WebSocket.OPEN) {
             const eventData = new Uint8Array(8 + payload.byteLength);
             const eventHeader16 = new Uint16Array(eventData.buffer, 0, 2);
@@ -270,6 +271,12 @@ export class BackendService {
             }
             console.log(message);
             console.log("\n");
+        }
+    }
+
+    requestData() {
+        if (this.connectionStatus === ConnectionStatus.ACTIVE) {
+            // const message = VRDAVis.create({fileId, tiles, compressionQuality: quality, compressionType: CARTA.CompressionType.ZFP});
         }
     }
 }

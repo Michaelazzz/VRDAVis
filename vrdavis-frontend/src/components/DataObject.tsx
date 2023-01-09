@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, useIntersect } from '@react-three/drei';
-import { RayGrab, useController, useInteraction, useXR, useXREvent, useXRFrame } from '@react-three/xr';
-
-import cm_viridis from '../colour-maps/cm_viridis.png'
+import { RayGrab, useController, useInteraction, useXR, useXREvent } from '@react-three/xr';
+import { useFrame } from '@react-three/fiber';
 
 import * as THREE from 'three';
 
 import { VolumeShader } from '../shaders/VolumeShader';
 import createColormap from 'colormap';
+
 
 const DataObject = ({data, width, height, depth}: any) => {
 
@@ -98,8 +98,7 @@ const DataObject = ({data, width, height, depth}: any) => {
         ref.current.add(dataCube);
     },[data]);
     
-
-    useXRFrame(() => {
+    useFrame(() => {
         if(!leftController || !rightController) {
             return;
         }

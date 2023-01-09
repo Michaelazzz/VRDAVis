@@ -2,8 +2,8 @@ import React, {useEffect, useRef, useState} from "react";
 import * as THREE from "three";
 
 import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, Tooltip, Legend, BasePlatform } from "chart.js";
-import { useController, useInteraction, useXR, useXRFrame } from "@react-three/xr";
-import { useThree } from "@react-three/fiber";
+import { useController, useInteraction, useXR } from "@react-three/xr";
+import { useThree, useFrame } from "@react-three/fiber";
 import { Object3D, Raycaster, Vector2, Vector3, XRRay } from "three";
 
 Chart.register(BarController, BarElement, LinearScale, CategoryScale,Tooltip, Legend, Title);
@@ -60,10 +60,10 @@ const ChartPanel = ({data}: any) => {
     var canvas = document.createElement("canvas");
     canvas.width = 500;
     canvas.height = 250;
+    
     const localCoord = new Vector2(0,0);
 
-    // let chart: Chart
-    const [chart, setChart] = useState(new Chart(canvas, {
+    const [chart, setChart] = useState(new Chart(canvas.getContext('2d'), {
         type: "bar",
         data: {
             labels: ["Red", "Orage", "Yellow", "Green", "Blue", "Purple", "Grey"],
@@ -120,7 +120,7 @@ const ChartPanel = ({data}: any) => {
             // },
             // events: ['mousemove', 'click']
         }
-    }))
+    }));
 
     scene.add( sphere );
 
@@ -128,78 +128,18 @@ const ChartPanel = ({data}: any) => {
         textureData = dataFromChild[0];
         setTextureData = dataFromChild[1];
     };
-
-    // chart = new Chart(canvas, {
-    //     type: "bar",
-    //     data: {
-    //         labels: ["Red", "Orage", "Yellow", "Green", "Blue", "Purple", "Grey"],
-    //         datasets: [{
-    //             label: 'My First Dataset',
-    //             data: data,
-    //             backgroundColor: [
-    //             'rgba(255, 99, 132, 0.2)',
-    //             'rgba(255, 159, 64, 0.2)',
-    //             'rgba(255, 205, 86, 0.2)',
-    //             'rgba(75, 192, 192, 0.2)',
-    //             'rgba(54, 162, 235, 0.2)',
-    //             'rgba(153, 102, 255, 0.2)',
-    //             'rgba(201, 203, 207, 0.2)'
-    //             ],
-    //             borderColor: [
-    //             'rgb(255, 99, 132)',
-    //             'rgb(255, 159, 64)',
-    //             'rgb(255, 205, 86)',
-    //             'rgb(75, 192, 192)',
-    //             'rgb(54, 162, 235)',
-    //             'rgb(153, 102, 255)',
-    //             'rgb(201, 203, 207)'
-    //             ],
-    //             borderWidth: 1
-    //         }]
-    //     },
-    //     options: {
-    //         layout: {
-    //             padding: 30
-    //         },
-    //         responsive: false,
-    //         animation: {
-    //             duration: 0
-    //         },
-    //         scales: {
-    //             y: {
-    //                 beginAtZero: true
-    //             }
-    //         },
-    //         plugins: {
-    //             legend: {
-    //                 display: true,
-    //                 labels: {
-    //                     color: 'rgb(255, 99, 132)'
-    //                 }
-    //             }
-    //         },
-    //         // onClick: (e) => {
-    //         //     sphere.material.copy(new THREE.MeshBasicMaterial( { color: 0xff0000 } ))
-    //         // },
-    //         // onHover: (e) => {
-    //         //     setTextureData(chart.toBase64Image());
-    //         // },
-    //         events: ['mousemove', 'click']
-    //     }
-    // });
     
-    
-
     useEffect(() => {
-        chart.update();
-        chart.options.onClick = () => {
+
+        // chart.update();
+        // chart.options.onClick = () => {
             // console.log('click received');
             // sphere.material.copy(new THREE.MeshBasicMaterial( { color: 0xff0000 } ));
-        }
+        // }
     });
 
 
-    useXRFrame((time, xFrame) => {
+    useFrame((state, delta) => {
 
         if (!ref.current) 
             return;
@@ -224,8 +164,10 @@ const ChartPanel = ({data}: any) => {
                 clientX: localCoord.x,
                 clientY: localCoord.y
             });
-    
+
             chart.canvas.dispatchEvent(event);
+            // worker.postMessage({action: "mousemove", localCoords: localCoord});
+
 
             sphere.position.copy(intersection[0].point);
             localPos.copy(ref.current.worldToLocal(intersection[0].point)); // converts point in world space to local space
@@ -238,6 +180,7 @@ const ChartPanel = ({data}: any) => {
         }
 
         setTextureData(chart.toBase64Image());
+        
     });
 
     useInteraction(ref, 'onSelect', () => {

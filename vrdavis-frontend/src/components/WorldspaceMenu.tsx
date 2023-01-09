@@ -1,9 +1,10 @@
 import React, { useRef, useState } from 'react'
-import { useController, useXRFrame, useInteraction, useXREvent, useXR } from '@react-three/xr';
+import { useController, useInteraction, useXREvent, useXR } from '@react-three/xr';
 import * as THREE from "three";
 import Panel from './Panel'
 import PanelText from './PanelText';
 import { Vector3 } from 'three';
+import { useFrame } from '@react-three/fiber';
 
 const WorldspaceMenu = ({position = [0,0,0]}: any) => {
 
@@ -28,7 +29,7 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
     let prevRightPos = rightController?.controller.position;
     let prevLeftPos = leftController?.controller.position;
 
-    useXRFrame(() => {
+    useFrame(() => {
         if(!leftController || !rightController || !ref.current) {
             return;
         }
@@ -55,7 +56,7 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
             prevLeftPos = leftPos.clone();
         }
 
-        ref.current.lookAt(player.position);
+        ref.current.lookAt(player.position.y, ref.current.position.y, player.position.z);
     });
 
     useInteraction(ref, 'onSqueezeStart', (e) => {
