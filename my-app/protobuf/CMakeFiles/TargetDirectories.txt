@@ -1,3 +1,0 @@
-/home/michaela/Desktop/VRDAVis/my-app/protobuf/CMakeFiles/rebuild_cache.dir
-/home/michaela/Desktop/VRDAVis/my-app/protobuf/CMakeFiles/edit_cache.dir
-/home/michaela/Desktop/VRDAVis/my-app/protobuf/CMakeFiles/vrdavis-protobuf.dir

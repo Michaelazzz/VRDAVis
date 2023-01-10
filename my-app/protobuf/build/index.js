@@ -108,9 +108,10 @@ export const VRDAVis = $root.VRDAVis = (() => {
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
-                case 1:
-                    message.volumeData = reader.bytes();
-                    break;
+                case 1: {
+                        message.volumeData = reader.bytes();
+                        break;
+                    }
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -167,7 +168,7 @@ export const VRDAVis = $root.VRDAVis = (() => {
             if (object.volumeData != null)
                 if (typeof object.volumeData === "string")
                     $util.base64.decode(object.volumeData, message.volumeData = $util.newBuffer($util.base64.length(object.volumeData)), 0);
-                else if (object.volumeData.length)
+                else if (object.volumeData.length >= 0)
                     message.volumeData = object.volumeData;
             return message;
         };
@@ -207,6 +208,21 @@ export const VRDAVis = $root.VRDAVis = (() => {
          */
         VolumeDataCube.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for VolumeDataCube
+         * @function getTypeUrl
+         * @memberof VRDAVis.VolumeDataCube
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        VolumeDataCube.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/VRDAVis.VolumeDataCube";
         };
 
         return VolumeDataCube;
@@ -336,9 +352,10 @@ export const VRDAVis = $root.VRDAVis = (() => {
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
-                case 1:
-                    message.sessionId = reader.fixed32();
-                    break;
+                case 1: {
+                        message.sessionId = reader.fixed32();
+                        break;
+                    }
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -426,6 +443,21 @@ export const VRDAVis = $root.VRDAVis = (() => {
          */
         RegisterViewer.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for RegisterViewer
+         * @function getTypeUrl
+         * @memberof VRDAVis.RegisterViewer
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RegisterViewer.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/VRDAVis.RegisterViewer";
         };
 
         return RegisterViewer;
@@ -545,15 +577,18 @@ export const VRDAVis = $root.VRDAVis = (() => {
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
-                case 1:
-                    message.sessionId = reader.fixed32();
-                    break;
-                case 2:
-                    message.success = reader.bool();
-                    break;
-                case 3:
-                    message.message = reader.string();
-                    break;
+                case 1: {
+                        message.sessionId = reader.fixed32();
+                        break;
+                    }
+                case 2: {
+                        message.success = reader.bool();
+                        break;
+                    }
+                case 3: {
+                        message.message = reader.string();
+                        break;
+                    }
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -660,6 +695,21 @@ export const VRDAVis = $root.VRDAVis = (() => {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
+        /**
+         * Gets the default type url for RegisterViewerAck
+         * @function getTypeUrl
+         * @memberof VRDAVis.RegisterViewerAck
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RegisterViewerAck.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/VRDAVis.RegisterViewerAck";
+        };
+
         return RegisterViewerAck;
     })();
 
@@ -757,11 +807,12 @@ export const VRDAVis = $root.VRDAVis = (() => {
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
-                case 1:
-                    if (!(message.cubes && message.cubes.length))
-                        message.cubes = [];
-                    message.cubes.push($root.VRDAVis.VolumeDataCube.decode(reader, reader.uint32()));
-                    break;
+                case 1: {
+                        if (!(message.cubes && message.cubes.length))
+                            message.cubes = [];
+                        message.cubes.push($root.VRDAVis.VolumeDataCube.decode(reader, reader.uint32()));
+                        break;
+                    }
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -866,6 +917,21 @@ export const VRDAVis = $root.VRDAVis = (() => {
          */
         VolumeData.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for VolumeData
+         * @function getTypeUrl
+         * @memberof VRDAVis.VolumeData
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        VolumeData.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/VRDAVis.VolumeData";
         };
 
         return VolumeData;
