@@ -16,7 +16,7 @@ const directory = dirname(fileURLToPath(import.meta.url));
 
 // if(db) log('[info] Database connected');
 
-const PORT = proccess.env.PORT || 8080;
+let PORT = proccess.env.PORT || 8080;
 const server = http.createServer(express);
 const wss = new WebSocketServer({ server });
 
