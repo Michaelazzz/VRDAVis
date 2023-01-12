@@ -83,6 +83,7 @@ wss.on('connection', function connection(ws) {
                         }
                     }));
                     log('[send] Pairing confirmation');
+                    await requestIceCredentials(ws.id);
                 } 
                 else log(`[error] Pairing codes do not match`)
                 break;
