@@ -9,15 +9,14 @@ import http from 'http';
 // Database - LowDB
 const directory = dirname(fileURLToPath(import.meta.url));
 
-const file = join(directory, 'db.json');
-const adapter = new JSONFileSync(file);
-const db = new Low(adapter);
-await db.read();
+// const file = join(directory, 'db.json');
+// const adapter = new JSONFileSync(file);
+// const db = new Low(adapter);
+// await db.read();
 
-if(db) log('[info] Database connected');
+// if(db) log('[info] Database connected');
 
-// const PORT = 8080;
-const PORT = proccess.env.PORT;
+const PORT = proccess.env.PORT || 8080;
 const server = http.createServer(express);
 const wss = new WebSocketServer({ server });
 
@@ -25,94 +24,94 @@ wss.on('connection', function connection(ws) {
     const pairingCodes = new Array();
     let pairingDeviceId;
 
-    ws.on('message', async function message(data) {
-        log(`[received] ${data}`);
+    // ws.on('message', async function message(data) {
+    //     log(`[received] ${data}`);
 
-        let msg = JSON.parse(data);
+    //     let msg = JSON.parse(data);
 
-        switch (msg.type) {
-            case 'open':
-                // check if device is paired
-                ws.id = msg.data.id;
-                ws.vr = msg.data.vr;
-                if(await isPaired(msg.data.id))
-                {
-                    // console.log(await getPairedDevice(msg.data.id));
-                    ws.send(JSON.stringify({
-                        type: 'paired',
-                        data: {
-                            paired: true,
-                            pairId: await getPairedDevice(msg.data.id)
-                        }
-                    }));
-                    log('[send] Device is already paired');
-                    await requestIceCredentials(ws.id);
-                }
-                else {
-                    // start pairing process
-                    ws.send(JSON.stringify({
-                        type: 'devices',
-                        data: {
-                            devices: await getAvailableVRDevices()
-                        }
-                    }));
-                    log('[send] Available devices');
-                }
-                break;
-            case 'pair-code':
-                pairingDeviceId = msg.data.device;
-                pairingCodes.push(msg.data.code);
-                requestPairConfirmation(msg.data.device);
-                break;
-            case 'pair-code-confrimation-response':
-                pairingCodes.push(msg.data.code)
-                if(pairingCodes[0] === pairingCodes[1]) {
-                    await db.read();
-                    log('[info] Pairing codes match');
-                    const { pairs } = db.data
-                    pairs.push({
-                        vrDevice: pairingDeviceId,
-                        desktopDevice: ws.id
-                    })
-                    await db.write();
-                    log('[info] Pair added to db');
-                    ws.send(JSON.stringify({
-                        type: 'paired',
-                        data: {
-                            paired: true,
-                            pairId: pairingDeviceId
-                        }
-                    }));
-                    log('[send] Pairing confirmation');
-                    await requestIceCredentials(ws.id);
-                } 
-                else log(`[error] Pairing codes do not match`)
-                break;
-            case 'ice-credentials-response':
-                // ws.ice = msg.data.ice
-                log('[info] ICE credentials received')
-                // send ice credentials to paired device
-                const offer = msg.data.offer;
-                // const pairedId = await getPairedDevice(ws.id);
-                await sendOffer(msg.data.pairedId, offer);
-                break;
-            case 'rtc-answer':
-                log('[info] Web RTC answer received')
-                const answer = msg.data.answer;
-                await sendAnswer(msg.data.pairedId, answer);
-                break;
-            default:
-                log(`[error] unknown message type "${msg.type}"`);
-                break;
-        }
+    //     switch (msg.type) {
+    //         case 'open':
+    //             // check if device is paired
+    //             ws.id = msg.data.id;
+    //             ws.vr = msg.data.vr;
+    //             if(await isPaired(msg.data.id))
+    //             {
+    //                 // console.log(await getPairedDevice(msg.data.id));
+    //                 ws.send(JSON.stringify({
+    //                     type: 'paired',
+    //                     data: {
+    //                         paired: true,
+    //                         pairId: await getPairedDevice(msg.data.id)
+    //                     }
+    //                 }));
+    //                 log('[send] Device is already paired');
+    //                 await requestIceCredentials(ws.id);
+    //             }
+    //             else {
+    //                 // start pairing process
+    //                 ws.send(JSON.stringify({
+    //                     type: 'devices',
+    //                     data: {
+    //                         devices: await getAvailableVRDevices()
+    //                     }
+    //                 }));
+    //                 log('[send] Available devices');
+    //             }
+    //             break;
+    //         case 'pair-code':
+    //             pairingDeviceId = msg.data.device;
+    //             pairingCodes.push(msg.data.code);
+    //             requestPairConfirmation(msg.data.device);
+    //             break;
+    //         case 'pair-code-confrimation-response':
+    //             pairingCodes.push(msg.data.code)
+    //             if(pairingCodes[0] === pairingCodes[1]) {
+    //                 await db.read();
+    //                 log('[info] Pairing codes match');
+    //                 const { pairs } = db.data
+    //                 pairs.push({
+    //                     vrDevice: pairingDeviceId,
+    //                     desktopDevice: ws.id
+    //                 })
+    //                 await db.write();
+    //                 log('[info] Pair added to db');
+    //                 ws.send(JSON.stringify({
+    //                     type: 'paired',
+    //                     data: {
+    //                         paired: true,
+    //                         pairId: pairingDeviceId
+    //                     }
+    //                 }));
+    //                 log('[send] Pairing confirmation');
+    //                 await requestIceCredentials(ws.id);
+    //             } 
+    //             else log(`[error] Pairing codes do not match`)
+    //             break;
+    //         case 'ice-credentials-response':
+    //             // ws.ice = msg.data.ice
+    //             log('[info] ICE credentials received')
+    //             // send ice credentials to paired device
+    //             const offer = msg.data.offer;
+    //             // const pairedId = await getPairedDevice(ws.id);
+    //             await sendOffer(msg.data.pairedId, offer);
+    //             break;
+    //         case 'rtc-answer':
+    //             log('[info] Web RTC answer received')
+    //             const answer = msg.data.answer;
+    //             await sendAnswer(msg.data.pairedId, answer);
+    //             break;
+    //         default:
+    //             log(`[error] unknown message type "${msg.type}"`);
+    //             break;
+    //     }
 
-        wss.clients.forEach(function each(client) {
-            if(client != ws && client.readyState == WebSocket.OPEN) {
-                // client.send(data);
-                // console.log()
-            }
-        });
-    });
+    //     wss.clients.forEach(function each(client) {
+    //         if(client != ws && client.readyState == WebSocket.OPEN) {
+    //             // client.send(data);
+    //             // console.log()
+    //         }
+    //     });
+    // });
 });
 
 const getAvailableVRDevices = async () => {
