@@ -17,7 +17,7 @@ await db.read();
 if(db) log('[info] Database connected');
 
 const PORT = 8080;
-console.log(process.env)
+console.log(process.env.PORT)
 const server = http.createServer(express);
 const wss = new WebSocketServer({ server });
 
