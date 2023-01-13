@@ -38,7 +38,8 @@ export class SignallingStore {
     }
 
     async start() {
-        this.socket = new WebSocket('ws://localhost:8080');
+        // this.socket = new WebSocket('ws://vrdavis-signaling-server-production.up.railway.app:6865');
+        this.socket = new WebSocket('ws://localhost:80');
 
         this.socket.onopen = (event) => {
             console.log('[open] Connection established');
