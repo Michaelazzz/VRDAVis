@@ -11,11 +11,11 @@ printf "...done\n"
 #npx pbjs -t static-module -o build/request.js --wrap es6 request/*.proto
 #npx pbts -o build/request.d.ts build/request.js
 #printf "...done\n"
-#
-#printf "Building Stream message module..."
-#npx pbjs -t static-module -o build/stream.js --wrap es6 stream/*.proto
-#npx pbts -o build/stream.d.ts build/stream.js
-#printf "...done\n"
+
+# printf "Building Stream message module..."
+# npx pbjs -t static-module -o build/stream.js --wrap es6 stream/*.proto
+# npx pbts -o build/stream.d.ts build/stream.js
+# printf "...done\n"
 
 cd ../node_modules
 rm -f vrdavis-protobuf

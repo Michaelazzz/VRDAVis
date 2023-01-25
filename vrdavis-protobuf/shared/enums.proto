@@ -5,7 +5,7 @@ enum EventType {
     EMPTY_EVENT = 0;
     REGISTER_VIEWER = 1;
     REGISTER_VIEWER_ACK = 2;
-    VOLUME_DATA = 32;
+    CUBE_DATA = 3;
 }
 
 enum SessionType {

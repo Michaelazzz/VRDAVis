@@ -1,0 +1,2 @@
+/usr/bin/ar qc libvrdavis-protobuf.a  CMakeFiles/vrdavis-protobuf.dir/cubes.pb.o CMakeFiles/vrdavis-protobuf.dir/register_viewer.pb.o CMakeFiles/vrdavis-protobuf.dir/defs.pb.o CMakeFiles/vrdavis-protobuf.dir/enums.pb.o CMakeFiles/vrdavis-protobuf.dir/cube.pb.o
+/usr/bin/ranlib libvrdavis-protobuf.a

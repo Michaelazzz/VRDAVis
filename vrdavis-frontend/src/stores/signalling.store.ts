@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { autorun, makeAutoObservable } from "mobx";
 import { v1 as uuidv1 } from 'uuid';
 // import { SignallingService } from "../services/signalling.service";
@@ -37,6 +38,7 @@ export class SignallingStore {
     }
 
     async start() {
+        // this.socket = new WebSocket('ws://vrdavis-signalling-server.vercel.app:80');
         this.socket = new WebSocket('ws://localhost:8080');
 
         this.socket.onopen = (event) => {

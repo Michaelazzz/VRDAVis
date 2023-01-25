@@ -53,11 +53,12 @@ set(LINK_LIBS
 
 set(SOURCE_FILES
     ${SOURCE_FILES}
-    src/HttpServer.cpp
+    src/HttpServer/HttpServer.cpp
+    src/Logger/Logger.cpp
     src/Main.cpp
     src/Message.cpp
-    src/Session.cpp
-    src/SessionManager.cpp
+    src/Session/Session.cpp
+    src/Session/SessionManager.cpp
 )
 
 add_executable(vrdavis_backend ${SOURCE_FILES})

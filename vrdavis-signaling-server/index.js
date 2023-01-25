@@ -18,8 +18,8 @@ if(db) log('[info] Database connected');
 
 console.log(process.env);
 
-// const PORT = process.env.PORT || 8080;
-const PORT = 80;
+const PORT = process.env.PORT || 8080;
+// const PORT = 80;
 const server = http.createServer(express);
 const wss = new WebSocketServer({ server });
 

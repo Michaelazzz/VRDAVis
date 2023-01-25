@@ -4,52 +4,14 @@ import * as THREE from "three";
 import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, Tooltip, Legend, BasePlatform } from "chart.js";
 import { useController, useInteraction, useXR } from "@react-three/xr";
 import { useThree, useFrame } from "@react-three/fiber";
-import { Object3D, Raycaster, Vector2, Vector3, XRRay } from "three";
+import { Object3D, Raycaster, Vector2, Vector3 } from "three";
 
 Chart.register(BarController, BarElement, LinearScale, CategoryScale,Tooltip, Legend, Title);
-
-const ChartObject = ({onMount}: any) => {
-
-    const ref = useRef<Object3D>();
-
-    const [textureData, setTextureData] = useState("");
-    const loader = new THREE.TextureLoader();
-    let t: THREE.CanvasTexture
-
-    useEffect(() => {
-        onMount([textureData, setTextureData]);
-
-        loader.load(textureData, texture => {
-            // @ts-ignore
-            ref.current.set({backgroundTexture: texture});
-        });
-
-        // console.log('texture update');
-    }, [onMount, textureData]);
-
-    return (
-        <block
-            ref={ref}
-            args={[
-                {
-                    width: 1,
-                    height: 0.5,
-                    fontSize: 0.1,
-                    backgroundOpacity: 1,
-                    fontFamily: "./Roboto-msdf.json",
-                    fontTexture: "./Roboto-msdf.png"
-                }
-            ]}
-        ></block>
-    );
-};
 
 const ChartPanel = ({data}: any) => {
     const ref = useRef<Object3D>();
     const { gl, scene } = useThree();
     const rightController = useController("right");
-    let textureData = null;
-    let setTextureData:any = null;
     const raycaster = new Raycaster();
     let localPos = new Vector3(0,0,0);
     const geometry = new THREE.SphereGeometry( 0.01, 32, 16 );
@@ -63,6 +25,10 @@ const ChartPanel = ({data}: any) => {
     
     const localCoord = new Vector2(0,0);
 
+    const [textureData, setTextureData] = useState("");
+    const loader = new THREE.TextureLoader();
+
+    // @ts-ignore
     const [chart, setChart] = useState(new Chart(canvas.getContext('2d'), {
         type: "bar",
         data: {
@@ -123,11 +89,6 @@ const ChartPanel = ({data}: any) => {
     }));
 
     scene.add( sphere );
-
-    const onChildMount = (dataFromChild: any) => {
-        textureData = dataFromChild[0];
-        setTextureData = dataFromChild[1];
-    };
     
     useEffect(() => {
 
@@ -136,10 +97,15 @@ const ChartPanel = ({data}: any) => {
             // console.log('click received');
             // sphere.material.copy(new THREE.MeshBasicMaterial( { color: 0xff0000 } ));
         // }
+
+        loader.load(textureData, texture => {
+            // @ts-ignore
+            ref.current.set({backgroundTexture: texture});
+        });
     });
 
 
-    useFrame((state, delta) => {
+    useFrame((time, xFrame) => {
 
         if (!ref.current) 
             return;
@@ -183,6 +149,7 @@ const ChartPanel = ({data}: any) => {
         
     });
 
+    // @ts-ignore
     useInteraction(ref, 'onSelect', () => {
         const event = new MouseEvent('click', {
             clientX: localCoord.x,
@@ -193,10 +160,12 @@ const ChartPanel = ({data}: any) => {
         // console.log('click sent')
     });
 
+    // @ts-ignore
     useInteraction(ref, 'onHover', () => {
         hover = true;
     });
 
+    // @ts-ignore
     useInteraction(ref, 'onBlur', () => {
         hover = false;
     });
@@ -209,18 +178,12 @@ const ChartPanel = ({data}: any) => {
                     width: 1,
                     height: 0.5,
                     fontSize: 0.1,
-                    backgroundOpacity: 0,
+                    backgroundOpacity: 1,
                     fontFamily: "./Roboto-msdf.json",
                     fontTexture: "./Roboto-msdf.png"
                 }
             ]}
-        >
-            <ChartObject
-                // textureData={textureData}
-                onMount={onChildMount}
-            ></ChartObject>
-        </block>
-        
+        ></block>
     );
 };
 

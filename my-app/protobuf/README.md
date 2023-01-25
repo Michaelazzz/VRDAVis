@@ -1,1 +1,0 @@
-# vrdavis-protobuf

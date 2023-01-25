@@ -1,0 +1,9 @@
+syntax = "proto3";
+package VRDAVis;
+
+import "enums.proto";
+import "defs.proto";
+
+message CubeData {
+    repeated Cubelet cubes = 1;
+}

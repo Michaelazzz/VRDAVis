@@ -2,91 +2,145 @@ import * as $protobuf from "protobufjs";
 /** Namespace VRDAVis. */
 export namespace VRDAVis {
 
-    /** Properties of a VolumeDataCube. */
-    interface IVolumeDataCube {
+    /** Properties of a Cubelet. */
+    interface ICubelet {
 
-        /** VolumeDataCube volumeData */
+        /** Cubelet layer */
+        layer?: (number|null);
+
+        /** Cubelet x */
+        x?: (number|null);
+
+        /** Cubelet y */
+        y?: (number|null);
+
+        /** Cubelet z */
+        z?: (number|null);
+
+        /** Cubelet width */
+        width?: (number|null);
+
+        /** Cubelet height */
+        height?: (number|null);
+
+        /** Cubelet length */
+        length?: (number|null);
+
+        /** Cubelet volumeData */
         volumeData?: (Uint8Array|null);
+
+        /** Cubelet nanEncodings */
+        nanEncodings?: (Uint8Array|null);
+
+        /** Cubelet mip */
+        mip?: (number|null);
     }
 
-    /** Represents a VolumeDataCube. */
-    class VolumeDataCube implements IVolumeDataCube {
+    /** Represents a Cubelet. */
+    class Cubelet implements ICubelet {
 
         /**
-         * Constructs a new VolumeDataCube.
+         * Constructs a new Cubelet.
          * @param [properties] Properties to set
          */
-        constructor(properties?: VRDAVis.IVolumeDataCube);
+        constructor(properties?: VRDAVis.ICubelet);
 
-        /** VolumeDataCube volumeData. */
+        /** Cubelet layer. */
+        public layer: number;
+
+        /** Cubelet x. */
+        public x: number;
+
+        /** Cubelet y. */
+        public y: number;
+
+        /** Cubelet z. */
+        public z: number;
+
+        /** Cubelet width. */
+        public width: number;
+
+        /** Cubelet height. */
+        public height: number;
+
+        /** Cubelet length. */
+        public length: number;
+
+        /** Cubelet volumeData. */
         public volumeData: Uint8Array;
 
+        /** Cubelet nanEncodings. */
+        public nanEncodings: Uint8Array;
+
+        /** Cubelet mip. */
+        public mip: number;
+
         /**
-         * Creates a new VolumeDataCube instance using the specified properties.
+         * Creates a new Cubelet instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns VolumeDataCube instance
+         * @returns Cubelet instance
          */
-        public static create(properties?: VRDAVis.IVolumeDataCube): VRDAVis.VolumeDataCube;
+        public static create(properties?: VRDAVis.ICubelet): VRDAVis.Cubelet;
 
         /**
-         * Encodes the specified VolumeDataCube message. Does not implicitly {@link VRDAVis.VolumeDataCube.verify|verify} messages.
-         * @param message VolumeDataCube message or plain object to encode
+         * Encodes the specified Cubelet message. Does not implicitly {@link VRDAVis.Cubelet.verify|verify} messages.
+         * @param message Cubelet message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: VRDAVis.IVolumeDataCube, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: VRDAVis.ICubelet, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified VolumeDataCube message, length delimited. Does not implicitly {@link VRDAVis.VolumeDataCube.verify|verify} messages.
-         * @param message VolumeDataCube message or plain object to encode
+         * Encodes the specified Cubelet message, length delimited. Does not implicitly {@link VRDAVis.Cubelet.verify|verify} messages.
+         * @param message Cubelet message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: VRDAVis.IVolumeDataCube, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: VRDAVis.ICubelet, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a VolumeDataCube message from the specified reader or buffer.
+         * Decodes a Cubelet message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns VolumeDataCube
+         * @returns Cubelet
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): VRDAVis.VolumeDataCube;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): VRDAVis.Cubelet;
 
         /**
-         * Decodes a VolumeDataCube message from the specified reader or buffer, length delimited.
+         * Decodes a Cubelet message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns VolumeDataCube
+         * @returns Cubelet
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): VRDAVis.VolumeDataCube;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): VRDAVis.Cubelet;
 
         /**
-         * Verifies a VolumeDataCube message.
+         * Verifies a Cubelet message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a VolumeDataCube message from a plain object. Also converts values to their respective internal types.
+         * Creates a Cubelet message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns VolumeDataCube
+         * @returns Cubelet
          */
-        public static fromObject(object: { [k: string]: any }): VRDAVis.VolumeDataCube;
+        public static fromObject(object: { [k: string]: any }): VRDAVis.Cubelet;
 
         /**
-         * Creates a plain object from a VolumeDataCube message. Also converts values to other types if specified.
-         * @param message VolumeDataCube
+         * Creates a plain object from a Cubelet message. Also converts values to other types if specified.
+         * @param message Cubelet
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: VRDAVis.VolumeDataCube, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: VRDAVis.Cubelet, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this VolumeDataCube to JSON.
+         * Converts this Cubelet to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -97,13 +151,205 @@ export namespace VRDAVis {
         EMPTY_EVENT = 0,
         REGISTER_VIEWER = 1,
         REGISTER_VIEWER_ACK = 2,
-        VOLUME_DATA = 32
+        CUBE_DATA = 3
     }
 
     /** SessionType enum. */
     enum SessionType {
         NEW = 0,
         RESUMED = 1
+    }
+
+    /** Properties of an AddRequiredCubes. */
+    interface IAddRequiredCubes {
+
+        /** AddRequiredCubes fileId */
+        fileId?: (number|null);
+
+        /** AddRequiredCubes cubes */
+        cubes?: (number[]|null);
+    }
+
+    /** Represents an AddRequiredCubes. */
+    class AddRequiredCubes implements IAddRequiredCubes {
+
+        /**
+         * Constructs a new AddRequiredCubes.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: VRDAVis.IAddRequiredCubes);
+
+        /** AddRequiredCubes fileId. */
+        public fileId: number;
+
+        /** AddRequiredCubes cubes. */
+        public cubes: number[];
+
+        /**
+         * Creates a new AddRequiredCubes instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AddRequiredCubes instance
+         */
+        public static create(properties?: VRDAVis.IAddRequiredCubes): VRDAVis.AddRequiredCubes;
+
+        /**
+         * Encodes the specified AddRequiredCubes message. Does not implicitly {@link VRDAVis.AddRequiredCubes.verify|verify} messages.
+         * @param message AddRequiredCubes message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: VRDAVis.IAddRequiredCubes, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AddRequiredCubes message, length delimited. Does not implicitly {@link VRDAVis.AddRequiredCubes.verify|verify} messages.
+         * @param message AddRequiredCubes message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: VRDAVis.IAddRequiredCubes, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AddRequiredCubes message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AddRequiredCubes
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): VRDAVis.AddRequiredCubes;
+
+        /**
+         * Decodes an AddRequiredCubes message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AddRequiredCubes
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): VRDAVis.AddRequiredCubes;
+
+        /**
+         * Verifies an AddRequiredCubes message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AddRequiredCubes message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AddRequiredCubes
+         */
+        public static fromObject(object: { [k: string]: any }): VRDAVis.AddRequiredCubes;
+
+        /**
+         * Creates a plain object from an AddRequiredCubes message. Also converts values to other types if specified.
+         * @param message AddRequiredCubes
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: VRDAVis.AddRequiredCubes, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AddRequiredCubes to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RemoveRequiredTiles. */
+    interface IRemoveRequiredTiles {
+
+        /** RemoveRequiredTiles fileId */
+        fileId?: (number|null);
+
+        /** RemoveRequiredTiles cubes */
+        cubes?: (number[]|null);
+    }
+
+    /** Represents a RemoveRequiredTiles. */
+    class RemoveRequiredTiles implements IRemoveRequiredTiles {
+
+        /**
+         * Constructs a new RemoveRequiredTiles.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: VRDAVis.IRemoveRequiredTiles);
+
+        /** RemoveRequiredTiles fileId. */
+        public fileId: number;
+
+        /** RemoveRequiredTiles cubes. */
+        public cubes: number[];
+
+        /**
+         * Creates a new RemoveRequiredTiles instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RemoveRequiredTiles instance
+         */
+        public static create(properties?: VRDAVis.IRemoveRequiredTiles): VRDAVis.RemoveRequiredTiles;
+
+        /**
+         * Encodes the specified RemoveRequiredTiles message. Does not implicitly {@link VRDAVis.RemoveRequiredTiles.verify|verify} messages.
+         * @param message RemoveRequiredTiles message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: VRDAVis.IRemoveRequiredTiles, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RemoveRequiredTiles message, length delimited. Does not implicitly {@link VRDAVis.RemoveRequiredTiles.verify|verify} messages.
+         * @param message RemoveRequiredTiles message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: VRDAVis.IRemoveRequiredTiles, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RemoveRequiredTiles message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RemoveRequiredTiles
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): VRDAVis.RemoveRequiredTiles;
+
+        /**
+         * Decodes a RemoveRequiredTiles message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RemoveRequiredTiles
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): VRDAVis.RemoveRequiredTiles;
+
+        /**
+         * Verifies a RemoveRequiredTiles message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RemoveRequiredTiles message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RemoveRequiredTiles
+         */
+        public static fromObject(object: { [k: string]: any }): VRDAVis.RemoveRequiredTiles;
+
+        /**
+         * Creates a plain object from a RemoveRequiredTiles message. Also converts values to other types if specified.
+         * @param message RemoveRequiredTiles
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: VRDAVis.RemoveRequiredTiles, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RemoveRequiredTiles to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a RegisterViewer. */
@@ -298,91 +544,145 @@ export namespace VRDAVis {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a VolumeData. */
-    interface IVolumeData {
+    /** Properties of a CubeData. */
+    interface ICubeData {
 
-        /** VolumeData cubes */
-        cubes?: (VRDAVis.IVolumeDataCube[]|null);
+        /** CubeData layer */
+        layer?: (number|null);
+
+        /** CubeData x */
+        x?: (number|null);
+
+        /** CubeData y */
+        y?: (number|null);
+
+        /** CubeData z */
+        z?: (number|null);
+
+        /** CubeData width */
+        width?: (number|null);
+
+        /** CubeData height */
+        height?: (number|null);
+
+        /** CubeData length */
+        length?: (number|null);
+
+        /** CubeData volumeData */
+        volumeData?: (Uint8Array|null);
+
+        /** CubeData nanEncodings */
+        nanEncodings?: (Uint8Array|null);
+
+        /** CubeData mip */
+        mip?: (number|null);
     }
 
-    /** Represents a VolumeData. */
-    class VolumeData implements IVolumeData {
+    /** Represents a CubeData. */
+    class CubeData implements ICubeData {
 
         /**
-         * Constructs a new VolumeData.
+         * Constructs a new CubeData.
          * @param [properties] Properties to set
          */
-        constructor(properties?: VRDAVis.IVolumeData);
+        constructor(properties?: VRDAVis.ICubeData);
 
-        /** VolumeData cubes. */
-        public cubes: VRDAVis.IVolumeDataCube[];
+        /** CubeData layer. */
+        public layer: number;
+
+        /** CubeData x. */
+        public x: number;
+
+        /** CubeData y. */
+        public y: number;
+
+        /** CubeData z. */
+        public z: number;
+
+        /** CubeData width. */
+        public width: number;
+
+        /** CubeData height. */
+        public height: number;
+
+        /** CubeData length. */
+        public length: number;
+
+        /** CubeData volumeData. */
+        public volumeData: Uint8Array;
+
+        /** CubeData nanEncodings. */
+        public nanEncodings: Uint8Array;
+
+        /** CubeData mip. */
+        public mip: number;
 
         /**
-         * Creates a new VolumeData instance using the specified properties.
+         * Creates a new CubeData instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns VolumeData instance
+         * @returns CubeData instance
          */
-        public static create(properties?: VRDAVis.IVolumeData): VRDAVis.VolumeData;
+        public static create(properties?: VRDAVis.ICubeData): VRDAVis.CubeData;
 
         /**
-         * Encodes the specified VolumeData message. Does not implicitly {@link VRDAVis.VolumeData.verify|verify} messages.
-         * @param message VolumeData message or plain object to encode
+         * Encodes the specified CubeData message. Does not implicitly {@link VRDAVis.CubeData.verify|verify} messages.
+         * @param message CubeData message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: VRDAVis.IVolumeData, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: VRDAVis.ICubeData, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified VolumeData message, length delimited. Does not implicitly {@link VRDAVis.VolumeData.verify|verify} messages.
-         * @param message VolumeData message or plain object to encode
+         * Encodes the specified CubeData message, length delimited. Does not implicitly {@link VRDAVis.CubeData.verify|verify} messages.
+         * @param message CubeData message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: VRDAVis.IVolumeData, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: VRDAVis.ICubeData, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a VolumeData message from the specified reader or buffer.
+         * Decodes a CubeData message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns VolumeData
+         * @returns CubeData
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): VRDAVis.VolumeData;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): VRDAVis.CubeData;
 
         /**
-         * Decodes a VolumeData message from the specified reader or buffer, length delimited.
+         * Decodes a CubeData message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns VolumeData
+         * @returns CubeData
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): VRDAVis.VolumeData;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): VRDAVis.CubeData;
 
         /**
-         * Verifies a VolumeData message.
+         * Verifies a CubeData message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a VolumeData message from a plain object. Also converts values to their respective internal types.
+         * Creates a CubeData message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns VolumeData
+         * @returns CubeData
          */
-        public static fromObject(object: { [k: string]: any }): VRDAVis.VolumeData;
+        public static fromObject(object: { [k: string]: any }): VRDAVis.CubeData;
 
         /**
-         * Creates a plain object from a VolumeData message. Also converts values to other types if specified.
-         * @param message VolumeData
+         * Creates a plain object from a CubeData message. Also converts values to other types if specified.
+         * @param message CubeData
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: VRDAVis.VolumeData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: VRDAVis.CubeData, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this VolumeData to JSON.
+         * Converts this CubeData to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

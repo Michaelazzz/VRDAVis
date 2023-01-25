@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {action, computed, makeObservable, observable} from "mobx";
 
 const MAX_CHUNK_SIZE = 262144;
