@@ -1,26 +1,29 @@
 import React, { useContext, useEffect, useState } from "react";
-import {VRCanvas, DefaultXRControllers, Interactive, RayGrab} from "@react-three/xr";
-import {Box, Plane} from "@react-three/drei";
+import { XR, Controllers, Interactive, RayGrab, XRButton, VRButton} from "@react-three/xr";
+import { Canvas } from '@react-three/fiber'
+// import {Box, Plane} from "@react-three/drei";
 import * as THREE from "three";
 import CssBaseline from '@mui/material/CssBaseline';
-
 import HandMenu from "./components/HandMenu";
 import DataObject from "./components/DataObject";
 import WorldspaceMenu from "./components/WorldspaceMenu";
-import { PairingMenu } from "./components/PairingMenu";
-import BrowserMenu from "./components/BrowserMenu";
+import { PairingMenu } from "./components/browser UI/PairingMenu";
+import BrowserMenu from "./components/browser UI/BrowserMenu";
 import { RootContext } from "./store.context";
 import { observer } from "mobx-react";
+import { BackendMenu } from "./components/browser UI/BackendMenu";
 
 const AppView: React.FC = () => {
 
-    const { signallingStore } = useContext(RootContext);
+    const { signallingStore, backendStore } = useContext(RootContext);
     const paired = signallingStore.getPaired();
     const pairedDeviceId = signallingStore.getPairedDeviceId();
 
     useEffect(() => {
-        signallingStore.start();
-    }, []);
+        // appStore.initVRDAVis();
+        // signallingStore.start();
+        backendStore.start();
+    }, [backendStore]);
 
     let height = 128;
     let width = 128;
@@ -46,36 +49,38 @@ const AppView: React.FC = () => {
                         <p>{pairedDeviceId}</p>
                     </>
                 }
+                <BackendMenu/>
             </BrowserMenu>
             
-            <VRCanvas>
-                <color 
-                    attach="background" 
-                    args={["#DBE9EE"]} 
-                />
+            <VRButton />
+            <Canvas>
+                <XR>
+                    <color 
+                        attach="background" 
+                        args={["#DBE9EE"]} 
+                    />
 
-                <ambientLight intensity={1} />
-                {/* <pointLight position={[10, 10, 10]} /> */}
-                
-                <Plane 
+                    <ambientLight intensity={0.5} />
+                    {/* <pointLight position={[10, 10, 10]} /> */}
+
+                    <mesh
+                        position={new THREE.Vector3(0, 0, 0)}
+                        rotation={new THREE.Euler(-Math.PI / 2, 0, 0)} 
+                    >
+                        <planeGeometry attach="geometry" args={[10, 10]} />
+                        <meshPhongMaterial attach="material" color="C0D6DF" />
+                    </mesh>
+
+                    <Controllers />
+
+                    {/* <HandMenu /> */}
+
+                    {/* <WorldspaceMenu position={[1,1.5,-1.5]} /> */}
                     
-                    position={[0, 0, 0]} 
-                    rotation={[Math.PI / 2, 0, 0]} 
-                    scale={[10, 10, 10]}
-                >
-                    <meshStandardMaterial color="#C0D6DF" side={THREE.DoubleSide} />
-                </Plane>
 
-                <DefaultXRControllers />
-
-                {/* <HandMenu /> */}
-
-                {/* <WorldspaceMenu position={[1,1.5,-1.5]} /> */}
-                
-
-                <DataObject data={data} height={height} width={width} depth={depth} />
-                
-            </VRCanvas>
+                    <DataObject data={data} height={height} width={width} depth={depth} />
+                </XR>
+            </Canvas>
         </>
     );
 }

@@ -1,13 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, useIntersect } from '@react-three/drei';
 import { RayGrab, useController, useInteraction, useXR, useXREvent } from '@react-three/xr';
-import { useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber'
 
 import * as THREE from 'three';
 
 import { VolumeShader } from '../shaders/VolumeShader';
 import createColormap from 'colormap';
-
 
 const DataObject = ({data, width, height, depth}: any) => {
 
@@ -33,17 +31,30 @@ const DataObject = ({data, width, height, depth}: any) => {
     let prevRightPos = rightController?.controller.position;
     let prevLeftPos = leftController?.controller.position;
 
+    let cmData = new Float32Array(100*4);
+
     // @ts-ignore
     let texture: THREE.Data3DTexture;
+    texture = new THREE.Data3DTexture(data, width, height, depth);
     let colormap: THREE.DataTexture;
+    colormap = new THREE.DataTexture(cmData, 100, 1);
     let material: THREE.ShaderMaterial;
+    material = new THREE.ShaderMaterial({
+        uniforms: {
+            u_textureData: { value: texture },
+            // u_threshold: { value: 0.25 },
+            // u_range: { value: 0.1 },
+            // u_steps: { value: 100 },
+            u_colourMap: { value: colormap },
+        },
+        vertexShader: VolumeShader.vertexShader,
+        fragmentShader: VolumeShader.fradgmentShader,
+        side: THREE.BackSide,
+        transparent: true
+    });
     let geometry = new THREE.BoxGeometry(1,1,1);
     let dataCube: THREE.Mesh;
-
-    let colourMaps = {
-        viridis: new THREE.TextureLoader().load('../colour-maps/cm_viridis.png'),
-        // gray: new THREE.TextureLoader().load( 'textures/cm_gray.png', render )
-    };
+    dataCube = new THREE.Mesh(geometry, material);
 
     let cm = createColormap({
         colormap: 'jet',
@@ -51,8 +62,6 @@ const DataObject = ({data, width, height, depth}: any) => {
         format: 'float',
         alpha: 1
     });
-
-    let cmData = new Float32Array(100*4);
 
     for(let i=0; i<100; i++){
         const stride = i * 4;
@@ -67,7 +76,7 @@ const DataObject = ({data, width, height, depth}: any) => {
             return;
 
         // @ts-ignore
-        texture = new THREE.Data3DTexture(data, width, height, depth);
+        
         texture.format = THREE.RedFormat;
         texture.type = THREE.FloatType;
         texture.minFilter = THREE.LinearFilter;
@@ -75,29 +84,16 @@ const DataObject = ({data, width, height, depth}: any) => {
         texture.unpackAlignment = 1;
         texture.needsUpdate = true;
 
-        colormap = new THREE.DataTexture(cmData, 100, 1);
         colormap.type = THREE.FloatType;
         colormap.needsUpdate = true;
-
-        material = new THREE.ShaderMaterial({
-            uniforms: {
-                u_textureData: { value: texture },
-                // u_threshold: { value: 0.25 },
-                // u_range: { value: 0.1 },
-                // u_steps: { value: 100 },
-                u_colourMap: { value: colormap },
-            },
-            vertexShader: VolumeShader.vertexShader,
-            fragmentShader: VolumeShader.fradgmentShader,
-            side: THREE.BackSide,
-            transparent: true
-        });
+        
         // material.map = texture;
-        dataCube = new THREE.Mesh(geometry, material);
+        
         dataCube.frustumCulled = false;
         ref.current.add(dataCube);
-    },[data]);
+    }, [data]);
     
+
     useFrame(() => {
         if(!leftController || !rightController) {
             return;
@@ -158,14 +154,15 @@ const DataObject = ({data, width, height, depth}: any) => {
 
     });
     
+    // @ts-ignore
     useInteraction(ref, 'onSqueezeStart', (e) => {
-        if(e.controller.inputSource.handedness == 'right'){
-            rightSqueeze = true;
-        }
+        // if(e.controller.inputSource.handedness == 'right'){
+        //     rightSqueeze = true;
+        // }
 
-        if(e.controller.inputSource.handedness == 'left'){
-            leftSqueeze = true;
-        }
+        // if(e.controller.inputSource.handedness == 'left'){
+        //     leftSqueeze = true;
+        // }
     });
 
     useXREvent('squeezeend', () => {
@@ -176,15 +173,15 @@ const DataObject = ({data, width, height, depth}: any) => {
         leftSqueeze = false;
     }, {handedness: 'left'});
 
-
+    // @ts-ignore
     useInteraction(ref, 'onSelectStart', (e) => {
-        if(e.controller.inputSource.handedness == 'right'){
-            rightSelect = true;
-        }
+        // if(e.controller.inputSource.handedness == 'right'){
+        //     rightSelect = true;
+        // }
 
-        if(e.controller.inputSource.handedness == 'left'){
-            leftSelect = true;
-        }
+        // if(e.controller.inputSource.handedness == 'left'){
+        //     leftSelect = true;
+        // }
     });
 
     useXREvent('selectend', () => { 
@@ -212,6 +209,7 @@ const DataObject = ({data, width, height, depth}: any) => {
         //     <meshBasicMaterial color={'hotpink'} />
         // </mesh>
         <group 
+            // @ts-ignore
             ref={ref}
             position={[0,1.5,-2.5]}
         >

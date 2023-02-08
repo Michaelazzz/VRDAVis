@@ -1,8 +1,0 @@
-syntax = "proto3";
-package VRDAVis;
-
-import "enums.proto";
-
-message VolumeDataCube {
-    bytes volume_data = 1;
-}

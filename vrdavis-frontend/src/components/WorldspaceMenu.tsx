@@ -59,14 +59,15 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
         ref.current.lookAt(player.position.y, ref.current.position.y, player.position.z);
     });
 
+    // @ts-ignore
     useInteraction(ref, 'onSqueezeStart', (e) => {
-        if(e.controller.inputSource.handedness == 'right'){
-            rightSqueeze = true;
-        }
+        // if(e.controller.inputSource.handedness == 'right'){
+        //     rightSqueeze = true;
+        // }
 
-        if(e.controller.inputSource.handedness == 'left'){
-            leftSqueeze = true;
-        }
+        // if(e.controller.inputSource.handedness == 'left'){
+        //     leftSqueeze = true;
+        // }
     });
 
     useXREvent('squeezeend', () => {
@@ -77,15 +78,15 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
         leftSqueeze = false;
     }, {handedness: 'left'});
 
-
+    // @ts-ignore
     useInteraction(ref, 'onSelectStart', (e) => {
-        if(e.controller.inputSource.handedness == 'right'){
-            rightSelect = true;
-        }
+        // if(e.controller.inputSource.handedness == 'right'){
+        //     rightSelect = true;
+        // }
 
-        if(e.controller.inputSource.handedness == 'left'){
-            leftSelect = true;
-        }
+        // if(e.controller.inputSource.handedness == 'left'){
+        //     leftSelect = true;
+        // }
     });
 
     useXREvent('selectend', () => { 
@@ -98,6 +99,7 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
 
 
     return (
+        // @ts-ignore
         <group ref={ref} position={ position }>
             <Panel 
                 height={1}
