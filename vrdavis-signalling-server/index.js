@@ -160,7 +160,7 @@ const getDevicePair = async (id) => {
         pairs.forEach(pair => {
             if(pair.desktopDevice === id || pair.vrDevice === id)
                 // console.log(pair)
-                return Jpair;
+                return pair;
         });
     }
     return null;
