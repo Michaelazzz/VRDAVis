@@ -16,12 +16,16 @@ await db.read();
 
 if(db) log('[info] Database connected');
 
-console.log(process.env);
+const PORT = process.env.PORT || 3003;
 
-const PORT = process.env.PORT || 8080;
-// const PORT = 80;
 const server = http.createServer(express);
 const wss = new WebSocketServer({ server });
+
+const app = express();
+
+// app.get('/', function (req, res) {
+//     res.sendFile(__dirname + '/index.html');
+// });
 
 wss.on('connection', function connection(ws) {
     const pairingCodes = new Array();
