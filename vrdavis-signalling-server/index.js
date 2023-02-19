@@ -18,14 +18,13 @@ if(db) log('[info] Database connected');
 
 const PORT = process.env.PORT || 3003;
 
-const server = http.createServer(express);
+const app = express();
+const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
-const app = express();
-
-// app.get('/', function (req, res) {
-//     res.sendFile(__dirname + '/index.html');
-// });
+app.get('*', function (req, res) {
+     res.send('Hello World!');
+});
 
 wss.on('connection', function connection(ws) {
     const pairingCodes = new Array();
