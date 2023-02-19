@@ -21,8 +21,8 @@ const AppView: React.FC = () => {
 
     useEffect(() => {
         // appStore.initVRDAVis();
-        // signallingStore.start();
-        backendStore.start();
+        signallingStore.start();
+        // backendStore.start();
     }, [backendStore]);
 
     let height = 128;

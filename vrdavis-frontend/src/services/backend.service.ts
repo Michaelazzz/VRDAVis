@@ -74,7 +74,7 @@ export class BackendService {
     private deferredMap: Map<number, Deferred<IBackendResponse>>;
     private eventCounter: number;
 
-    readonly volumeDataStream: Subject<VRDAVis.VolumeData>;
+    // readonly volumeDataStream: Subject<VRDAVis.VolumeData>;
     
     private readonly decoderMap: Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>;
 
@@ -89,12 +89,12 @@ export class BackendService {
         this.sessionId = 0;
         this.endToEndPing = NaN;
         this.connectionStatus = ConnectionStatus.CLOSED;
-        this.volumeDataStream = new Subject<VRDAVis.VolumeData>();
+        // this.volumeDataStream = new Subject<VRDAVis.VolumeData>();
 
         // Construct handler and decoder maps
         this.decoderMap = new Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>([
             [VRDAVis.EventType.REGISTER_VIEWER_ACK, {decoder: VRDAVis.RegisterViewerAck.decode, handler: this.onRegisterViewerAck}],
-            [VRDAVis.EventType.VOLUME_DATA, {decoder: VRDAVis.VolumeData.decode, handler: this.onStreamedVolumeData}],
+            // [VRDAVis.EventType.VOLUME_DATA, {decoder: VRDAVis.VolumeData.decode, handler: this.onStreamedVolumeData}],
         ]);
 
         // check ping every 5 seconds
@@ -241,9 +241,9 @@ export class BackendService {
         this.onDeferredResponse(eventId, ack);
     };
 
-    private onStreamedVolumeData(_eventId: number, volumeData: VRDAVis.VolumeData) {
-        this.volumeDataStream.next(volumeData);
-    }
+    // private onStreamedVolumeData(_eventId: number, volumeData: VRDAVis.VolumeData) {
+    //     this.volumeDataStream.next(volumeData);
+    // }
 
     private sendEvent(eventType: VRDAVis.EventType, payload: Uint8Array): boolean {
         if (this.connection.readyState === WebSocket.OPEN) {
