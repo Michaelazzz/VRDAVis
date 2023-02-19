@@ -11,7 +11,7 @@ export interface DataCube {
 }
 
 export interface CompressedTile {
-    tile: VRDAVis.IVolumeData;
+    // tile: VRDAVis.IVolumeData;
     compressionQuality: number;
 }
 
@@ -40,31 +40,31 @@ interface CubeMessageArgs {
 }
 
 export class CubeService {
-    private static staticInstance: CubeService;
+    // private static staticInstance: CubeService;
 
-    static get Instance() {
-        if (!CubeService.staticInstance) {
-            CubeService.staticInstance = new CubeService();
-        }
-        return CubeService.staticInstance;   
-    }
+    // static get Instance() {
+    //     if (!CubeService.staticInstance) {
+    //         CubeService.staticInstance = new CubeService();
+    //     }
+    //     return CubeService.staticInstance;   
+    // }
 
-    private readonly backendService: BackendService;
-    readonly volumeDataStream: Subject<CubeStreamDetails>;
+    // private readonly backendService: BackendService;
+    // readonly volumeDataStream: Subject<CubeStreamDetails>;
 
-    private constructor() {
-        makeObservable(this);
-        this.backendService = BackendService.Instance;
+    // private constructor() {
+    //     makeObservable(this);
+    //     this.backendService = BackendService.Instance;
 
-        this.volumeDataStream = new Subject<CubeStreamDetails>();
-        this.backendService.volumeDataStream.subscribe(this.handleStreamedCubes);
-    }
+    //     this.volumeDataStream = new Subject<CubeStreamDetails>();
+    //     this.backendService.volumeDataStream.subscribe(this.handleStreamedCubes);
+    // }
 
-    handleStreamedCubes = (cubeMessage: VRDAVis.IVolumeData) => {
-        console.log(cubeMessage);
-    }
+    // handleStreamedCubes = (cubeMessage: VRDAVis.IVolumeData) => {
+    //     console.log(cubeMessage);
+    // }
 
-    requestCubeData = () => {
-        this.backendService.requestData();
-    }
+    // requestCubeData = () => {
+    //     this.backendService.requestData();
+    // }
 }
