@@ -241,10 +241,10 @@ server.listen(PORT, function() {
     log(`Server is listening on port ${PORT}`);
 })
 
-// if(wss)
-//     log("Signaling server listening on port " + PORT);
-// else
-//     log("ERROR: Unable to create WebSocket server!");
+if(wss)
+    log("Signaling server listening on port " + PORT);
+else
+    log("ERROR: Unable to create WebSocket server!");
 
 // wss.on('connection', function connection(ws) {
 //     log('[open] Client connected');
