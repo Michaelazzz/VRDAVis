@@ -20,12 +20,12 @@ const PORT = process.env.PORT || 3003;
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
 
 app.get('*', function (req, res) {
-     res.send('Hello World!');
+    res.send('Hello World!');
 });
 
+const wss = new WebSocketServer({ server });
 wss.on('connection', function connection(ws) {
     const pairingCodes = new Array();
     let pairingDeviceId;
