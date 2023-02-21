@@ -2,10 +2,10 @@
   "name": "vrdavis-signaling-server",
   "version": "1.0.0",
   "description": "Signaling server for VRDAVis",
-  "main": "index.js",
+  "main": "test.cjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node test.cjs"
   },
   "author": "Michaela van Zyl",
   "license": "MIT",
