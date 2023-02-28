@@ -17,6 +17,7 @@ await db.read();
 if(db) log('[info] Database connected');
 
 const PORT = process.env.PORT || 3003;
+// const PORT = process.env.PORT || 8080;
 
 const app = express();
 const server = http.createServer(app);
@@ -88,7 +89,7 @@ wss.on('connection', function connection(ws) {
                 pairingDeviceId = msg.data.uuid;
                 pairingDeviceName = msg.data.name;
                 pairingCodes.push(msg.data.code);
-                requestPairConfirmation(msg.data.device);
+                requestPairConfirmation(msg.data.uuid);
                 break;
             case 'pair-code-confrimation-response':
                 pairingCodes.push(msg.data.code)

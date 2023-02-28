@@ -13,6 +13,7 @@ const PairingMenuView: React.FC = () => {
     const { signallingStore } = useContext(RootContext);
     const availableDevices = signallingStore.getDevices();
     const connectionStatus = signallingStore.getConnectionStatus();
+    const codeConfirmationStatus = signallingStore.getCodeConfirmation();
     const paired = signallingStore.getPaired();
     const pairedDeviceId = signallingStore.getPairedDeviceId();
     const pairedDeviceName = signallingStore.getPairedDeviceName();
@@ -97,7 +98,7 @@ const PairingMenuView: React.FC = () => {
                 </>
             }
             <BasicModal
-                open={signallingStore.getCodeConfirmation()}
+                open={codeConfirmationStatus}
                 handleClose={handleBasicModalClose}
             >
                 <Typography id="modal-modal-title" variant="h6" component="h2">

@@ -36,10 +36,10 @@ const DeviceCredentialsView: React.FC = () => {
                 buttonText='add device name'
             >
                 <Typography id="modal-modal-title" variant="h6" component="h2">
-                    Confirmation code:
+                    Device name:
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Please enter a number to confirm your connection on this device.
+                    Please enter a name you would like to use for this device.
                 </Typography>
                 <Stack spacing={2} direction="row">
                     <TextField 
