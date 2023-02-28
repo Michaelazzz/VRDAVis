@@ -15,16 +15,20 @@ export class SignallingStore {
     vrCapable: boolean;
     codeConfrimatiom: boolean;
     uuid: string;
+    name: string;
     iceCredentials: string;
     paired: boolean;
     pairedDeviceId: string;
+    pairedDeviceName: string;
 
     private devices: any[];
+    private pairs: any[];
 
     constructor() {
         makeAutoObservable(this);
 
         this.devices = new Array<any>();
+        this.pairs = new Array<any>();
         this.codeConfrimatiom = false;
         this.connected = false;
 
@@ -35,10 +39,17 @@ export class SignallingStore {
             this.uuid = localStorage.getItem('vrdavis-id');
         else
             localStorage.setItem('vrdavis-id', uuidv1());
+
+        if(localStorage.getItem('vrdavis-device-name'))
+            this.name = localStorage.getItem('vrdavis-device-name')
+        else
+            this.name = 'no name';
+
     }
 
     async start() {
-        this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
+        // this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
+        this.socket = new WebSocket('ws://localhost:8080');
 
         this.socket.onopen = (event) => {
             console.log('[open] Connection established');
@@ -47,6 +58,7 @@ export class SignallingStore {
                 type: 'open',
                 data: {
                     id: this.uuid,
+                    name: this.name,     
                     vr: this.vrCapable
                 }
             });
@@ -62,9 +74,13 @@ export class SignallingStore {
             const msg = JSON.parse(event.data);
 
             switch (msg.type) {
+                case 'pairs':
+                    this.setPairs(msg.data.pairs)
+                    break;
                 case 'paired':
                     this.setPaired(msg.data.paired);
                     this.setPairedDeviceId(msg.data.pairId);
+                    this.setPairedDeviceName(msg.data.pairedName);
                     break;
                 case 'devices':
                     this.setDevices(msg.data.devices);
@@ -116,7 +132,7 @@ export class SignallingStore {
     }
 
     setDevices(newDevices: any[]) {
-        this.devices = [...newDevices]
+        this.devices = [...newDevices];
     }
 
     getCodeConfirmation() {
@@ -143,7 +159,43 @@ export class SignallingStore {
         this.pairedDeviceId = pairedId;
     }
 
+    setPairedDeviceName(pairedName: string) {
+        this.pairedDeviceName = pairedName;
+    }
+
+    getPairedDeviceName() {
+        return this.pairedDeviceName;
+    }
+
     getConnectionStatus() {
         return this.connected;
+    }
+
+    getVRStatus() {
+        return this.vrCapable;
+    }
+
+    getDeviceName() {
+        return this.name;
+    }
+
+    setDeviceName(name: string) {
+        localStorage.setItem('vrdavis-device-name', name);
+        this.name = localStorage.getItem('vrdavis-device-name');
+    }
+
+    requestDevicePairs() {
+        this.sendMessage({ 
+            type: 'get-pairs',
+            data: {}
+        });
+    }
+
+    getPairs() {
+        return this.pairs;
+    }
+
+    setPairs(newPairs: any[]) {
+        this.pairs = [...newPairs]
     }
 }

@@ -16,7 +16,7 @@ await db.read();
 
 if(db) log('[info] Database connected');
 
-const PORT = process.env.PORT || 3003;
+const PORT = process.env.PORT || 3030;
 
 const app = express();
 const server = http.createServer(app);
@@ -29,6 +29,7 @@ const wss = new WebSocketServer({ server });
 wss.on('connection', function connection(ws) {
     const pairingCodes = new Array();
     let pairingDeviceId;
+    let pairingDeviceName;
 
     ws.on('message', async function message(data) {
         log(`[received] ${data}`);
@@ -36,18 +37,33 @@ wss.on('connection', function connection(ws) {
         let msg = JSON.parse(data);
 
         switch (msg.type) {
+            case 'clear-pairs': 
+                await clearPairs();
+                break;
+            case 'get-pairs':
+                ws.send(JSON.stringify({
+                    type: 'pairs',
+                    data: {
+                        pairs: await getPairs()
+                    }
+                }));
+                log('[send] Device pairs');
+                break;
             case 'open':
                 // check if device is paired
                 ws.id = msg.data.id;
                 ws.vr = msg.data.vr;
+                ws.name = msg.data.name;
+                let pairedDevice = await getPairedDevice(msg.data.id);
+                console.log(pairedDevice)
                 if(await isPaired(msg.data.id))
                 {
-                    // console.log(await getPairedDevice(msg.data.id));
                     ws.send(JSON.stringify({
                         type: 'paired',
                         data: {
                             paired: true,
-                            pairId: await getPairedDevice(msg.data.id)
+                            pairedId: pairedDevice.uuid,
+                            pairedName: pairedDevice.name
                         }
                     }));
                     log('[send] Device is already paired');
@@ -63,9 +79,14 @@ wss.on('connection', function connection(ws) {
                     }));
                     log('[send] Available devices');
                 }
+                ws.send(JSON.stringify({
+                    type: 'pairs',
+                    data: await getPairs()
+                }));
                 break;
             case 'pair-code':
-                pairingDeviceId = msg.data.device;
+                pairingDeviceId = msg.data.uuid;
+                pairingDeviceName = msg.data.name;
                 pairingCodes.push(msg.data.code);
                 requestPairConfirmation(msg.data.device);
                 break;
@@ -76,8 +97,14 @@ wss.on('connection', function connection(ws) {
                     log('[info] Pairing codes match');
                     const { pairs } = db.data
                     pairs.push({
-                        vrDevice: pairingDeviceId,
-                        desktopDevice: ws.id
+                        vrDevice: {
+                            name: pairingDeviceName,
+                            uuid: pairingDeviceId
+                        },
+                        desktopDevice: {
+                            name: ws.name,
+                            uuid: ws.id
+                        }
                     })
                     await db.write();
                     log('[info] Pair added to db');
@@ -85,7 +112,8 @@ wss.on('connection', function connection(ws) {
                         type: 'paired',
                         data: {
                             paired: true,
-                            pairId: pairingDeviceId
+                            pairId: pairingDeviceId,
+                            pairName: pairingDeviceName
                         }
                     }));
                     log('[send] Pairing confirmation');
@@ -120,12 +148,21 @@ wss.on('connection', function connection(ws) {
     });
 });
 
+const clearPairs = async () => {
+    db.data.pairs = [];
+    await db.write();
+};
+
+const getPairs = async () => {
+    return db.data;
+};
+
 const getAvailableVRDevices = async () => {
     const devices = new Array();
     wss.clients.forEach(function each(client) {
         // if(client != ws && client.readyState == WebSocket.OPEN) {
         if(client.readyState == WebSocket.OPEN && client.vr) {
-            devices.push(client.id);
+            devices.push({uuid: client.id, name: client.name});
         }
     });
     return devices;
@@ -149,7 +186,7 @@ const isPaired = async (id) => {
     let flag = false;
     if(pairs.length > 0) {
         pairs.forEach(pair => {
-            if(pair.vrDevice === id || pair.desktopDevice === id)
+            if(pair.vrDevice.uuid === id || pair.desktopDevice.uuid === id)
                 flag = true;
         });
     }
@@ -172,17 +209,17 @@ const getDevicePair = async (id) => {
 const getPairedDevice = async (id) => {
     await db.read();
     const { pairs } = db.data;
-    let pairedId = '';
+    let pairedDevice;
     if(pairs.length > 0) {
         pairs.forEach(pair => {
-            if(pair.desktopDevice === id)
-                pairedId = pair.desktopDevice;
-            else if (pair.vrDevice === id)
-                pairedId = pair.vrDevice;
+            if(pair.desktopDevice.uuid === id)
+                pairedDevice = pair.desktopDevice;
+            else if (pair.vrDevice.uuid === id)
+                pairedDevice = pair.vrDevice;
         });
     }
     else return null;
-    return pairedId;
+    return pairedDevice;
 }
 
 const sendOffer = async (id, offer) => {
@@ -221,13 +258,12 @@ const requestIceCredentials = async (id) => {
     let devicePair = null;
     if(pairs.length > 0) {
         pairs.forEach(pair => {
-            if(pair.desktopDevice === id || pair.vrDevice === id)
+            if(pair.desktopDevice.uuid === id || pair.vrDevice.uuid === id)
                 devicePair = pair
         });
     }
     wss.clients.forEach(function each(client) {
-        
-        if(client.id === devicePair.desktopDevice || client.id === devicePair.vrDevice) {
+        if(client.id === devicePair.desktopDevice.uuid || client.id === devicePair.vrDevice.uuid) {
             client.send(JSON.stringify({
                 type: 'ice-credentials-request',
                 data: {}
@@ -241,10 +277,10 @@ server.listen(PORT, function() {
     log(`Server is listening on port ${PORT}`);
 })
 
-if(wss)
-    log("Signaling server listening on port " + PORT);
-else
-    log("ERROR: Unable to create WebSocket server!");
+// if(wss)
+//     log("Signaling server listening on port " + PORT);
+// else
+//     log("ERROR: Unable to create WebSocket server!");
 
 // wss.on('connection', function connection(ws) {
 //     log('[open] Client connected');

@@ -13,6 +13,10 @@ const PairingMenuView: React.FC = () => {
     const { signallingStore } = useContext(RootContext);
     const availableDevices = signallingStore.getDevices();
     const connectionStatus = signallingStore.getConnectionStatus();
+    const paired = signallingStore.getPaired();
+    const pairedDeviceId = signallingStore.getPairedDeviceId();
+    const pairedDeviceName = signallingStore.getPairedDeviceName();
+    const pairs = signallingStore.getPairs();
 
     const [code, setCode] = useState('');
     const [confirmCode, setConfirmCode] = useState('');
@@ -31,15 +35,19 @@ const PairingMenuView: React.FC = () => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const codeConfirmation = signallingStore.getCodeConfirmation();
+    // const codeConfirmation = signallingStore.getCodeConfirmation();
     const handleBasicModalClose = () => signallingStore.setCodeConfirmation(false);
 
     return (
         <>
             <h2>Signalling Server</h2>
-            <p>Current Device ID: <br/> {localStorage.getItem('vrdavis-id')}</p>
-            {!connectionStatus && <p>Could not connect to signalling server</p> }
-            {availableDevices.length > 0 &&
+            {connectionStatus && pairs.length > 0 && pairs.map((item: any, index: number) => (
+                <p>VR device: {item.vrDevice.name} -&gt; Desktop device: {item.desktopDevice.name}</p>
+            ))}
+            {connectionStatus && pairs.length > 0 && <Button onClick={event => signallingStore.sendMessage({type: 'clear-pairs', data: {}})}>Clear all pairs</Button>}
+            {paired && <p>This device is paired to: <b>{ pairedDeviceName }</b></p>}
+            {!paired && !connectionStatus && <p>Could not connect to signalling server</p> }
+            {!paired && availableDevices.length > 0 &&
                 <>
                     <p>Available VR devices: </p>
                     {availableDevices.map((item: any, index: number) => (
@@ -48,7 +56,7 @@ const PairingMenuView: React.FC = () => {
                             open={open}
                             handleOpen={handleOpen}
                             handleClose={handleClose}
-                            buttonText={item}
+                            buttonText={item.name}
                         >
                             <Typography id="modal-modal-title" variant="h6" component="h2">
                                 Confirmation code:
@@ -70,7 +78,8 @@ const PairingMenuView: React.FC = () => {
                                         signallingStore.sendMessage({ 
                                             type: 'pair-code',
                                             data: {
-                                                device: item,
+                                                uuid: item.uuid,
+                                                name: item.name,
                                                 code: code
                                             }
                                         })
@@ -82,7 +91,7 @@ const PairingMenuView: React.FC = () => {
                     ))}
                 </>
             }
-            {availableDevices.length == 0 && connectionStatus && 
+            {!paired && availableDevices.length === 0 && connectionStatus && 
                 <>
                     <p>No devices are available for pairing</p>
                 </>

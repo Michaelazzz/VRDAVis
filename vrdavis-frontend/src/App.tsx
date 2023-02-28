@@ -12,12 +12,11 @@ import BrowserMenu from "./components/browser UI/BrowserMenu";
 import { RootContext } from "./store.context";
 import { observer } from "mobx-react";
 import { BackendMenu } from "./components/browser UI/BackendMenu";
+import { DeviceCredentialsView } from "./components/browser UI/DeviceCredentials";
 
 const AppView: React.FC = () => {
 
     const { signallingStore, backendStore } = useContext(RootContext);
-    const paired = signallingStore.getPaired();
-    const pairedDeviceId = signallingStore.getPairedDeviceId();
 
     useEffect(() => {
         // appStore.initVRDAVis();
@@ -42,13 +41,8 @@ const AppView: React.FC = () => {
             <CssBaseline />
             <BrowserMenu>
                 <h1>VRDAVis</h1>
-                {!paired && <PairingMenu />}
-                {paired && 
-                    <>
-                        <p>This device is paired to:</p>
-                        <p>{pairedDeviceId}</p>
-                    </>
-                }
+                <DeviceCredentialsView/>
+                <PairingMenu/>
                 <BackendMenu/>
             </BrowserMenu>
             
