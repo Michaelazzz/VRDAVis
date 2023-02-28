@@ -1,3 +1,16 @@
 {
+<<<<<<< HEAD
   "pairs": []
+=======
+  "pairs": [
+    {
+      "vrDevice": "a599faf0-5ad1-11ed-964b-250d15d80c59",
+      "desktopDevice": "a599faf0-5ad1-11ed-964b-250d15d80c59"
+    },
+    {
+      "vrDevice": "94d7c640-ac55-11ed-886d-afb966e826db",
+      "desktopDevice": "94d7c640-ac55-11ed-886d-afb966e826db"
+    }
+  ]
+>>>>>>> 181b122 (signalling server changes)
 }
