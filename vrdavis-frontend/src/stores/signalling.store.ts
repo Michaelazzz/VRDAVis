@@ -48,8 +48,8 @@ export class SignallingStore {
     }
 
     async start() {
-        // this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
-        this.socket = new WebSocket('ws://localhost:8080');
+        this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
+        // this.socket = new WebSocket('ws://localhost:8080');
 
         this.socket.onopen = (event) => {
             console.log('[open] Connection established');
@@ -79,7 +79,7 @@ export class SignallingStore {
                     break;
                 case 'paired':
                     this.setPaired(msg.data.paired);
-                    this.setPairedDeviceId(msg.data.pairId);
+                    this.setPairedDeviceId(msg.data.pairedId);
                     this.setPairedDeviceName(msg.data.pairedName);
                     break;
                 case 'devices':
