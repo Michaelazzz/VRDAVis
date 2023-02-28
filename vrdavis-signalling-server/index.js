@@ -16,7 +16,7 @@ await db.read();
 
 if(db) log('[info] Database connected');
 
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.PORT || 3003;
 
 const app = express();
 const server = http.createServer(app);
