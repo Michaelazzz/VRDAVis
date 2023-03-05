@@ -48,8 +48,8 @@ export class SignallingStore {
     }
 
     async start() {
-        // this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
-        this.socket = new WebSocket('ws://localhost:3003');
+        this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
+        // this.socket = new WebSocket('ws://localhost:3003');
 
         this.socket.onopen = (event) => {
             console.log('[open] Connection established');
