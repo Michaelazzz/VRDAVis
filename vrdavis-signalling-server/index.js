@@ -52,13 +52,12 @@ wss.on('connection', function connection(ws) {
                 break;
             case 'open':
                 // check if device is paired
-                ws.id = msg.data.id;
+                ws.id = msg.data.uuid;
                 ws.vr = msg.data.vr;
                 ws.name = msg.data.name;
-                let pairedDevice = await getPairedDevice(msg.data.id);
-                console.log(pairedDevice)
                 if(await isPaired(msg.data.id))
                 {
+                    let pairedDevice = await getPairedDevice(msg.data.uuid);
                     ws.send(JSON.stringify({
                         type: 'paired',
                         data: {
@@ -88,12 +87,13 @@ wss.on('connection', function connection(ws) {
             case 'pair-code':
                 pairingDeviceId = msg.data.uuid;
                 pairingDeviceName = msg.data.name;
-                pairingCodes.push(msg.data.code);
+                // pairingCodes.push(msg.data.code);
+                ws.pairingCode = msg.data.code;
                 requestPairConfirmation(msg.data.uuid);
                 break;
             case 'pair-code-confrimation-response':
-                pairingCodes.push(msg.data.code)
-                if(pairingCodes[0] === pairingCodes[1]) {
+                ws.pairingCode = msg.data.code;
+                if(checkCode(ws.pairingCode)) {
                     await db.read();
                     log('[info] Pairing codes match');
                     const { pairs } = db.data
@@ -156,6 +156,15 @@ const clearPairs = async () => {
 
 const getPairs = async () => {
     return db.data;
+};
+
+const checkCode = async (code) => {
+    wss.clients.forEach(function each(client) {
+        if(client.pairingCode === code) {
+            return true;
+        }
+    });
+    return false;
 };
 
 const getAvailableVRDevices = async () => {
