@@ -57,13 +57,12 @@ wss.on('connection', function connection(ws) {
                 ws.name = msg.data.name;
                 if(await isPaired(msg.data.id))
                 {
-                    let pairedDevice = await getPairedDevice(msg.data.uuid);
+                    const pair = await getPair(msg.data.uuid);
                     ws.send(JSON.stringify({
                         type: 'paired',
                         data: {
                             paired: true,
-                            pairedId: pairedDevice.uuid,
-                            pairedName: pairedDevice.name
+                            pair: pair
                         }
                     }));
                     log('[send] Device is already paired');
@@ -123,7 +122,6 @@ wss.on('connection', function connection(ws) {
                 log('[info] ICE credentials received')
                 // send ice credentials to paired device
                 const offer = msg.data.offer;
-                // const pairedId = await getPairedDevice(ws.id);
                 await sendOffer(msg.data.pairedId, offer);
                 break;
             case 'rtc-answer':
@@ -228,7 +226,7 @@ const getDevicePair = async (id) => {
     return null;
 }
 
-const getPairedDevice = async (id) => {
+const getPair = async (id) => {
     await db.read();
     const { pairs } = db.data;
     if(pairs.length > 0) {
