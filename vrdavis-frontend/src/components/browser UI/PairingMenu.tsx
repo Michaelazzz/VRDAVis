@@ -18,6 +18,7 @@ const PairingMenuView: React.FC = () => {
     const pairedDeviceId = signallingStore.getPairedDeviceId();
     const pairedDeviceName = signallingStore.getPairedDeviceName();
     const pairs = signallingStore.getPairs();
+    const vrCapable = signallingStore.getVRStatus();
 
     const [code, setCode] = useState('');
     const [confirmCode, setConfirmCode] = useState('');
@@ -121,7 +122,8 @@ const PairingMenuView: React.FC = () => {
                             signallingStore.sendMessage({ 
                                 type: 'pair-code-confrimation-response',
                                 data: {
-                                    code: confirmCode
+                                    code: confirmCode,
+                                    vr: vrCapable
                                 }
                             })
                             handleBasicModalClose()

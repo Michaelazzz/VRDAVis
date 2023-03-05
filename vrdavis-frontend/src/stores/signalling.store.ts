@@ -79,9 +79,13 @@ export class SignallingStore {
                     break;
                 case 'paired':
                     this.setPaired(msg.data.paired);
-                    this.setPairedDeviceId(msg.data.pairedId);
-                    this.setPairedDeviceName(msg.data.pairedName);
-                    
+                    if(this.vrCapable) {
+                        this.setPairedDeviceId(msg.data.pair.vrDevice.uuid);
+                        this.setPairedDeviceName(msg.data.pair.vrDevice.name);
+                    } else {
+                        this.setPairedDeviceId(msg.data.pair.desktopDevice.uuid);
+                        this.setPairedDeviceName(msg.data.pair.desktopDevice.name);
+                    }
                     break;
                 case 'devices':
                     this.setDevices(msg.data.devices);

@@ -93,30 +93,26 @@ wss.on('connection', function connection(ws) {
                 break;
             case 'pair-code-confrimation-response':
                 ws.pairingCode = msg.data.code;
+                // vrStatus = msg.data.vr;
                 if(checkCode(ws.pairingCode)) {
                     await db.read();
                     log('[info] Pairing codes match');
                     const { pairs } = db.data
-                    pairs.push({
+                    const pair = {
                         vrDevice: {
-                            name: pairingDeviceName,
-                            uuid: pairingDeviceId
-                        },
-                        desktopDevice: {
                             name: ws.name,
                             uuid: ws.id
+                        },
+                        desktopDevice: {
+                            name: pairingDeviceName,
+                            uuid: pairingDeviceId
                         }
-                    })
+                    }
+                    await pairs.push(pair)
                     await db.write();
                     log('[info] Pair added to db');
-                    ws.send(JSON.stringify({
-                        type: 'paired',
-                        data: {
-                            paired: true,
-                            pairId: pairingDeviceId,
-                            pairName: pairingDeviceName
-                        }
-                    }));
+                    // send pair details to both clients
+                    await sendPaired(pair)
                     log('[send] Pairing confirmation');
                     await requestIceCredentials(ws.id);
                 } 
@@ -157,6 +153,22 @@ const clearPairs = async () => {
 const getPairs = async () => {
     return db.data;
 };
+
+const sendPaired = async (pair) => {
+    wss.clients.forEach(function each(client) {
+        if(pair.vrDevice.uuid === client.id || pair.desktopDevice.uuid === client.id) {
+            client.send(JSON.stringify({
+                type: 'paired',
+                data: {
+                    paired: true,
+                    pair: pair
+                }
+            }));
+            log('[send] Web RTC offer');
+            return;
+        }
+    });
+}
 
 const checkCode = async (code) => {
     wss.clients.forEach(function each(client) {
@@ -219,17 +231,13 @@ const getDevicePair = async (id) => {
 const getPairedDevice = async (id) => {
     await db.read();
     const { pairs } = db.data;
-    let pairedDevice;
     if(pairs.length > 0) {
         pairs.forEach(pair => {
-            if(pair.desktopDevice.uuid === id)
-                pairedDevice = pair.desktopDevice;
-            else if (pair.vrDevice.uuid === id)
-                pairedDevice = pair.vrDevice;
+            if(pair.desktopDevice.uuid === id || pair.vrDevice.uuid === id)
+                return pair;
         });
     }
     else return null;
-    return pairedDevice;
 }
 
 const sendOffer = async (id, offer) => {

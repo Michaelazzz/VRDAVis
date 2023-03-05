@@ -22,7 +22,7 @@ const AppView: React.FC = () => {
         // appStore.initVRDAVis();
         signallingStore.start();
         // backendStore.start();
-    }, [backendStore]);
+    }, [signallingStore, backendStore]);
 
     let height = 128;
     let width = 128;
