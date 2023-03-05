@@ -94,7 +94,7 @@ wss.on('connection', function connection(ws) {
                             name: ws.name,
                             uuid: ws.id
                         },
-                        desktopDevice: msg.desktopDevice
+                        desktopDevice: msg.data.desktopDevice
                     }
                     await pairs.push(pair)
                     await db.write();
