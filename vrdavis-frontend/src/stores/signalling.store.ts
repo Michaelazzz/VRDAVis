@@ -48,8 +48,8 @@ export class SignallingStore {
     }
 
     async start() {
-        this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
-        // this.socket = new WebSocket('ws://localhost:8080');
+        // this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
+        this.socket = new WebSocket('ws://localhost:3003');
 
         this.socket.onopen = (event) => {
             console.log('[open] Connection established');
@@ -87,7 +87,7 @@ export class SignallingStore {
                     this.setDevices(msg.data.devices);
                     break;
                 case 'pair-code-confirmation-request':
-                    setCodeConfirmation(true);
+                    this.codeConfrimatiom = true;
                     break;
                 case 'ice-credentials-request':
                     await this.webRTCService.createPeerConnection();
@@ -142,10 +142,6 @@ export class SignallingStore {
 
     setCodeConfirmation(status: boolean) {
         this.codeConfrimatiom = status;
-    }
-
-    setCodeConfirmation(state: boolean) {
-        this.codeConfrimatiom = state;
     }
 
     getPaired() {
