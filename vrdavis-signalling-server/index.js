@@ -213,19 +213,6 @@ const isPaired = async (id) => {
     return flag;
 }
 
-const getDevicePair = async (id) => {
-    await db.read();
-    const { pairs } = db.data;
-    if(pairs.length > 0) {
-        pairs.forEach(pair => {
-            if(pair.desktopDevice === id || pair.vrDevice === id)
-                // console.log(pair)
-                return pair;
-        });
-    }
-    return null;
-}
-
 const getPair = async (id) => {
     await db.read();
     const { pairs } = db.data;
