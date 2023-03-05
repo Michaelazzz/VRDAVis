@@ -55,16 +55,10 @@ wss.on('connection', function connection(ws) {
                 ws.id = msg.data.uuid;
                 ws.vr = msg.data.vr;
                 ws.name = msg.data.name;
-                if(await isPaired(msg.data.id))
+                if(await isPaired(ws.id))
                 {
-                    const pair = await getPair(msg.data.uuid);
-                    ws.send(JSON.stringify({
-                        type: 'paired',
-                        data: {
-                            paired: true,
-                            pair: pair
-                        }
-                    }));
+                    const pair = await getPair(ws.id);
+                    await sendPaired(pair);
                     log('[send] Device is already paired');
                     await requestIceCredentials(ws.id);
                 }
@@ -204,25 +198,23 @@ const isPaired = async (id) => {
     await db.read();
     const { pairs } = db.data;
     let flag = false;
-    if(pairs.length > 0) {
-        pairs.forEach(pair => {
-            if(pair.vrDevice.uuid === id || pair.desktopDevice.uuid === id)
-                flag = true;
-        });
-    }
+    pairs.forEach(pair => {
+        if(pair.vrDevice.uuid === id || pair.desktopDevice.uuid === id)
+            flag = true;
+    });
     return flag;
 }
 
 const getPair = async (id) => {
     await db.read();
     const { pairs } = db.data;
-    if(pairs.length > 0) {
-        pairs.forEach(pair => {
-            if(pair.desktopDevice.uuid === id || pair.vrDevice.uuid === id)
-                return pair;
-        });
-    }
-    else return null;
+    let foundPair = null;
+    pairs.forEach(pair => {
+        if(pair.desktopDevice.uuid === id || pair.vrDevice.uuid === id) {
+            foundPair = pair;
+        }
+    });
+    return foundPair;
 }
 
 const sendOffer = async (id, offer) => {
