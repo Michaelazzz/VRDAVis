@@ -29,8 +29,8 @@ app.get('*', function (req, res) {
 const wss = new WebSocketServer({ server });
 wss.on('connection', function connection(ws) {
     const pairingCodes = new Array();
-    let pairingDeviceId;
-    let pairingDeviceName;
+    let vrDeviceId;
+    let vrDeviceName;
 
     ws.on('message', async function message(data) {
         log(`[received] ${data}`);
@@ -78,15 +78,13 @@ wss.on('connection', function connection(ws) {
                 }));
                 break;
             case 'pair-code':
-                pairingDeviceId = msg.data.uuid;
-                pairingDeviceName = msg.data.name;
-                // pairingCodes.push(msg.data.code);
+                vrDeviceId = msg.data.vrDevice.uuid;
+                vrDeviceName = msg.data.vrDevice.name;
                 ws.pairingCode = msg.data.code;
-                requestPairConfirmation(msg.data.uuid);
+                requestPairConfirmation(vrDeviceId, msg.data.desktopDevice);
                 break;
             case 'pair-code-confrimation-response':
                 ws.pairingCode = msg.data.code;
-                // vrStatus = msg.data.vr;
                 if(checkCode(ws.pairingCode)) {
                     await db.read();
                     log('[info] Pairing codes match');
@@ -96,10 +94,7 @@ wss.on('connection', function connection(ws) {
                             name: ws.name,
                             uuid: ws.id
                         },
-                        desktopDevice: {
-                            name: pairingDeviceName,
-                            uuid: pairingDeviceId
-                        }
+                        desktopDevice: msg.desktopDevice
                     }
                     await pairs.push(pair)
                     await db.write();
@@ -182,12 +177,14 @@ const getAvailableVRDevices = async () => {
     return devices;
 };
 
-const requestPairConfirmation = (id) => {
+const requestPairConfirmation = (id, desktopDevice) => {
     wss.clients.forEach(function each(client) {
         if(client.id === id) {
             client.send(JSON.stringify({
                 type: 'pair-code-confirmation-request',
-                data: {}
+                data: {
+                    desktopDevice: desktopDevice
+                }
             }));
             log('[send] Pair code confirmation request');
         }

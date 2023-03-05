@@ -92,6 +92,8 @@ export class SignallingStore {
                     break;
                 case 'pair-code-confirmation-request':
                     this.codeConfrimatiom = true;
+                    this.setPairedDeviceId(msg.data.desktopDevice.uuid);
+                    this.setPairedDeviceName(msg.data.desktopDevice.name);
                     break;
                 case 'ice-credentials-request':
                     await this.webRTCService.createPeerConnection();

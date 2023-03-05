@@ -80,8 +80,14 @@ const PairingMenuView: React.FC = () => {
                                         signallingStore.sendMessage({ 
                                             type: 'pair-code',
                                             data: {
-                                                uuid: item.uuid,
-                                                name: item.name,
+                                                vrDevice: {
+                                                    uuid: item.uuid,
+                                                    name: item.name
+                                                },
+                                                desktopDevice: {
+                                                    uuid: signallingStore.uuid,
+                                                    name: signallingStore.name
+                                                },
                                                 code: code
                                             }
                                         });
@@ -123,7 +129,10 @@ const PairingMenuView: React.FC = () => {
                                 type: 'pair-code-confrimation-response',
                                 data: {
                                     code: confirmCode,
-                                    vr: vrCapable
+                                    desktopDevice: {
+                                        uuid: signallingStore.getPairedDeviceId(),
+                                        name: signallingStore.getPairedDeviceName()
+                                    }
                                 }
                             })
                             handleBasicModalClose()
