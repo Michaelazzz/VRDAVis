@@ -83,8 +83,8 @@ const PairingMenuView: React.FC = () => {
                                                 name: item.name,
                                                 code: code
                                             }
-                                        })
-                                        handleClose()
+                                        });
+                                        handleClose();
                                     }}
                                 >Pair</Button>
                             </Stack>
@@ -121,8 +121,7 @@ const PairingMenuView: React.FC = () => {
                             signallingStore.sendMessage({ 
                                 type: 'pair-code-confrimation-response',
                                 data: {
-                                    code: confirmCode,
-                                    vr: signallingStore.vrCapable
+                                    code: confirmCode
                                 }
                             })
                             handleBasicModalClose()

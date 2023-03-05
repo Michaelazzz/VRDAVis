@@ -57,7 +57,7 @@ export class SignallingStore {
             this.sendMessage({ 
                 type: 'open',
                 data: {
-                    id: this.uuid,
+                    uuid: this.uuid,
                     name: this.name,     
                     vr: this.vrCapable
                 }
@@ -81,12 +81,13 @@ export class SignallingStore {
                     this.setPaired(msg.data.paired);
                     this.setPairedDeviceId(msg.data.pairedId);
                     this.setPairedDeviceName(msg.data.pairedName);
+                    
                     break;
                 case 'devices':
                     this.setDevices(msg.data.devices);
                     break;
                 case 'pair-code-confirmation-request':
-                    this.codeConfrimatiom = true;
+                    setCodeConfirmation(true);
                     break;
                 case 'ice-credentials-request':
                     await this.webRTCService.createPeerConnection();
@@ -137,6 +138,10 @@ export class SignallingStore {
 
     getCodeConfirmation() {
         return this.codeConfrimatiom;
+    }
+
+    setCodeConfirmation(status: boolean) {
+        this.codeConfrimatiom = status;
     }
 
     setCodeConfirmation(state: boolean) {
