@@ -74,4 +74,4 @@ const DeviceCredentialsView: React.FC = () => {
 }
 
 const DeviceCredentials = observer(DeviceCredentialsView);
-export { DeviceCredentialsView };
+export { DeviceCredentials };

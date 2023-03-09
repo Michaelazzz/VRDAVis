@@ -31,6 +31,7 @@ wss.on('connection', function connection(ws) {
     const pairingCodes = new Array();
     let vrDeviceId;
     let vrDeviceName;
+    let pair;
 
     ws.on('message', async function message(data) {
         log(`[received] ${data}`);
@@ -60,7 +61,7 @@ wss.on('connection', function connection(ws) {
                     const pair = await getPair(ws.id);
                     await sendPaired(pair);
                     log('[send] Device is already paired');
-                    await requestIceCredentials(ws.id);
+                    // await requestIceCredentials(ws.id);
                 }
                 else {
                     // start pairing process
@@ -102,22 +103,43 @@ wss.on('connection', function connection(ws) {
                     // send pair details to both clients
                     await sendPaired(pair)
                     log('[send] Pairing confirmation');
-                    await requestIceCredentials(ws.id);
+                    // await requestIceCredentials(ws.id);
                 } 
                 else log(`[error] Pairing codes do not match`)
                 break;
-            case 'ice-credentials-response':
-                // ws.ice = msg.data.ice
-                log('[info] ICE credentials received')
-                // send ice credentials to paired device
-                const offer = msg.data.offer;
-                await sendOffer(msg.data.pairedId, offer);
+            case 'ready':
+                if(!ws.vr) {
+                    ws.send(JSON.stringify({
+                        type: 'ready',
+                        data: {}
+                    }));
+                    log('[send] ready to start Web RTC');
+                }
                 break;
-            case 'rtc-answer':
-                log('[info] Web RTC answer received')
-                const answer = msg.data.answer;
-                await sendAnswer(msg.data.pairedId, answer);
+            case 'offer':
+                const offer = msg.data;
+                await sendOffer(ws.id, offer);
                 break;
+            case 'answer':
+                const answer = msg.data;
+                await sendAnswer(ws.id, answer);
+                break;
+            case 'bye':
+                pair = getPair(ws.id);
+
+                break;
+            // case 'ice-credentials-response':
+            //     // ws.ice = msg.data.ice
+            //     log('[info] ICE credentials received')
+            //     // send ice credentials to paired device
+            //     const offer = msg.data.offer;
+            //     await sendOffer(msg.data.pairedId, offer);
+            //     break;
+            // case 'rtc-answer':
+            //     log('[info] Web RTC answer received')
+            //     const answer = msg.data.answer;
+            //     await sendAnswer(msg.data.pairedId, answer);
+            //     break;
             default:
                 log(`[error] unknown message type "${msg.type}"`);
                 break;
@@ -218,9 +240,9 @@ const sendOffer = async (id, offer) => {
     wss.clients.forEach(function each(client) {
         if(client.id === id) {
             client.send(JSON.stringify({
-                type: 'rtc-offer',
+                type: 'offer',
                 data: {
-                    offer: offer
+                    sdp: offer
                 }
             }));
             log('[send] Web RTC offer');
@@ -233,9 +255,9 @@ const sendAnswer = async (id, answer) => {
     wss.clients.forEach(function each(client) {
         if(client.id === id) {
             client.send(JSON.stringify({
-                type: 'rtc-answer',
+                type: 'answer',
                 data: {
-                    answer: answer
+                    sdp: answer
                 }
             }));
             log('[send] Web RTC answer');

@@ -2,8 +2,7 @@
 import { autorun, makeAutoObservable } from "mobx";
 import { v1 as uuidv1 } from 'uuid';
 // import { SignallingService } from "../services/signalling.service";
-import { WebRTCService } from "../services/webRTC.service";
-
+import { WebRTCService } from '../services/webRTC.service';
 
 export class SignallingStore {
 
@@ -80,12 +79,16 @@ export class SignallingStore {
                 case 'paired':
                     this.setPaired(msg.data.paired);
                     if(this.vrCapable) {
-                        this.setPairedDeviceId(msg.data.pair.vrDevice.uuid);
-                        this.setPairedDeviceName(msg.data.pair.vrDevice.name);
-                    } else {
                         this.setPairedDeviceId(msg.data.pair.desktopDevice.uuid);
                         this.setPairedDeviceName(msg.data.pair.desktopDevice.name);
+                    } else {
+                        this.setPairedDeviceId(msg.data.pair.vrDevice.uuid);
+                        this.setPairedDeviceName(msg.data.pair.vrDevice.name);
                     }
+                    this.sendMessage({ 
+                        type: 'ready',
+                        data: {}
+                    });
                     break;
                 case 'devices':
                     this.setDevices(msg.data.devices);
@@ -95,29 +98,59 @@ export class SignallingStore {
                     this.setPairedDeviceId(msg.data.desktopDevice.uuid);
                     this.setPairedDeviceName(msg.data.desktopDevice.name);
                     break;
-                case 'ice-credentials-request':
-                    await this.webRTCService.createPeerConnection();
+                case 'ready':
+                    await this.webRTCService.start();
+                    const offer = await this.webRTCService.createOffer();
                     this.sendMessage({ 
-                        type: 'ice-credentials-response',
+                        type: 'offer',
                         data: {
-                            offer: await this.webRTCService.createOffer(),
-                            pairedId: this.pairedDeviceId
+                            sdp: offer.sdp
                         }
                     });
+                break;
+                // case 'ice-credentials-request':
+                //     this.webRTCService.createPeerConnection();
+                //     this.sendMessage({ 
+                //         type: 'ice-credentials-response',
+                //         data: {
+                //             offer: await this.webRTCService.createOffer(),
+                //             pairedId: this.pairedDeviceId
+                //         }
+                //     });
+                //     break;
+                // case 'rtc-offer':
+                //     const offer = msg.data.offer;
+                //     this.sendMessage({ 
+                //         type: 'rtc-answer',
+                //         data: {
+                //             answer: await this.webRTCService.answerOffer(offer),
+                //             pairedId: this.pairedDeviceId
+                //         }
+                //     });
+                //     break;
+                // case 'rtc-answer':
+                //     const answer = msg.data.answer;
+                //     await this.webRTCService.addCandidate(answer);
+                //     break;
+                case 'candidate':
+                    this.webRTCService.handleCandidate(msg.data);
                     break;
-                case 'rtc-offer':
-                    const offer = msg.data.offer;
-                    this.sendMessage({ 
-                        type: 'rtc-answer',
-                        data: {
-                            answer: await this.webRTCService.answerOffer(offer),
-                            pairedId: this.pairedDeviceId
-                        }
-                    });
+                case 'offer':
+                    const answer = await this.webRTCService.handleOffer(msg.data.sdp);
+                    if(answer != null | undefined) {
+                        this.sendMessage({ 
+                            type: 'answer',
+                            data: {
+                                sdp: answer.sdp
+                            }
+                        });
+                    }
                     break;
-                case 'rtc-answer':
-                    const answer = msg.data.answer;
-                    await this.webRTCService.addCandidate(answer);
+                case 'answer':
+                    await this.webRTCService.handleAnswer(msg.data.sdp);
+                    break;
+                case 'bye':
+                    await this.webRTCService.hangup();
                     break;
                 default:
                     console.log(`[error] unknown message type "${msg.type}"`);
