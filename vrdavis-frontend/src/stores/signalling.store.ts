@@ -289,6 +289,7 @@ export class SignallingStore {
                 this.sendMessage({ 
                     type: 'candidate',
                     data: {
+                        device: this.pairedDeviceId,
                         candidate: null
                     }
                 });
