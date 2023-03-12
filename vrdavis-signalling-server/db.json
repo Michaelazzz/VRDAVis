@@ -1,14 +1,3 @@
 {
-  "pairs": [
-    {
-      "vrDevice": {
-        "name": "Michaela's XPS17",
-        "uuid": "a599faf0-5ad1-11ed-964b-250d15d80c59"
-      },
-      "desktopDevice": {
-        "uuid": "a599faf0-5ad1-11ed-964b-250d15d80c59",
-        "name": "Michaela's XPS17"
-      }
-    }
-  ]
+  "pairs": []
 }
