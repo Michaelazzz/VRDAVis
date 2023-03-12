@@ -77,21 +77,9 @@ const PairingMenuView: React.FC = () => {
                                 <Button 
                                     variant="contained"
                                     onClick={event => {
-                                        signallingStore.sendMessage({ 
-                                            type: 'pair-code',
-                                            data: {
-                                                vrDevice: {
-                                                    uuid: item.uuid,
-                                                    name: item.name
-                                                },
-                                                desktopDevice: {
-                                                    uuid: signallingStore.uuid,
-                                                    name: signallingStore.name
-                                                },
-                                                code: code
-                                            }
-                                        });
+                                        signallingStore.sendCode(item, code);
                                         handleClose();
+                                        setCode('');
                                     }}
                                 >Pair</Button>
                             </Stack>
@@ -125,17 +113,9 @@ const PairingMenuView: React.FC = () => {
                     <Button 
                         variant="contained"
                         onClick={event => {
-                            signallingStore.sendMessage({ 
-                                type: 'pair-code-confrimation-response',
-                                data: {
-                                    code: confirmCode,
-                                    desktopDevice: {
-                                        uuid: signallingStore.getPairedDeviceId(),
-                                        name: signallingStore.getPairedDeviceName()
-                                    }
-                                }
-                            })
-                            handleBasicModalClose()
+                            signallingStore.sendConfirmationCode(confirmCode);
+                            handleBasicModalClose();
+                            setConfirmCode('');
                         }}
                     >Pair</Button>
                 </Stack>

@@ -1,12 +1,14 @@
 // @ts-nocheck
-import { autorun, makeAutoObservable } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { v1 as uuidv1 } from 'uuid';
 // import { SignallingService } from "../services/signalling.service";
-import { WebRTCService } from '../services/webRTC.service';
+// import { WebRTCService } from '../services/webRTC.service';
 
 export class SignallingStore {
 
-    webRTCService: WebRTCService = new WebRTCService();
+    // webRTCService: WebRTCService = new WebRTCService();
+
+    // pairing
 
     private socket: WebSocket;
     connected: boolean;
@@ -22,6 +24,18 @@ export class SignallingStore {
 
     private devices: any[];
     private pairs: any[];
+
+    // web RTC
+    public peerConnection: RTCPeerConnection
+    public sendChannel: RTCDataChannel;
+    public receiveChannel: RTCDataChannel;
+
+    public dataChannelReceive: string
+    public dataChannelSend: string
+
+    servers: any
+
+    dataChannelParams:any = {ordered: false};
 
     constructor() {
         makeAutoObservable(this);
@@ -46,9 +60,11 @@ export class SignallingStore {
 
     }
 
+    // pairing
+
     async start() {
-        this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
-        // this.socket = new WebSocket('ws://localhost:3003');
+        // this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
+        this.socket = new WebSocket('ws://localhost:3003');
 
         this.socket.onopen = (event) => {
             console.log('[open] Connection established');
@@ -91,66 +107,28 @@ export class SignallingStore {
                     });
                     break;
                 case 'devices':
+                    this.paired = false;
                     this.setDevices(msg.data.devices);
                     break;
-                case 'pair-code-confirmation-request':
+                case 'code-confirmation':
                     this.codeConfrimatiom = true;
                     this.setPairedDeviceId(msg.data.desktopDevice.uuid);
                     this.setPairedDeviceName(msg.data.desktopDevice.name);
                     break;
                 case 'ready':
-                    await this.webRTCService.start();
-                    const offer = await this.webRTCService.createOffer();
-                    this.sendMessage({ 
-                        type: 'offer',
-                        data: {
-                            sdp: offer.sdp
-                        }
-                    });
+                    await this.startWebRTC();
                 break;
-                // case 'ice-credentials-request':
-                //     this.webRTCService.createPeerConnection();
-                //     this.sendMessage({ 
-                //         type: 'ice-credentials-response',
-                //         data: {
-                //             offer: await this.webRTCService.createOffer(),
-                //             pairedId: this.pairedDeviceId
-                //         }
-                //     });
-                //     break;
-                // case 'rtc-offer':
-                //     const offer = msg.data.offer;
-                //     this.sendMessage({ 
-                //         type: 'rtc-answer',
-                //         data: {
-                //             answer: await this.webRTCService.answerOffer(offer),
-                //             pairedId: this.pairedDeviceId
-                //         }
-                //     });
-                //     break;
-                // case 'rtc-answer':
-                //     const answer = msg.data.answer;
-                //     await this.webRTCService.addCandidate(answer);
-                //     break;
                 case 'candidate':
-                    this.webRTCService.handleCandidate(msg.data);
+                    this.handleCandidate(msg.data);
                     break;
                 case 'offer':
-                    const answer = await this.webRTCService.handleOffer(msg.data.sdp);
-                    if(answer != null | undefined) {
-                        this.sendMessage({ 
-                            type: 'answer',
-                            data: {
-                                sdp: answer.sdp
-                            }
-                        });
-                    }
+                    await this.handleOffer(msg.data.sdp);
                     break;
                 case 'answer':
-                    await this.webRTCService.handleAnswer(msg.data.sdp);
+                    await this.handleAnswer(msg.data.sdp);
                     break;
                 case 'bye':
-                    await this.webRTCService.hangup();
+                    await this.hangup();
                     break;
                 default:
                     console.log(`[error] unknown message type "${msg.type}"`);
@@ -164,6 +142,36 @@ export class SignallingStore {
         const msg = JSON.stringify(message);
         this.socket.send(msg);
         console.log(`[send] ${msg}`)
+    }
+
+    sendCode(item: any, code: string) {
+        this.sendMessage({ 
+            type: 'code',
+            data: {
+                vrDevice: {
+                    uuid: item.uuid,
+                    name: item.name
+                },
+                desktopDevice: {
+                    uuid: this.uuid,
+                    name: this.name
+                },
+                code: code
+            }
+        });
+    }
+
+    sendConfirmationCode(confirmCode: any) {
+        this.sendMessage({ 
+            type: 'code-confrimation',
+            data: {
+                code: confirmCode,
+                desktopDevice: {
+                    uuid: this.pairedDeviceId,
+                    name: this.pairedDeviceName
+                }
+            }
+        })
     }
 
     getDevices() {
@@ -237,5 +245,172 @@ export class SignallingStore {
 
     setPairs(newPairs: any[]) {
         this.pairs = [...newPairs]
+    }
+
+    // web RTC
+
+    startWebRTC = async () => {
+        await this.createPeerConnection();
+
+        this.sendChannel = this.peerConnection.createDataChannel('sendDataChannel');
+        this.sendChannel.onopen = this.onSendChannelStateChange;
+        this.sendChannel.onmessage = this.onSendChannelMessageCallback;
+        this.sendChannel.onclose = this.onSendChannelStateChange;
+
+        const offer = await this.peerConnection.createOffer();
+        this.sendMessage({ 
+            type: 'offer',
+            data: {
+                sdp: offer.sdp
+            }
+        });
+        await this.peerConnection.setLocalDescription(offer);
+    } 
+
+    createPeerConnection = async () => {
+        this.peerConnection = new RTCPeerConnection();
+        // this.peerConnection = new RTCPeerConnection(this.servers);
+        this.peerConnection.onicecandidate = (event: any) => {
+            // send ice candidate to paired device
+            if (event.candidate) {
+                this.sendMessage({ 
+                    type: 'candidate',
+                    data: {
+                        candidate: event.candidate.candidate,
+                        sdpMid: event.candidate.sdpMid,
+                        sdpMLineIndex: event.candidate.sdpMLineIndex
+                    }
+                });
+            }
+            else { 
+                this.sendMessage({ 
+                    type: 'candidate',
+                    data: {
+                        candidate: null
+                    }
+                });
+            }
+        }
+    }
+
+
+    answerOffer = async (offer: any) => {
+        await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+
+        const answerDescription = await this.peerConnection.createAnswer();
+        await this.peerConnection.setLocalDescription(answerDescription);
+
+        const answer = {
+            sdpMid: answerDescription.sdp,
+            type: answerDescription.type,
+        }
+
+        return answer;
+    }
+    
+    handleCandidate = async (candidate: any) => {
+        if (!this.peerConnection) {
+            console.error('no peer connection');
+            return;
+        }
+        if (!candidate.candidate) {
+            // @ts-ignore
+            await this.peerConnection.addIceCandidate(null);
+        } else {
+            await this.peerConnection.addIceCandidate(candidate);
+        }
+    }
+
+    handleOffer = async (offer: any) => {
+        if (this.peerConnection) {
+            console.error('existing peerconnection');
+            return;
+        }
+        await this.createPeerConnection();
+        // @ts-ignore
+        this.peerConnection.ondatachannel = this.receiveChannelCallback;
+        // @ts-ignore
+        await this.peerConnection.setRemoteDescription(offer);
+        // @ts-ignore
+        const answer = await this.peerConnection.createAnswer();
+        this.sendMessage({ 
+            type: 'answer',
+            data: {
+                sdp: answer.sdp
+            }
+        });
+        // @ts-ignore
+        await this.peerConnection.setLocalDescription(answer);
+    }
+
+    handleAnswer = async (answer: any) => {
+        console.log(answer)
+        if (!this.peerConnection) {
+            console.error('no peer connection');
+            return;
+        }
+        await this.peerConnection.setRemoteDescription(answer);
+    }
+
+    hangup = async () => {
+        if (this.peerConnection) {
+          this.peerConnection.close();
+          // @ts-ignore
+          this.peerConnection = null;
+        }
+        // @ts-ignore
+        this.sendChannel = null;
+        // @ts-ignore
+        this.receiveChannel = null;
+        console.log('Closed peer connections');
+        this.dataChannelSend = '';
+        this.dataChannelReceive = '';
+    };
+
+    receiveChannelCallback = (event: any) => {
+        console.log('Receive Channel Callback');
+        this.receiveChannel = event.channel;
+        this.receiveChannel.onmessage = this.onReceiveChannelMessageCallback;
+        this.receiveChannel.onopen = this.onReceiveChannelStateChange;
+        this.receiveChannel.onclose = this.onReceiveChannelStateChange;
+    }
+    
+    onSendChannelStateChange = () => {
+        const readyState = this.sendChannel.readyState;
+        console.log('Send channel state is: ' + readyState);
+        if (readyState === 'open') {
+            // dataChannelSend.disabled = false;
+            // dataChannelSend.focus();
+            // sendButton.disabled = false;
+            // closeButton.disabled = false;
+        } else {
+            // dataChannelSend.disabled = true;
+            // sendButton.disabled = true;
+            // closeButton.disabled = true;
+        }
+    }
+
+    onSendChannelMessageCallback = (event: any) => {
+        console.log('Received Message');
+        this.dataChannelReceive = event.data;
+    }
+
+    onReceiveChannelStateChange = () => {
+        const readyState = this.receiveChannel.readyState;
+        console.log(`Receive channel state is: ${readyState}`);
+        if (readyState === 'open') {
+            // dataChannelSend.disabled = false;
+            // sendButton.disabled = false;
+            // closeButton.disabled = false;
+        } else {
+            // dataChannelSend.disabled = true;
+            // sendButton.disabled = true;
+            // closeButton.disabled = true;
+        }
+      }
+
+    onReceiveChannelMessageCallback = (event: any) => {
+        console.log('Received Message');
+        this.dataChannelReceive = event.data;
     }
 }

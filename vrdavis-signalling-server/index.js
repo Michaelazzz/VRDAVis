@@ -41,6 +41,18 @@ wss.on('connection', function connection(ws) {
         switch (msg.type) {
             case 'clear-pairs': 
                 await clearPairs();
+                ws.send(JSON.stringify({
+                    type: 'pairs',
+                    data: await getPairs()
+                }));
+                log('[send] Cleared all evice pairs');
+                ws.send(JSON.stringify({
+                    type: 'devices',
+                    data: {
+                        devices: await getAvailableVRDevices()
+                    }
+                }));
+                log('[send] Available devices');
                 break;
             case 'get-pairs':
                 ws.send(JSON.stringify({
@@ -62,6 +74,10 @@ wss.on('connection', function connection(ws) {
                     await sendPaired(pair);
                     log('[send] Device is already paired');
                     // await requestIceCredentials(ws.id);
+                    ws.send(JSON.stringify({
+                        type: 'pairs',
+                        data: await getPairs()
+                    }));
                 }
                 else {
                     // start pairing process
@@ -73,18 +89,14 @@ wss.on('connection', function connection(ws) {
                     }));
                     log('[send] Available devices');
                 }
-                ws.send(JSON.stringify({
-                    type: 'pairs',
-                    data: await getPairs()
-                }));
                 break;
-            case 'pair-code':
+            case 'code':
                 vrDeviceId = msg.data.vrDevice.uuid;
                 vrDeviceName = msg.data.vrDevice.name;
                 ws.pairingCode = msg.data.code;
                 requestPairConfirmation(vrDeviceId, msg.data.desktopDevice);
                 break;
-            case 'pair-code-confrimation-response':
+            case 'code-confrimation':
                 ws.pairingCode = msg.data.code;
                 if(checkCode(ws.pairingCode)) {
                     await db.read();
@@ -104,6 +116,10 @@ wss.on('connection', function connection(ws) {
                     await sendPaired(pair)
                     log('[send] Pairing confirmation');
                     // await requestIceCredentials(ws.id);
+                    ws.send(JSON.stringify({
+                        type: 'pairs',
+                        data: await getPairs()
+                    }));
                 } 
                 else log(`[error] Pairing codes do not match`)
                 break;
@@ -116,6 +132,10 @@ wss.on('connection', function connection(ws) {
                     log('[send] ready to start Web RTC');
                 }
                 break;
+            case 'candidate':
+                const candidate = msg.data;
+                await sendCandidate(ws.id, candidate);
+                break;
             case 'offer':
                 const offer = msg.data;
                 await sendOffer(ws.id, offer);
@@ -125,21 +145,9 @@ wss.on('connection', function connection(ws) {
                 await sendAnswer(ws.id, answer);
                 break;
             case 'bye':
-                pair = getPair(ws.id);
-
+                const bye = msg.data;
+                await sendBye(ws.id, bye)
                 break;
-            // case 'ice-credentials-response':
-            //     // ws.ice = msg.data.ice
-            //     log('[info] ICE credentials received')
-            //     // send ice credentials to paired device
-            //     const offer = msg.data.offer;
-            //     await sendOffer(msg.data.pairedId, offer);
-            //     break;
-            // case 'rtc-answer':
-            //     log('[info] Web RTC answer received')
-            //     const answer = msg.data.answer;
-            //     await sendAnswer(msg.data.pairedId, answer);
-            //     break;
             default:
                 log(`[error] unknown message type "${msg.type}"`);
                 break;
@@ -203,7 +211,7 @@ const requestPairConfirmation = (id, desktopDevice) => {
     wss.clients.forEach(function each(client) {
         if(client.id === id) {
             client.send(JSON.stringify({
-                type: 'pair-code-confirmation-request',
+                type: 'code-confirmation',
                 data: {
                     desktopDevice: desktopDevice
                 }
@@ -235,15 +243,28 @@ const getPair = async (id) => {
     });
     return foundPair;
 }
+    
+// web RTC 
+
+const sendCandidate = async (id, candidate) => {
+    wss.clients.forEach(function each(client) {
+        if(client.id === id) {
+            client.send(JSON.stringify({
+                type: 'candidate',
+                data: candidate
+            }));
+            log('[send] Web RTC offer');
+            return;
+        }
+    });
+}
 
 const sendOffer = async (id, offer) => {
     wss.clients.forEach(function each(client) {
         if(client.id === id) {
             client.send(JSON.stringify({
                 type: 'offer',
-                data: {
-                    sdp: offer
-                }
+                data: offer
             }));
             log('[send] Web RTC offer');
             return;
@@ -256,9 +277,7 @@ const sendAnswer = async (id, answer) => {
         if(client.id === id) {
             client.send(JSON.stringify({
                 type: 'answer',
-                data: {
-                    sdp: answer
-                }
+                data: answer
             }));
             log('[send] Web RTC answer');
             return;
@@ -266,64 +285,22 @@ const sendAnswer = async (id, answer) => {
     });
 }
 
-const requestIceCredentials = async (id) => {
-    await db.read();
-    const { pairs } = db.data;
-    let devicePair = null;
-    if(pairs.length > 0) {
-        pairs.forEach(pair => {
-            if(pair.desktopDevice.uuid === id || pair.vrDevice.uuid === id)
-                devicePair = pair
-        });
-    }
+const sendBye = async (id, bye) => {
     wss.clients.forEach(function each(client) {
-        if(client.id === devicePair.desktopDevice.uuid || client.id === devicePair.vrDevice.uuid) {
+        if(client.id === id) {
             client.send(JSON.stringify({
-                type: 'ice-credentials-request',
-                data: {}
+                type: 'bye',
+                data: bye
             }));
-            log('[send] ICE credentials request');
+            log('[send] Web RTC answer');
+            return;
         }
     });
 }
 
 server.listen(PORT, function() {
     log(`Server is listening on port ${PORT}`);
-})
-
-// if(wss)
-//     log("Signaling server listening on port " + PORT);
-// else
-//     log("ERROR: Unable to create WebSocket server!");
-
-// wss.on('connection', function connection(ws) {
-//     log('[open] Client connected');
-
-//     ws.on('message', function message(data) {
-//         console.log('received: %s', data);
-
-    //     let jsonObject = JSON.parse(data)
-
-        // switch (jsonObject.type) {
-        //     case 'open':
-        //         log(JSON.stringify(jsonObject.data));
-        //         ws.send(JSON.stringify({
-        //             type: 'devices',
-        //             data: {
-        //                 devices: ['device1', 'device2', 'device3']
-        //             }
-        //         }));
-        //         break;
-        //     default:
-        //         log('unknown message type');
-        //         break;
-        // }
-//     });
-
-    
-
-    
-// });
+});
 
 function log(text) {
     var time = new Date();
