@@ -31,7 +31,6 @@ wss.on('connection', function connection(ws) {
     const pairingCodes = new Array();
     let vrDeviceId;
     let vrDeviceName;
-    let pair;
 
     ws.on('message', async function message(data) {
         log(`[received] ${data}`);
@@ -45,7 +44,7 @@ wss.on('connection', function connection(ws) {
                     type: 'pairs',
                     data: await getPairs()
                 }));
-                log('[send] Cleared all evice pairs');
+                log('[send] Cleared all device pairs');
                 ws.send(JSON.stringify({
                     type: 'devices',
                     data: {
@@ -71,6 +70,8 @@ wss.on('connection', function connection(ws) {
                 if(await isPaired(ws.id))
                 {
                     const pair = await getPair(ws.id);
+                    vrDeviceId = pair.vrDevice.uuid;
+                    vrDeviceName = pair.vrDevice.name;
                     await sendPaired(pair);
                     log('[send] Device is already paired');
                     // await requestIceCredentials(ws.id);
@@ -131,15 +132,15 @@ wss.on('connection', function connection(ws) {
                 break;
             case 'candidate':
                 const candidate = msg.data;
-                await sendCandidate(ws.id, candidate);
+                await sendCandidate(msg.data.device, candidate);
                 break;
             case 'offer':
                 const offer = msg.data;
-                await sendOffer(ws.id, offer);
+                await sendOffer(msg.data.device, offer);
                 break;
             case 'answer':
                 const answer = msg.data;
-                await sendAnswer(ws.id, answer);
+                await sendAnswer(msg.data.device, answer);
                 break;
             case 'bye':
                 const bye = msg.data;
@@ -248,7 +249,11 @@ const sendCandidate = async (id, candidate) => {
         if(client.id === id) {
             client.send(JSON.stringify({
                 type: 'candidate',
-                data: candidate
+                data: {
+                    candidate: candidate.candidate,
+                    sdpMid: candidate.sdpMid,
+                    sdpMLineIndex: candidate.sdpMLineIndex
+                }
             }));
             log('[send] Web RTC offer');
             return;
@@ -261,7 +266,9 @@ const sendOffer = async (id, offer) => {
         if(client.id === id) {
             client.send(JSON.stringify({
                 type: 'offer',
-                data: offer
+                data: {
+                    sdp: offer.sdp
+                }
             }));
             log('[send] Web RTC offer');
             return;
@@ -274,7 +281,9 @@ const sendAnswer = async (id, answer) => {
         if(client.id === id) {
             client.send(JSON.stringify({
                 type: 'answer',
-                data: answer
+                data: {
+                    sdp: answer.sdp
+                }
             }));
             log('[send] Web RTC answer');
             return;

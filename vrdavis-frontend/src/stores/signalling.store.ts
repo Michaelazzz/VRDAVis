@@ -63,8 +63,8 @@ export class SignallingStore {
     // pairing
 
     async start() {
-        this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
-        // this.socket = new WebSocket('ws://localhost:3003');
+        // this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
+        this.socket = new WebSocket('ws://localhost:3003');
 
         this.socket.onopen = (event) => {
             console.log('[open] Connection established');
@@ -262,6 +262,7 @@ export class SignallingStore {
         this.sendMessage({ 
             type: 'offer',
             data: {
+                device: this.pairedDeviceId,
                 sdp: offer.sdp
             }
         });
@@ -277,6 +278,7 @@ export class SignallingStore {
                 this.sendMessage({ 
                     type: 'candidate',
                     data: {
+                        device: this.pairedDeviceId,
                         candidate: event.candidate.candidate,
                         sdpMid: event.candidate.sdpMid,
                         sdpMLineIndex: event.candidate.sdpMLineIndex
@@ -292,21 +294,6 @@ export class SignallingStore {
                 });
             }
         }
-    }
-
-
-    answerOffer = async (offer: any) => {
-        await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-
-        const answerDescription = await this.peerConnection.createAnswer();
-        await this.peerConnection.setLocalDescription(answerDescription);
-
-        const answer = {
-            sdpMid: answerDescription.sdp,
-            type: answerDescription.type,
-        }
-
-        return answer;
     }
     
     handleCandidate = async (candidate: any) => {
@@ -337,6 +324,7 @@ export class SignallingStore {
         this.sendMessage({ 
             type: 'answer',
             data: {
+                device: this.pairedDeviceId,
                 sdp: answer.sdp
             }
         });
