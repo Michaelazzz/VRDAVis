@@ -63,8 +63,8 @@ export class SignallingStore {
     // pairing
 
     async start() {
-        this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
-        // this.socket = new WebSocket('ws://localhost:3003');
+        // this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/');
+        this.socket = new WebSocket('ws://localhost:3003');
 
         this.socket.onopen = (event) => {
             console.log('[open] Connection established');
@@ -100,11 +100,11 @@ export class SignallingStore {
                     } else {
                         this.setPairedDeviceId(msg.data.pair.vrDevice.uuid);
                         this.setPairedDeviceName(msg.data.pair.vrDevice.name);
+                        this.sendMessage({ 
+                            type: 'ready',
+                            data: {}
+                        });
                     }
-                    this.sendMessage({ 
-                        type: 'ready',
-                        data: {}
-                    });
                     break;
                 case 'devices':
                     this.paired = false;
@@ -139,6 +139,7 @@ export class SignallingStore {
     }
 
     sendMessage(message: any) {
+        message.device = this.name
         const msg = JSON.stringify(message);
         this.socket.send(msg);
         console.log(`[send] ${msg}`)

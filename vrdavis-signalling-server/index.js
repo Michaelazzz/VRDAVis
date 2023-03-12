@@ -78,6 +78,7 @@ wss.on('connection', function connection(ws) {
                         type: 'pairs',
                         data: await getPairs()
                     }));
+                    log('[send] Device pairs');
                 }
                 else {
                     // start pairing process
@@ -114,8 +115,6 @@ wss.on('connection', function connection(ws) {
                     log('[info] Pair added to db');
                     // send pair details to both clients
                     await sendPaired(pair)
-                    log('[send] Pairing confirmation');
-                    // await requestIceCredentials(ws.id);
                     ws.send(JSON.stringify({
                         type: 'pairs',
                         data: await getPairs()
@@ -124,13 +123,11 @@ wss.on('connection', function connection(ws) {
                 else log(`[error] Pairing codes do not match`)
                 break;
             case 'ready':
-                if(!ws.vr) {
-                    ws.send(JSON.stringify({
-                        type: 'ready',
-                        data: {}
-                    }));
-                    log('[send] ready to start Web RTC');
-                }
+                ws.send(JSON.stringify({
+                    type: 'ready',
+                    data: {}
+                }));
+                log('[send] ready to start Web RTC');
                 break;
             case 'candidate':
                 const candidate = msg.data;
@@ -181,7 +178,7 @@ const sendPaired = async (pair) => {
                     pair: pair
                 }
             }));
-            log('[send] Web RTC offer');
+            log('[send] Pairing complete');
             return;
         }
     });

@@ -46,7 +46,11 @@ const PairingMenuView: React.FC = () => {
             {connectionStatus && pairs.length > 0 && pairs.map((item: any, index: number) => (
                 <p key={index}>VR device: {item.vrDevice.name} -&gt; Desktop device: {item.desktopDevice.name}</p>
             ))}
-            {connectionStatus && pairs.length > 0 && <Button onClick={event => signallingStore.sendMessage({type: 'clear-pairs', data: {}})}>Clear all pairs</Button>}
+            {connectionStatus && pairs.length > 0 && 
+            <Button onClick={event => {
+                signallingStore.sendMessage({type: 'clear-pairs', data: {}})
+                signallingStore.hangup()
+            }}>Clear all pairs</Button>}
             {paired && <p>This device is paired to: <b>{ pairedDeviceName }</b></p>}
             {!paired && !connectionStatus && <p>Could not connect to signalling server</p> }
             {!paired && availableDevices.length > 0 &&
