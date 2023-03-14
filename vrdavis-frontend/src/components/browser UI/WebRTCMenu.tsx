@@ -9,7 +9,12 @@ const WebRTCMenuView: React.FC = () => {
         <>
             <h2>Web RTC</h2>
             <p>Log</p>
-            {logs.length >= 5 && logs.slice(logs.length-5, logs.length).map((item: any, index: number) => (
+            {logs.length >= 5 ? logs.slice(logs.length-5, logs.length).map((item: any, index: number) => (
+                <p key={index}>
+                    {item}
+                </p>
+            )) : 
+            logs.map((item: any, index: number) => (
                 <p key={index}>
                     {item}
                 </p>
