@@ -74,7 +74,6 @@ wss.on('connection', function connection(ws) {
                     vrDeviceName = pair.vrDevice.name;
                     await sendPaired(pair);
                     log('[send] Device is already paired');
-                    // await requestIceCredentials(ws.id);
                     ws.send(JSON.stringify({
                         type: 'pairs',
                         data: await getPairs()
@@ -124,11 +123,14 @@ wss.on('connection', function connection(ws) {
                 else log(`[error] Pairing codes do not match`)
                 break;
             case 'ready':
-                ws.send(JSON.stringify({
-                    type: 'ready',
-                    data: {}
-                }));
-                log('[send] ready to start Web RTC');
+                //check if paired device is connected
+                if(isPairedDeviceConnected(vrDeviceId)){
+                    ws.send(JSON.stringify({
+                        type: 'ready',
+                        data: {}
+                    }));
+                    log('[send] ready to start Web RTC');
+                }
                 break;
             case 'candidate':
                 const candidate = msg.data;
@@ -183,6 +185,16 @@ const sendPaired = async (pair) => {
             return;
         }
     });
+}
+
+const isPairedDeviceConnected = (id) => {
+    let flag = false;
+    wss.clients.forEach(function each(client) {
+        if(client.id === id) {
+            flag = true;
+        }
+    });
+    return flag;
 }
 
 const checkCode = async (code) => {

@@ -13,6 +13,7 @@ import { RootContext } from "./store.context";
 import { observer } from "mobx-react";
 import { BackendMenu } from "./components/browser UI/BackendMenu";
 import { DeviceCredentials } from "./components/browser UI/DeviceCredentials";
+import { WebRTCMenu } from "./components/browser UI/WebRTCMenu";
 
 const AppView: React.FC = () => {
 
@@ -42,6 +43,7 @@ const AppView: React.FC = () => {
             <BrowserMenu>
                 <h1>VRDAVis</h1>
                 <DeviceCredentials/>
+                <WebRTCMenu/>
                 <PairingMenu/>
                 <BackendMenu/>
             </BrowserMenu>

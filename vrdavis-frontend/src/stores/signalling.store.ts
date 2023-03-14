@@ -37,6 +37,8 @@ export class SignallingStore {
 
     dataChannelParams:any = {ordered: false};
 
+    logs: string[];
+
     constructor() {
         makeAutoObservable(this);
 
@@ -44,6 +46,8 @@ export class SignallingStore {
         this.pairs = new Array<any>();
         this.codeConfrimatiom = false;
         this.connected = false;
+
+        this.logs = new Array<string>();
 
         // @ts-ignore
         this.vrCapable = navigator.xr ? true : false;
@@ -57,7 +61,6 @@ export class SignallingStore {
             this.name = localStorage.getItem('vrdavis-device-name')
         else
             this.name = 'no name';
-
     }
 
     // pairing
@@ -86,6 +89,7 @@ export class SignallingStore {
 
         this.socket.onmessage = async (event) => {
             console.log(`[received] ${event.data}`);
+            this.logs.push(`[received] ${event.data}`)
             const msg = JSON.parse(event.data);
 
             switch (msg.type) {
@@ -117,6 +121,7 @@ export class SignallingStore {
                     break;
                 case 'ready':
                     await this.startWebRTC();
+                    
                 break;
                 case 'candidate':
                     this.handleCandidate(msg.data);
@@ -143,6 +148,7 @@ export class SignallingStore {
         const msg = JSON.stringify(message);
         this.socket.send(msg);
         console.log(`[send] ${msg}`)
+        this.logs.push(`[send] ${msg}`)
     }
 
     sendCode(item: any, code: string) {
