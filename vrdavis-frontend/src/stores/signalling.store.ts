@@ -330,6 +330,7 @@ export class SignallingStore {
             await this.peerConnection.setRemoteDescription(offer);
             // @ts-ignore
             const answer = await this.peerConnection.createAnswer();
+            this.logs.push(`[info] ${answer}`);
             this.sendMessage({ 
                 type: 'answer',
                 data: {
