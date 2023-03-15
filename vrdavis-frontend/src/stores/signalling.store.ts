@@ -305,7 +305,7 @@ export class SignallingStore {
     handleCandidate = async (candidate: any) => {
         if (!this.peerConnection) {
             console.error('no peer connection');
-            this.logs.push('[info] no peer connection');
+            this.logs.push('[error] no peer connection');
             return;
         }
         if (!candidate.candidate) {
@@ -317,38 +317,46 @@ export class SignallingStore {
     }
 
     handleOffer = async (offer: any) => {
-        if (this.peerConnection) {
-            console.error('existing peer connection');
-            this.logs.push('[info] existing peer connection');
-            return;
-        }
-        this.logs.push('[info] handle offer');
-        await this.createPeerConnection();
-        // @ts-ignore
-        this.peerConnection.ondatachannel = this.receiveChannelCallback;
-        // @ts-ignore
-        await this.peerConnection.setRemoteDescription(offer);
-        // @ts-ignore
-        const answer = await this.peerConnection.createAnswer();
-        this.logs.push('[info] send answer');
-        this.sendMessage({ 
-            type: 'answer',
-            data: {
-                device: this.pairedDeviceId,
-                sdp: answer.sdp
+        try {
+            if (this.peerConnection) {
+                console.error('existing peer connection');
+                this.logs.push('[info] existing peer connection');
+                return;
             }
-        });
-        // @ts-ignore
-        await this.peerConnection.setLocalDescription(answer);
+            await this.createPeerConnection();
+            // @ts-ignore
+            this.peerConnection.ondatachannel = this.receiveChannelCallback;
+            // @ts-ignore
+            await this.peerConnection.setRemoteDescription(offer);
+            // @ts-ignore
+            const answer = await this.peerConnection.createAnswer();
+            this.sendMessage({ 
+                type: 'answer',
+                data: {
+                    device: this.pairedDeviceId,
+                    sdp: answer.sdp
+                }
+            });
+            // @ts-ignore
+            await this.peerConnection.setLocalDescription(answer);
+        } catch (error) {
+            console.error(`[error] ${error}`);
+        }
     }
 
     handleAnswer = async (answer: any) => {
-        console.log(answer)
-        if (!this.peerConnection) {
-            console.error('no peer connection');
-            return;
+        try {
+            if (!this.peerConnection) {
+                console.error('[error] no peer connection');
+                this.logs.push('[error] no peer connection');
+                return;
+            }
+            await this.peerConnection.setRemoteDescription(answer);
+        } catch (error) {
+            console.error(`[error] ${error}`);
+            this.logs.push(`[error] ${error}`);
         }
-        await this.peerConnection.setRemoteDescription(answer);
+        
     }
 
     hangup = async () => {
