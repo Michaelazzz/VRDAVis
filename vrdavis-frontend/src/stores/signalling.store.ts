@@ -121,7 +121,6 @@ export class SignallingStore {
                     break;
                 case 'ready':
                     await this.startWebRTC();
-                    
                 break;
                 case 'candidate':
                     this.handleCandidate(msg.data);
@@ -306,6 +305,7 @@ export class SignallingStore {
     handleCandidate = async (candidate: any) => {
         if (!this.peerConnection) {
             console.error('no peer connection');
+            this.logs.push('[info] no peer connection');
             return;
         }
         if (!candidate.candidate) {
@@ -318,7 +318,8 @@ export class SignallingStore {
 
     handleOffer = async (offer: any) => {
         if (this.peerConnection) {
-            console.error('existing peerconnection');
+            console.error('existing peer connection');
+            this.logs.push('[info] existing peer connection');
             return;
         }
         await this.createPeerConnection();
