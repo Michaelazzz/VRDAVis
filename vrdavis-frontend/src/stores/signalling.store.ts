@@ -324,12 +324,16 @@ export class SignallingStore {
                 return;
             }
             await this.createPeerConnection();
+            this.logs.push('[info] create peer connection');
             // @ts-ignore
             this.peerConnection.ondatachannel = this.receiveChannelCallback;
+            this.logs.push('[info] ondatachennel set to receiveChannelCallback');
             // @ts-ignore
             await this.peerConnection.setRemoteDescription(offer);
+            this.logs.push('[info] set remote description to offer');
             // @ts-ignore
             const answer = await this.peerConnection.createAnswer();
+            this.logs.push('[info] generate answer');
             this.logs.push(`[info] ${answer}`);
             this.sendMessage({ 
                 type: 'answer',
@@ -338,8 +342,10 @@ export class SignallingStore {
                     sdp: answer.sdp
                 }
             });
+            this.logs.push('[info] send answer');
             // @ts-ignore
             await this.peerConnection.setLocalDescription(answer);
+            this.logs.push('[info] set local description to answer');
         } catch (error) {
             console.error(`[error] ${error}`);
         }
