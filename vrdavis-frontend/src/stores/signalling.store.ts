@@ -325,13 +325,17 @@ export class SignallingStore {
             }
             await this.createPeerConnection();
             this.logs.push('[info] create peer connection');
-            // @ts-ignore
-            this.peerConnection.ondatachannel = this.receiveChannelCallback;
-            this.logs.push('[info] ondatachennel set to receiveChannelCallback');
-            // @ts-ignore
+            // this.peerConnection.ondatachannel = this.receiveChannelCallback;
+            this.peerConnection.ondatachannel = (event) => {
+                console.log('[info] receive Channel Callback');
+                this.receiveChannel = event.channel;
+                this.receiveChannel.onmessage = this.onReceiveChannelMessageCallback;
+                this.receiveChannel.onopen = this.onReceiveChannelStateChange;
+                this.receiveChannel.onclose = this.onReceiveChannelStateChange;
+            }
+            this.logs.push('[info] ond atachennel set');
             await this.peerConnection.setRemoteDescription(offer);
             this.logs.push('[info] set remote description to offer');
-            // @ts-ignore
             const answer = await this.peerConnection.createAnswer();
             this.logs.push('[info] generate answer');
             this.logs.push(`[info] ${answer}`);
@@ -343,7 +347,6 @@ export class SignallingStore {
                 }
             });
             this.logs.push('[info] send answer');
-            // @ts-ignore
             await this.peerConnection.setLocalDescription(answer);
             this.logs.push('[info] set local description to answer');
         } catch (error) {
