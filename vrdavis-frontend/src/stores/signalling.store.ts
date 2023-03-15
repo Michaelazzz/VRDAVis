@@ -322,6 +322,7 @@ export class SignallingStore {
             this.logs.push('[info] existing peer connection');
             return;
         }
+        this.logs.push('[info] handle offer');
         await this.createPeerConnection();
         // @ts-ignore
         this.peerConnection.ondatachannel = this.receiveChannelCallback;
