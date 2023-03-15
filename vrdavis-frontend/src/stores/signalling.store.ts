@@ -325,16 +325,9 @@ export class SignallingStore {
             }
             await this.createPeerConnection();
             this.logs.push('[info] create peer connection');
-            // this.peerConnection.ondatachannel = this.receiveChannelCallback;
-            this.peerConnection.ondatachannel = (event) => {
-                console.log('[info] receive Channel Callback');
-                this.receiveChannel = event.channel;
-                this.receiveChannel.onmessage = this.onReceiveChannelMessageCallback;
-                this.receiveChannel.onopen = this.onReceiveChannelStateChange;
-                this.receiveChannel.onclose = this.onReceiveChannelStateChange;
-            }
-            this.logs.push('[info] ond atachennel set');
-            await this.peerConnection.setRemoteDescription(offer);
+            this.peerConnection.ondatachannel = this.receiveChannelCallback;
+            this.logs.push('[info] on data channel set');
+            await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
             this.logs.push('[info] set remote description to offer');
             const answer = await this.peerConnection.createAnswer();
             this.logs.push('[info] generate answer');
