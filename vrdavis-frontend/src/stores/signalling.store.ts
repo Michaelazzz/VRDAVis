@@ -30,14 +30,15 @@ export class SignallingStore {
     public sendChannel: RTCDataChannel;
     public receiveChannel: RTCDataChannel;
 
-    public dataChannelReceive: string
-    public dataChannelSend: string
+    public dataChannelReceive: string;
+    public dataChannelSend: string;
 
-    servers: any
+    public receiveChannelState: string;
+    public sendChannelState: string;
+
+    servers: any;
 
     dataChannelParams:any = {ordered: false};
-
-    logs: string[];
 
     constructor() {
         makeAutoObservable(this);
@@ -46,8 +47,6 @@ export class SignallingStore {
         this.pairs = new Array<any>();
         this.codeConfrimatiom = false;
         this.connected = false;
-
-        this.logs = new Array<string>();
 
         // @ts-ignore
         this.vrCapable = navigator.xr ? true : false;
@@ -61,6 +60,9 @@ export class SignallingStore {
             this.name = localStorage.getItem('vrdavis-device-name')
         else
             this.name = 'no name';
+
+        this.receiveChannelState = 'closed';
+        this.sendChannelState = 'closed';
     }
 
     // pairing
@@ -70,7 +72,7 @@ export class SignallingStore {
         // this.socket = new WebSocket('ws://localhost:3003');
 
         this.socket.onopen = (event) => {
-            console.log('[open] Connection established');
+            console.log('[open] connection established');
             this.connected = true;
             this.sendMessage({ 
                 type: 'open',
@@ -88,8 +90,7 @@ export class SignallingStore {
         }
 
         this.socket.onmessage = async (event) => {
-            console.log(`[received] ${event.data}`);
-            this.logs.push(`[received] ${event.data}`)
+            // console.log(`[received] ${event.data}`);
             const msg = JSON.parse(event.data);
 
             switch (msg.type) {
@@ -146,8 +147,7 @@ export class SignallingStore {
         message.device = this.name
         const msg = JSON.stringify(message);
         this.socket.send(msg);
-        console.log(`[send] ${msg}`)
-        this.logs.push(`[send] ${msg}`)
+        // console.log(`[send] ${msg}`)
     }
 
     sendCode(item: any, code: string) {
@@ -305,7 +305,6 @@ export class SignallingStore {
     handleCandidate = async (candidate: any) => {
         if (!this.peerConnection) {
             console.error('no peer connection');
-            this.logs.push('[error] no peer connection');
             return;
         }
         if (!candidate.candidate) {
@@ -320,18 +319,12 @@ export class SignallingStore {
         try {
             if (this.peerConnection) {
                 console.error('existing peer connection');
-                this.logs.push('[info] existing peer connection');
                 return;
             }
             await this.createPeerConnection();
-            this.logs.push('[info] create peer connection');
             this.peerConnection.ondatachannel = this.receiveChannelCallback;
-            this.logs.push('[info] on data channel set');
-            await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-            this.logs.push('[info] set remote description to offer');
+            await this.peerConnection.setRemoteDescription({type: 'offer', sdp: offer});
             const answer = await this.peerConnection.createAnswer();
-            this.logs.push('[info] generate answer');
-            this.logs.push(`[info] ${answer}`);
             this.sendMessage({ 
                 type: 'answer',
                 data: {
@@ -339,9 +332,7 @@ export class SignallingStore {
                     sdp: answer.sdp
                 }
             });
-            this.logs.push('[info] send answer');
             await this.peerConnection.setLocalDescription(answer);
-            this.logs.push('[info] set local description to answer');
         } catch (error) {
             console.error(`[error] ${error}`);
         }
@@ -351,13 +342,11 @@ export class SignallingStore {
         try {
             if (!this.peerConnection) {
                 console.error('[error] no peer connection');
-                this.logs.push('[error] no peer connection');
                 return;
             }
-            await this.peerConnection.setRemoteDescription(answer);
+            await this.peerConnection.setRemoteDescription({type: 'answer', sdp: answer});
         } catch (error) {
             console.error(`[error] ${error}`);
-            this.logs.push(`[error] ${error}`);
         }
         
     }
@@ -372,13 +361,13 @@ export class SignallingStore {
         this.sendChannel = null;
         // @ts-ignore
         this.receiveChannel = null;
-        console.log('Closed peer connections');
+        console.log('closed peer connections');
         this.dataChannelSend = '';
         this.dataChannelReceive = '';
     };
 
     receiveChannelCallback = (event: any) => {
-        console.log('Receive Channel Callback');
+        // console.log('Receive Channel Callback');
         this.receiveChannel = event.channel;
         this.receiveChannel.onmessage = this.onReceiveChannelMessageCallback;
         this.receiveChannel.onopen = this.onReceiveChannelStateChange;
@@ -387,7 +376,8 @@ export class SignallingStore {
     
     onSendChannelStateChange = () => {
         const readyState = this.sendChannel.readyState;
-        console.log('Send channel state is: ' + readyState);
+        console.log('send channel state is: ' + readyState);
+        this.sendChannelState = readyState;
         if (readyState === 'open') {
             // dataChannelSend.disabled = false;
             // dataChannelSend.focus();
@@ -401,13 +391,14 @@ export class SignallingStore {
     }
 
     onSendChannelMessageCallback = (event: any) => {
-        console.log('Received Message');
+        console.log('received message');
         this.dataChannelReceive = event.data;
     }
 
     onReceiveChannelStateChange = () => {
         const readyState = this.receiveChannel.readyState;
-        console.log(`Receive channel state is: ${readyState}`);
+        console.log(`receive channel state is: ${readyState}`);
+        this.receiveChannelState = readyState;
         if (readyState === 'open') {
             // dataChannelSend.disabled = false;
             // sendButton.disabled = false;
@@ -420,7 +411,16 @@ export class SignallingStore {
       }
 
     onReceiveChannelMessageCallback = (event: any) => {
-        console.log('Received Message');
+        console.log('received message');
         this.dataChannelReceive = event.data;
+    }
+
+    sendData = (data: any) => {
+        if (this.sendChannel) {
+            this.sendChannel.send(data);
+        } else {
+            this.receiveChannel.send(data);
+        }
+        console.log('sent data: ' + data);
     }
 }

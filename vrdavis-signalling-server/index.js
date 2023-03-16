@@ -40,10 +40,7 @@ wss.on('connection', function connection(ws) {
         switch (msg.type) {
             case 'clear-pairs': 
                 await clearPairs();
-                ws.send(JSON.stringify({
-                    type: 'pairs',
-                    data: await getPairs()
-                }));
+                
                 log('[send] Cleared all device pairs');
                 ws.send(JSON.stringify({
                     type: 'devices',
@@ -165,6 +162,13 @@ wss.on('connection', function connection(ws) {
 const clearPairs = async () => {
     db.data.pairs = [];
     await db.write();
+
+    wss.clients.forEach(async function each(client) {
+        ws.send(JSON.stringify({
+            type: 'pairs',
+            data: await getPairs()
+        }));
+    });
 };
 
 const getPairs = async () => {
