@@ -72,7 +72,7 @@ export class SignallingStore {
         // this.socket = new WebSocket('ws://localhost:3003');
 
         this.socket.onopen = (event) => {
-            console.log('[open] connection established');
+            console.log('[info] connection established');
             this.connected = true;
             this.sendMessage({ 
                 type: 'open',
