@@ -4,8 +4,6 @@ import {action, makeObservable, observable, runInAction, makeAutoObservable, toJ
 import {VRDAVis} from "vrdavis-protobuf";
 import {Subject, throwError} from "rxjs";
 
-import { WebRTCService } from "./webRTC.service";
-
 // adapted from CARTA
 
 export enum ConnectionStatus {
@@ -163,7 +161,6 @@ export class BackendService {
         });
 
         // this.connection.onerror = ev => {
-        //     // AppStore.Instance.logStore.addInfo(`Connecting to server ${url} failed.`, ["network"]);
         //     console.log(ev);
         // };
 

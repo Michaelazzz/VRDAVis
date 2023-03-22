@@ -20,7 +20,6 @@ const AppView: React.FC = () => {
     const { signallingStore, backendStore } = useContext(RootContext);
 
     useEffect(() => {
-        // appStore.initVRDAVis();
         signallingStore.start();
         // backendStore.start();
     }, [signallingStore, backendStore]);

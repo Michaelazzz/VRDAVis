@@ -1,8 +1,6 @@
 // @ts-nocheck
 import { makeAutoObservable } from "mobx";
 import { v1 as uuidv1 } from 'uuid';
-// import { SignallingService } from "../services/signalling.service";
-// import { WebRTCService } from '../services/webRTC.service';
 
 export class SignallingStore {
 
