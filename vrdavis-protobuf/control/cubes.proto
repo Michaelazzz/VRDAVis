@@ -11,14 +11,14 @@ message AddRequiredCubes {
     // The list of tiles required, in encoded coordinate
     repeated sfixed32 cubes = 2;
     // The compression algorithm used
-    // CompressionType compression_type = 3;
+    CompressionType compression_type = 3;
     // Compression quality switch
-    // float compression_quality = 4;
+    float compression_quality = 4;
 }
 
 // REMOVE_REQUIRED_TILES
-// Provides a list of tiles that are required for the specified file
-message RemoveRequiredTiles {
+// Provides a list of cubelets that are required for the specified file
+message RemoveRequiredCubes {
     // The file ID that the view corresponds to
     sfixed32 file_id = 1;
     // The list of tiles required, in encoded coordinate

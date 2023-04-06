@@ -7,7 +7,8 @@ using json = nlohmann::json;
 
 namespace vrdavis {
 
-SessionManager::SessionManager() : _session_number(0), _app(uWS::App()) {}
+SessionManager::SessionManager(ProgramSettings& settings, std::shared_ptr<FileListHandler> file_list_handler) 
+    : _session_number(0), _app(uWS::App()), _settings(settings), _file_list_handler(file_list_handler) {}
 
 void SessionManager::DeleteSession(uint32_t session_id) {
     Session* session = _sessions[session_id];
@@ -82,7 +83,7 @@ void SessionManager::OnConnect(WSType* ws) {
     auto* loop = uWS::Loop::get();
 
     // create a Session
-    _sessions[session_id] = new Session(ws, loop, session_id, address);
+    _sessions[session_id] = new Session(ws, loop, session_id, address, _settings.folder);
 
     _sessions[session_id]->IncreaseRefCount();
 
@@ -210,10 +211,10 @@ void SessionManager::Listen(std::string host, int port) {
     _app.listen(host, port, LIBUS_LISTEN_EXCLUSIVE_PORT, [&](auto* token) {
         if (token) {
             port_ok = true;
-            std::cout << "Listening on port " << port << std::endl;
+            // std::cout << "Listening on port " << port << std::endl;
         } else {
-            // spdlog::error("Could not listen on port {}!\n", port);
-            std::cout << "Could not listen on port " << port << std::endl;
+            spdlog::error("Could not listen on port {}!\n", port);
+            // std::cout << "Could not listen on port " << port << std::endl;
         }
     });
 }

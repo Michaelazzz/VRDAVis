@@ -15,8 +15,12 @@
 #include <uWebSockets/App.h>
 #include <nlohmann/json.hpp>
 
+// #include <vrdavis-protobuf/close_file.pb.h>
+#include <vrdavis-protobuf/file_info.pb.h>
+#include <vrdavis-protobuf/file_list.pb.h>
 #include <vrdavis-protobuf/register_viewer.pb.h>
 
+#include "FileList/FileListHandler.h"
 #include "SessionContext.h"
 
 namespace vrdavis {
@@ -28,11 +32,12 @@ struct PerSocketData {
 
 class Session {
 public:
-    Session(uWS::WebSocket<false, true, PerSocketData>* ws, uWS::Loop* loop, uint32_t id, std::string address);
+    Session(uWS::WebSocket<false, true, PerSocketData>* ws, uWS::Loop* loop, uint32_t id, std::string address, std::string folder);
     ~Session();
 
     // VRDAVis ICD
     void OnRegisterViewer(const VRDAVis::RegisterViewer& message, uint16_t icd_version, uint32_t request_id);
+    void OnFileListRequest(const VRDAVis::FileListRequest& request, uint32_t request_id);
 
     int IncreaseRefCount() {
         return ++_ref_count;
@@ -76,6 +81,7 @@ protected:
 
     // Send protobuf messages
     void SendEvent(VRDAVis::EventType event_type, u_int32_t event_id, const google::protobuf::MessageLite& message);
+    // void SendLogEvent(const std::string& message, std::vector<std::string> tags, VRDAVis::ErrorSeverity severity);
 
     // uWebSockets
     uWS::WebSocket<false, true, PerSocketData>* _socket;
@@ -83,6 +89,10 @@ protected:
 
     uint32_t _id;
     std::string _address;
+    std::string _folder;
+
+    // File browser
+    std::shared_ptr<FileListHandler> _file_list_handler;
 
     SessionContext _base_context;
 

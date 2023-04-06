@@ -23,8 +23,7 @@ namespace vrdavis{
 struct ProgramSettings {
     bool version = false;
     std::vector<int> port;
-    std::string top_level_folder = "/";
-    std::string starting_folder = ".";
+    std::string folder = "ssh -i ~/.ssh/id_rsa ubuntu@vrdavis01.idia.ac.za";
     std::string host = "0.0.0.0";
     std::vector<std::string> files;
     std::vector<fs::path> file_paths;
@@ -46,8 +45,7 @@ struct ProgramSettings {
     // clang-format off
     std::unordered_map<std::string, std::string*> strings_keys_map{
         {"host", &host},
-        {"top_level_folder", &top_level_folder},
-        {"starting_folder", &starting_folder},
+        {"folder", &folder}
     };
 
     std::unordered_map<std::string, std::vector<int>*> vector_int_keys_map {

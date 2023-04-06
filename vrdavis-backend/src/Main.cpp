@@ -4,8 +4,9 @@
 #include <vector>
 
 #include <nlohmann/json.hpp>
-#include <spdlog/spdlog.h>
+// #include <spdlog/spdlog.h>
 
+#include "FileList/FileListHandler.h"
 #include "HttpServer/HttpServer.h"
 #include "Logger/Logger.h"
 #include "ProgramSettings.h"
@@ -18,7 +19,7 @@ using json = nlohmann::json;
 
 // Entry point. Parses command line arguments and starts server listening
 int main(int argc, char* argv[]) {
-
+    std::shared_ptr<FileListHandler> file_list_handler;
     std::unique_ptr<HttpServer> http_server;
     std::shared_ptr<SessionManager> session_manager;
 
@@ -40,7 +41,7 @@ int main(int argc, char* argv[]) {
         sigaction(SIGINT, &sig_handler, nullptr);
 
         // Main
-        // vrdavis::ProgramSettings settings(argc, argv);
+        vrdavis::ProgramSettings settings(argc, argv);
 
         // vrdavis::logger::InitLogger(settings.no_log, settings.verbosity, settings.log_performance, settings.log_protocol_messages, settings.user_directory);
         // settings.FlushMessages(); // flush log messages produced during Program Settings setup
@@ -53,14 +54,25 @@ int main(int argc, char* argv[]) {
         //     Session::SetInitExitTimeout(settings.init_wait_time);
         // }
 
+        // One FileListHandler works for all sessions.
+        file_list_handler = std::make_shared<FileListHandler>(settings.folder);
+        file_list_handler->GetFileList();
+
         // Session manager
-        session_manager = std::make_shared<SessionManager>();
-        // vrdavis::OnMessageTask::SetSessionManager(session_manager);
+        session_manager = std::make_shared<SessionManager>(settings, file_list_handler);
 
         // HTTP server
         http_server = std::make_unique<HttpServer>(session_manager);
 
-        session_manager->Listen("0.0.0.0", 9000);
+        session_manager->Listen(settings.host, DEFAULT_SOCKET_PORT);
+
+        // string start_info = fmt::format("Listening on port {} with top level folder {}, starting folder {}", DEFAULT_SOCKET_PORT, settings.top_level_folder, settings.starting_folder);
+        // if (settings.omp_thread_count > 0) {
+        //     start_info += fmt::format(", and {} OpenMP worker threads", settings.omp_thread_count);
+        // } else {
+        //     start_info += fmt::format(". The number of OpenMP worker threads will be handled automatically.");
+        // }
+        // spdlog::info(start_info);
 
         session_manager->RunApp();
 

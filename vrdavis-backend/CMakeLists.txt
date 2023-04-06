@@ -48,17 +48,22 @@ set(LINK_LIBS
     uSockets
     z
     ${OpenMP_CXX_LIBRARIES}
+    ${HDF5_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
 set(SOURCE_FILES
     ${SOURCE_FILES}
+    src/FileList/FileListHandler.cpp
     src/HttpServer/HttpServer.cpp
     src/Logger/Logger.cpp
     src/Main.cpp
+    src/ProgramSettings.cpp
     src/Message.cpp
     src/Session/Session.cpp
     src/Session/SessionManager.cpp
+    src/Util/File.cpp
+    src/Util/String.cpp
 )
 
 add_executable(vrdavis_backend ${SOURCE_FILES})

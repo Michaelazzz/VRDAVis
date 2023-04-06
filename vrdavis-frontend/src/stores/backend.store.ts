@@ -101,10 +101,10 @@ export class BackendStore {
 
     connectToServer = async (url: string) : Promise<VRDAVis.IRegisterViewerAck> => {
 
-        if (this.connection) {
-            this.connection.onclose = null;
-            this.connection.close();
-        }
+        // if (this.connection) {
+        //     this.connection.onclose = null;
+        //     this.connection.close();
+        // }
 
         const isReconnection: boolean = url === this.serverUrl;
         let connectionAttempts = 0;
