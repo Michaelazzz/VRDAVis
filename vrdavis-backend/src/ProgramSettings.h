@@ -23,7 +23,7 @@ namespace vrdavis{
 struct ProgramSettings {
     bool version = false;
     std::vector<int> port;
-    std::string folder = "ssh -i ~/.ssh/id_rsa ubuntu@vrdavis01.idia.ac.za";
+    std::string folder = "/data/cubes1";
     std::string host = "0.0.0.0";
     std::vector<std::string> files;
     std::vector<fs::path> file_paths;
