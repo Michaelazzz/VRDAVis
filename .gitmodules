@@ -13,3 +13,6 @@
 [submodule "vrdavis-backend/third-party/uWebSockets"]
 	path = vrdavis-backend/third-party/uWebSockets
 	url = git@github.com:uNetworking/uWebSockets.git
+[submodule "vrdavis-backend/cxxopts"]
+	path = vrdavis-backend/cxxopts
+	url = git@github.com:jarro2783/cxxopts.git
