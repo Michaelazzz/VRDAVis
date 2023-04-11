@@ -1,10 +1,10 @@
-import { join, dirname } from 'path';
-import { Low, JSONFileSync } from 'lowdb';
-import { fileURLToPath } from 'url'
-
 import WebSocket, { WebSocketServer } from 'ws';
 import express from 'express';
 import http from 'http';
+
+import { join, dirname } from 'path';
+import { Low, JSONFileSync } from 'lowdb';
+import { fileURLToPath } from 'url';
 
 // Database - LowDB
 const directory = dirname(fileURLToPath(import.meta.url));
