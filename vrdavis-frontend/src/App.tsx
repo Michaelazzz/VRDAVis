@@ -20,7 +20,7 @@ const AppView: React.FC = () => {
     const { signallingStore, backendStore } = useContext(RootContext);
 
     useEffect(() => {
-        // signallingStore.start();
+        signallingStore.start();
         backendStore.start();
     }, [signallingStore, backendStore]);
 
