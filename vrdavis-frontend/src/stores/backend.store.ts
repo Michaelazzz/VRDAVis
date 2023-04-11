@@ -70,7 +70,8 @@ export class BackendStore {
 
         this.loggingEnabled = true;
         this.connectionDropped = false;
-        this.serverUrl = 'ws://localhost:9000';
+        this.serverUrl = 'wss://vrdavis01.idia.ac.za/server'
+        // this.serverUrl = 'ws://localhost:9000';
 
         this.connection = new WebSocket(this.serverUrl);
         this.lastPingTime = 0;
@@ -101,10 +102,10 @@ export class BackendStore {
 
     connectToServer = async (url: string) : Promise<VRDAVis.IRegisterViewerAck> => {
 
-        if (this.connection) {
-            this.connection.onclose = null;
-            this.connection.close();
-        }
+        // if (this.connection) {
+        //     this.connection.onclose = null;
+        //     this.connection.close();
+        // }
 
         const isReconnection: boolean = url === this.serverUrl;
         let connectionAttempts = 0;

@@ -3,7 +3,65 @@ package VRDAVis;
 
 import "enums.proto";
 
-message Cubelet {
+//
+// Utility definitions and sub-messages for the Control package
+//
+
+message Point {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+message DoublePoint {
+    double x = 1;
+    double y = 2;
+    double z = 3;
+}
+
+// File info message structure (internal use only)
+message FileInfo {
+    string name = 1;
+    // FileType type = 2;
+    sfixed64 size = 2;
+    repeated string HDU_list = 3;
+    sfixed64 date = 4;
+}
+
+// Directory info message structure (internal use only)
+message DirectoryInfo {
+    string name = 1;
+    sfixed32 item_count = 2;
+    sfixed64 date = 3;
+}
+
+message HeaderEntry {
+    string name = 1;
+    string value = 2;
+    EntryType entry_type = 3;
+    double numeric_value = 4;
+    string comment = 5;
+}
+
+message FileInfoExtended {
+    // Number of dimensions of the image file
+    sfixed32 dimensions = 1;
+    // Width of the XY plane
+    sfixed32 width = 2;
+    // Height of the XY plane
+    sfixed32 height = 3;
+    // Number of channels
+    sfixed32 depth = 4;
+    // Number of Stokes parameters
+    sfixed32 stokes = 5;
+    // List of Stokes parameters contained in the file (if applicable). For files that do not explicitly specify Stokes files, this will be blank.
+    repeated string stokes_vals = 6;
+    // Header entries from header string or attributes
+    repeated HeaderEntry header_entries = 7;
+    repeated HeaderEntry computed_entries = 8;
+}
+
+message CubeData {
     // Cube layer coordinate. If this is < 0, the ``mip`` value is used for coordinates instead
     sfixed32 layer = 1;
     // Cube x coordinate

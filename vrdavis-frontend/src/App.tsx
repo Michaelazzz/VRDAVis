@@ -21,7 +21,7 @@ const AppView: React.FC = () => {
 
     useEffect(() => {
         signallingStore.start();
-        // backendStore.start();
+        backendStore.start();
     }, [signallingStore, backendStore]);
 
     let height = 128;

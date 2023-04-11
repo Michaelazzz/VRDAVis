@@ -10,9 +10,8 @@
 #include <tuple>
 #include <vector>
 
-#include <vrdavis-protobuf/volume_data.pb.h>
 #include <vrdavis-protobuf/defs.pb.h>
-#include <vrdavis-protobuf/volume_data.pb.h>
+#include <vrdavis-protobuf/raster_cube.pb.h>
 
 #include "Message.h"
 
@@ -24,8 +23,12 @@ volatile int Session::_num_sessions = 0;
 int Session::_exit_after_num_seconds = 5;
 bool Session::_exit_when_all_sessions_closed = false;
 
-Session::Session(uWS::WebSocket<false, true, PerSocketData>* ws, uWS::Loop* loop, uint32_t id, std::string address) 
-    : _socket(ws), _loop(loop), _id(id), _address(address) {
+Session::Session(uWS::WebSocket<false, true, PerSocketData>* ws, uWS::Loop* loop, uint32_t id, std::string address, std::string folder) 
+    : _socket(ws)
+    , _loop(loop), 
+    _id(id), 
+    _address(address),
+    _folder(folder) {
     _ref_count = 0;
     _connected = true;
     ++_num_sessions;
@@ -147,6 +150,20 @@ void Session::OnRegisterViewer(const VRDAVis::RegisterViewer& message, uint16_t 
     SendEvent(VRDAVis::EventType::REGISTER_VIEWER_ACK, request_id, ack_message);
 }
 
+void Session::OnFileListRequest(const VRDAVis::FileListRequest& request, uint32_t request_id) {
+    // auto progress_callback = [&](VRDAVis::ListProgress progress) { SendEvent(VRDAVis::EventType::FILE_LIST_PROGRESS, request_id, progress); };
+    // _file_list_handler->SetProgressCallback(progress_callback);
+    VRDAVis::FileListResponse response;
+    FileListHandler::ResultMsg result_msg;
+    _file_list_handler->OnFileListRequest(request, response, result_msg);
+    if (!response.cancel()) {
+        SendEvent(VRDAVis::EventType::FILE_LIST_RESPONSE, request_id, response);
+    }
+    if (!result_msg.message.empty()) {
+        // SendLogEvent(result_msg.message, result_msg.tags, result_msg.severity);
+    }
+}
+
 void Session::SendVolumeData() {
     // generate data
     int size = 128 * 128 * 128; 
@@ -180,7 +197,7 @@ void Session::ConnectCalled() {
 // SEND uWEBSOCKET MESSAGES
 
 // Sends an event to the client with a given event name (padded/concatenated to 32 characters) and a given ProtoBuf message
-void Session::SendEvent(VRDAVis::EventType event_type, uint32_t event_id, const google::protobuf::MessageLite& message) {
+void Session::SendEvent(VRDAVis::EventType event_type, u_int32_t event_id, const google::protobuf::MessageLite& message) {
     std::cout << "Session::SendEvent" << std::endl;
     std::cout << "\ttype: " << event_type << std::endl;
     std::cout << "\tid: " << event_id << std::endl;
@@ -217,6 +234,19 @@ void Session::SendEvent(VRDAVis::EventType event_type, uint32_t event_id, const 
         // });
     }
 }
+
+// void Session::SendLogEvent(const std::string& message, std::vector<std::string> tags, VRDAVis::ErrorSeverity severity) {
+//     VRDAVis::ErrorData error_data;
+//     VRDAVis::
+//     error_data.set_message(message);
+//     error_data.set_severity(severity);
+//     *error_data.mutable_tags() = {tags.begin(), tags.end()};
+//     SendEvent(VRDAVis::EventType::ERROR_DATA, 0, error_data);
+//     if ((severity > VRDAVis::ErrorSeverity::DEBUG)) {
+//         // spdlog::debug("Session {}: {}", _id, message);
+//         std::cout << "Session " << _id << ": " << message << std::endl;
+//     }
+// }
 
 void Session::UpdateLastMessageTimestamp() {
     _last_message_timestamp = std::chrono::high_resolution_clock::now();

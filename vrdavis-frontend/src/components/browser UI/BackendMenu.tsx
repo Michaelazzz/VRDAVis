@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { useContext } from "react";
 import { RootContext } from "../../store.context";
+import { ConnectionStatus } from "../../stores/backend.store";
 
 
 const BackendMenuView: React.FC = () => {
@@ -9,9 +10,9 @@ const BackendMenuView: React.FC = () => {
     return (
         <>
             <h2>Remote Server</h2>
-            {backendStore.connectionStatus === 0 && <p>No Connection</p>}
-            {backendStore.connectionStatus === 1 && <p>Connection pending...</p>}
-            {backendStore.connectionStatus === 2 && <p>Connected to server!</p>}
+            {backendStore.connectionStatus === ConnectionStatus.CLOSED && <p>No Connection</p>}
+            {backendStore.connectionStatus === ConnectionStatus.PENDING && <p>Connection pending...</p>}
+            {backendStore.connectionStatus === ConnectionStatus.ACTIVE && <p>Connected to server!</p>}
             {backendStore.sessionId !== 0 &&<p>Current Session ID: <br/> {backendStore.sessionId}</p>}
         </>
     )
