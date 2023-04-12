@@ -1,18 +1,9 @@
-[submodule "uWebSockets"]
-	path = uWebSockets
-	url = https://github.com/uNetworking/uWebSockets.git
-[submodule "third-party/uSockets"]
-	path = third-party/uSockets
-	url = git@github.com:uNetworking/uSockets.git
-[submodule "third-party/spdlog"]
-	path = third-party/spdlog
-	url = https://github.com/gabime/spdlog.git
-[submodule "vrdavis-backend/third-party/spdlog/spdlog"]
-	path = vrdavis-backend/third-party/spdlog/spdlog
-	url = git@github.com:gabime/spdlog.git
 [submodule "vrdavis-backend/third-party/uWebSockets"]
 	path = vrdavis-backend/third-party/uWebSockets
-	url = git@github.com:uNetworking/uWebSockets.git
-[submodule "cxxopts"]
+	url = https://github.com/uNetworking/uWebSockets.git
+[submodule "vrdavis-backend/third-party/spdlog"]
+	path = vrdavis-backend/third-party/spdlog
+	url = git@github.com:gabime/spdlog.git
+[submodule "vrdavis-backend/third-party/cxxopts"]
 	path = vrdavis-backend/third-party/cxxopts
 	url = git@github.com:jarro2783/cxxopts.git
