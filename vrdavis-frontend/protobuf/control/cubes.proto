@@ -1,10 +1,11 @@
 syntax = "proto3";
 package VRDAVis;
 
+import "defs.proto";
 import "enums.proto";
 
-// ADD_REQUIRED_TILES
-// Provides a list of tiles that are required for the specified file
+// ADD_REQUIRED_CUBES
+// Provides a list of cubes that are required for the specified file
 message AddRequiredCubes {
     // The file ID that the view corresponds to
     sfixed32 file_id = 1;
@@ -16,9 +17,9 @@ message AddRequiredCubes {
     // float compression_quality = 4;
 }
 
-// REMOVE_REQUIRED_TILES
-// Provides a list of tiles that are required for the specified file
-message RemoveRequiredTiles {
+// REMOVE_REQUIRED_CUBELETS
+// Provides a list of cubelets that are required for the specified file
+message RemoveRequiredCubelets {
     // The file ID that the view corresponds to
     sfixed32 file_id = 1;
     // The list of tiles required, in encoded coordinate

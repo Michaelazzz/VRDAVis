@@ -5,10 +5,63 @@ enum EventType {
     EMPTY_EVENT = 0;
     REGISTER_VIEWER = 1;
     REGISTER_VIEWER_ACK = 2;
-    CUBE_DATA = 3;
+    FILE_LIST_REQUEST = 3;
+    FILE_INFO_REQUEST = 4;
+    FILE_LIST_RESPONSE = 5;
+    FILE_INFO_RESPONSE = 6;
+    OPEN_FILE = 7;
+    OPEN_FILE_ACK = 8;
+    CLOSE_FILE = 9;
+    ADD_REQUIRED_CUBES = 10;
+    REMOVE_REQUIRED_CUBES = 11;
+    VOLUME_CUBE_DATA = 12;
+    VOLUME_CUBE_SYNC = 13;
+    RESUME_SESSION = 14;
+    RESUME_SESSION_ACK = 15;
+    ERROR_DATA = 16;
 }
 
 enum SessionType {
     NEW = 0;
     RESUMED = 1;
+}
+
+enum FileType {
+    CASA = 0;
+    CRTF = 1;
+    DS9_REG = 2;
+    FITS = 3;
+    HDF5 = 4;
+    MIRIAD = 5;
+    UNKNOWN = 6;
+}
+
+enum CompressionType {
+    NONE = 0;
+    ZFP = 1;
+    SZ = 2;
+}
+
+enum ErrorSeverity {
+    DEBUG = 0;
+    INFO = 1;
+    WARNING = 2;
+    ERROR = 3;
+    CRITICAL = 4;
+}
+
+enum EntryType {
+    STRING = 0;
+    FLOAT = 1;
+    INT = 2;
+}
+
+enum FileListType {
+    Volume = 0;
+}
+
+enum FileListFilterMode {
+    Content = 0;
+    Extension = 1;
+    AllFiles = 2;
 }
