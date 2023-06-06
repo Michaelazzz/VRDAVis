@@ -4,9 +4,10 @@ import { Canvas } from '@react-three/fiber'
 // import {Box, Plane} from "@react-three/drei";
 import * as THREE from "three";
 import CssBaseline from '@mui/material/CssBaseline';
-import HandMenu from "./components/HandMenu";
-import DataObject from "./components/DataObject";
-import WorldspaceMenu from "./components/WorldspaceMenu";
+import { ConnectionStatus } from "./stores/backend.store";
+import HandMenu from "./components/vr UI/HandMenu";
+import { DataObject } from "./components/DataObject";
+import WorldspaceMenu from "./components/vr UI/WorldspaceMenu";
 import { PairingMenu } from "./components/browser UI/PairingMenu";
 import BrowserMenu from "./components/browser UI/BrowserMenu";
 import { RootContext } from "./store.context";
@@ -72,8 +73,8 @@ const AppView: React.FC = () => {
 
                     {/* <WorldspaceMenu position={[1,1.5,-1.5]} /> */}
                     
-
-                    <DataObject data={data} height={height} width={width} depth={depth} />
+                    { backendStore.connectionStatus === ConnectionStatus.ACTIVE && <DataObject /> }
+                    
                 </XR>
             </Canvas>
         </>

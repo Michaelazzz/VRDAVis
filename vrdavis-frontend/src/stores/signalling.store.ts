@@ -66,6 +66,11 @@ export class SignallingStore {
     // pairing
 
     async start() {
+        if (this.socket) {
+            this.socket.onclose = null;
+            this.socket.close()
+        }
+
         this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/signal');
         // this.socket = new WebSocket('ws://localhost:3003');
 
@@ -144,8 +149,10 @@ export class SignallingStore {
     sendMessage(message: any) {
         message.device = this.name
         const msg = JSON.stringify(message);
-        this.socket.send(msg);
-        // console.log(`[send] ${msg}`)
+        if(this.socket)
+            this.socket.send(msg);
+        else
+            console.log('[error] could not send message')
     }
 
     sendCode(item: any, code: string) {

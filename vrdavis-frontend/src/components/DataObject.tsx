@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { RayGrab, useController, useInteraction, useXR, useXREvent } from '@react-three/xr';
 import { useFrame } from '@react-three/fiber'
 
@@ -6,8 +6,16 @@ import * as THREE from 'three';
 
 import { VolumeShader } from '../shaders/VolumeShader';
 import createColormap from 'colormap';
+import { RootContext } from '../store.context';
+import { observer } from 'mobx-react';
 
-const DataObject = ({data, width, height, depth}: any) => {
+const DataObjectView: React.FC = () => {
+
+    const { backendStore } = useContext(RootContext);
+    const data = backendStore.volumeData;
+    const width = backendStore.width;
+    const height = backendStore.height;
+    const depth = backendStore.depth;
 
     const ref = useRef<THREE.Mesh>();
 
@@ -91,7 +99,7 @@ const DataObject = ({data, width, height, depth}: any) => {
         
         dataCube.frustumCulled = false;
         ref.current.add(dataCube);
-    }, [data]);
+    }, [colormap, dataCube, texture]);
     
 
     useFrame(() => {
@@ -212,10 +220,9 @@ const DataObject = ({data, width, height, depth}: any) => {
             // @ts-ignore
             ref={ref}
             position={[0,1.5,-2.5]}
-        >
-
-        </group>
+        ></group>
     )
 };
 
-export default DataObject;
+const DataObject = observer(DataObjectView);
+export { DataObject };

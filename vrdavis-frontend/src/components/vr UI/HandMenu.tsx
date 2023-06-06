@@ -4,11 +4,11 @@ import {extend, useFrame} from "@react-three/fiber";
 import * as THREE from "three";
 import ThreeMeshUI from "three-mesh-ui";
 
-extend(ThreeMeshUI);
-
 import Panel from "./Panel";
 import Button from "./Button";
 import ChartPanel from "./ChartPanel";
+
+extend(ThreeMeshUI);
 
 const Title = forwardRef(({accentColor, text}: any, ref) => {
     return (
