@@ -2,6 +2,7 @@
 #define MESSAGE_H_
 
 #include <vrdavis-protobuf/register_viewer.pb.h>
+#include <vrdavis-protobuf/file_list.pb.h>
 
 namespace vrdavis {
 const uint16_t ICD_VERSION = 1;
@@ -19,6 +20,7 @@ class Message {
 public:
     // Request messages
     static VRDAVis::RegisterViewer RegisterViewer(uint32_t session_id);
+    static VRDAVis::FileListRequest FileListRequest(const std::string& directory);
     
     // Response messages
     // none so far

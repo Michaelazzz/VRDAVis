@@ -20,10 +20,9 @@ public:
         VRDAVis::ErrorSeverity severity;
     };
 
-    // void GetFileList(VRDAVis::FileListResponse& file_list, std::string folder, ResultMsg& result_msg);
-    void GetFileList();
-
     void OnFileListRequest(const VRDAVis::FileListRequest& request, VRDAVis::FileListResponse& response, ResultMsg& result_msg);
+
+    void GetFileList(VRDAVis::FileListResponse& file_list, std::string folder, ResultMsg& result_msg);
 
     void StopGettingFileList() {
         _stop_getting_file_list = true;
@@ -34,7 +33,6 @@ public:
 private:
     // ICD: File/Region list response
     
-
     // void GetRelativePath(std::string& folder);
 
     // lock on file list handler

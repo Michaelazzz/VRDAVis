@@ -1,6 +1,7 @@
 #include <spdlog/spdlog.h>
 
 #include "Session/SessionManager.h"
+#include "OnMessageTask.h"
 #include "Message.h"
 
 using json = nlohmann::json;
@@ -123,8 +124,6 @@ void SessionManager::OnDrain(WSType* ws) {
 }
 
 void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpCode op_code) {
-    // std::cout << "SessionManager OnMessage" << std::endl;
-
     uint32_t session_id = static_cast<PerSocketData*>(ws->getUserData())->session_id;
     Session* session = _sessions[session_id];
     if (!session) {
@@ -146,11 +145,11 @@ void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpC
 
             bool message_parsed(false);
             // thread manager task
-            // OnMessageTask* tsk = nullptr;
+            OnMessageTask* tsk = nullptr;
 
             switch (event_type) {
                 case VRDAVis::EventType::REGISTER_VIEWER: {
-                    // std::cout << "Session Register viewer message received" << std::endl;
+                    spdlog::info("Register viewer message received");
                     VRDAVis::RegisterViewer message;
                     if (message.ParseFromArray(event_buf, event_length)) {
                         session->OnRegisterViewer(message, head.icd_version, head.request_id);
@@ -158,15 +157,55 @@ void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpC
                     }
                     break;
                 }
+                case VRDAVis::EventType::FILE_LIST_REQUEST: {
+                    spdlog::info("File list request message received");
+                    VRDAVis::FileListRequest message;
+                    if (message.ParseFromArray(event_buf, event_length)) {
+                        // tsk = new GeneralMessageTask<VRDAVis::FileListRequest>(session, message, head.request_id);
+                        session->OnFileListRequest(message, head.request_id);
+                        message_parsed = true;
+                    }
+                    break;
+                }
+                case VRDAVis::EventType::FILE_INFO_REQUEST: {
+                    VRDAVis::FileInfoRequest message;
+                    if (message.ParseFromArray(event_buf, event_length)) {
+                        session->OnFileInfoRequest(message, head.request_id);
+                        message_parsed = true;
+                    }
+                    break;
+                }
+                case VRDAVis::EventType::OPEN_FILE: {
+                    VRDAVis::OpenFile message;
+                    if (message.ParseFromArray(event_buf, event_length)) {
+                        session->OnOpenFile(message, head.request_id);
+                        message_parsed = true;
+                    }
+                    break;
+                }
+                case VRDAVis::EventType::ADD_REQUIRED_CUBES: {
+                    VRDAVis::AddRequiredCubes message;
+                    if (message.ParseFromArray(event_buf, event_length)) {
+                        // tsk has to go through task manager
+                        // tsk = new GeneralMessageTask<VRDAVis::AddRequiredCubes>(session, message, head.request_id);
+                        session->OnAddRequiredCubes(message, head.request_id);
+                        message_parsed = true;
+                    }
+                    break;
+                }
                 default: {
-                    std::cout << "Bad event type " << event_type << "!" << std::endl;
+                    spdlog::warn("Bad event type {}!", event_type);
                     break;
                 }
             }
 
             if (!message_parsed) {
-                std::cout << "Bad " << event_type_name << " message!" << std::endl;
+                spdlog::warn("Bad {} message!", event_type_name);
             }
+
+            // if (tsk) {
+            //     ThreadManager::QueueTask(tsk);
+            // }
         }
     } else if (op_code == uWS::OpCode::TEXT) {
         if (sv_message == "PING") {
@@ -181,26 +220,6 @@ void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpC
             // }
         }
     }
-
-    // json jsonObject = json::parse(message);
-    // std::cout << message << std::endl;
-    // std::string type = jsonObject["type"].dump();
-    // type = type.substr(1, (type.length() - 2));
-    // std::cout << type << std::endl;
-
-    // if (type == "data") {
-    //     // generate data
-    //     int size = 128 * 128 * 128; 
-
-    //     json dataMessage;
-    //     dataMessage["data"] = {};
-    //     for (int i = 0; i < (size); i++) {
-    //         float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    //         dataMessage["data"].push_back(r);
-    //     }
-    //     dataMessage["type"] = "data";
-    //     ws->send(dataMessage.dump(), uWS::OpCode::TEXT, false);
-    //}
 }
 
 void SessionManager::Listen(std::string host, int port) {
@@ -211,7 +230,7 @@ void SessionManager::Listen(std::string host, int port) {
     _app.listen(host, port, LIBUS_LISTEN_EXCLUSIVE_PORT, [&](auto* token) {
         if (token) {
             port_ok = true;
-            // std::cout << "Listening on port " << port << std::endl;
+            spdlog::info("Listening on port {}", port);
         } else {
             spdlog::error("Could not listen on port {}!\n", port);
             // std::cout << "Could not listen on port " << port << std::endl;

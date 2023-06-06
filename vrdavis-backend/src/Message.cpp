@@ -10,6 +10,12 @@ VRDAVis::RegisterViewer Message::RegisterViewer(uint32_t session_id) {
     return register_viewer;
 }
 
+VRDAVis::FileListRequest Message::FileListRequest(const std::string& directory) {
+    VRDAVis::FileListRequest file_list_request;
+    file_list_request.set_directory(directory);
+    return file_list_request;
+}
+
 VRDAVis::EventType Message::EventType(std::vector<char>& message) {
     vrdavis::EventHeader head = *reinterpret_cast<const vrdavis::EventHeader*>(message.data());
     return static_cast<VRDAVis::EventType>(head.type);

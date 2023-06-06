@@ -52,14 +52,27 @@ set(LINK_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
+find_package(HDF5 REQUIRED COMPONENTS CXX)
+if (HDF5_FOUND)
+    include_directories(${HDF5_INCLUDE_DIR})
+    set(LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES})
+else ()
+    message(FATAL_ERROR "Could not find HDF5.")
+endif ()
+# project(UseHighFive)
+# find_package(HighFive REQUIRED)
+
 set(SOURCE_FILES
     ${SOURCE_FILES}
+    src/DataStream/Cube.cpp
     src/FileList/FileListHandler.cpp
     src/HttpServer/HttpServer.cpp
+    src/FileData/Hdf5Loader.cpp
     src/Logger/Logger.cpp
     src/Main.cpp
     src/ProgramSettings.cpp
     src/Message.cpp
+    src/Session/OnMessageTask.cpp
     src/Session/Session.cpp
     src/Session/SessionManager.cpp
     src/Util/File.cpp

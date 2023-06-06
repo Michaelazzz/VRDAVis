@@ -15,13 +15,19 @@
 #include <uWebSockets/App.h>
 #include <nlohmann/json.hpp>
 
-// #include <vrdavis-protobuf/close_file.pb.h>
+#include <vrdavis-protobuf/close_file.pb.h>
 #include <vrdavis-protobuf/file_info.pb.h>
 #include <vrdavis-protobuf/file_list.pb.h>
 #include <vrdavis-protobuf/register_viewer.pb.h>
+#include <vrdavis-protobuf/resume_session.pb.h>
+#include <vrdavis-protobuf/open_file.pb.h>
+#include <vrdavis-protobuf/cubes.pb.h>
 
+#include "FileData/Hdf5Loader.h"
 #include "FileList/FileListHandler.h"
 #include "SessionContext.h"
+
+#define LOADER_CACHE_SIZE 25
 
 namespace vrdavis {
 
@@ -38,6 +44,11 @@ public:
     // VRDAVis ICD
     void OnRegisterViewer(const VRDAVis::RegisterViewer& message, uint16_t icd_version, uint32_t request_id);
     void OnFileListRequest(const VRDAVis::FileListRequest& request, uint32_t request_id);
+    void OnFileInfoRequest(const VRDAVis::FileInfoRequest& request, uint32_t request_id);
+    bool OnOpenFile(const VRDAVis::OpenFile& message, uint32_t request_id, bool silent = false);
+    void OnCloseFile(const VRDAVis::CloseFile& message);
+    void OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, bool skip_data = false);
+    void OnResumeSession(const VRDAVis::ResumeSession& message, uint32_t request_id);
 
     int IncreaseRefCount() {
         return ++_ref_count;
@@ -76,12 +87,13 @@ public:
     void UpdateLastMessageTimestamp();
     std::chrono::high_resolution_clock::time_point GetLastMessageTimestamp();
 protected:
-    // Send data streams
-    void SendVolumeData();
+    bool FillFileInfo(VRDAVis::FileInfo& file_info, const std::string& folder, const std::string& filename, std::string& message);
 
     // Send protobuf messages
     void SendEvent(VRDAVis::EventType event_type, u_int32_t event_id, const google::protobuf::MessageLite& message);
-    // void SendLogEvent(const std::string& message, std::vector<std::string> tags, VRDAVis::ErrorSeverity severity);
+    // void SendFileEvent(int file_id, VRDAVis::EventType event_type, u_int32_t event_id, google::protobuf::MessageLite& message, bool compress = true);
+    void SendFileEvent(int file_id, VRDAVis::EventType event_type, u_int32_t event_id, google::protobuf::MessageLite& message);
+    void SendLogEvent(const std::string& message, std::vector<std::string> tags, VRDAVis::ErrorSeverity severity);
 
     // uWebSockets
     uWS::WebSocket<false, true, PerSocketData>* _socket;
@@ -90,9 +102,16 @@ protected:
     uint32_t _id;
     std::string _address;
     std::string _folder;
+    std::string _filename;
 
     // File browser
     std::shared_ptr<FileListHandler> _file_list_handler;
+
+    // File Loader
+    Hdf5Loader* _loader;
+
+    // std::unordered_map<int, std::shared_ptr<Cube>> _cubelets;
+    // std::mutex _frame_mutex;
 
     SessionContext _base_context;
 

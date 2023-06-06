@@ -27,6 +27,7 @@ struct Cube {
         int32_t x = (((encoded_value << 19) >> 19) + 4096) % 4096;
         int32_t layer = ((encoded_value >> 24) + 128) % 128;
         int32_t y = (((encoded_value << 7) >> 19) + 4096) % 4096;
+        // int32_t z = (((encoded_value << 7) >> 19) + 4096) % 4096;
         return Cube{x, y, layer};
     }
 

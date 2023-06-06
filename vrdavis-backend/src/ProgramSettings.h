@@ -22,6 +22,7 @@
 namespace vrdavis{
 struct ProgramSettings {
     bool version = false;
+    bool help = false;
     std::vector<int> port;
     std::string folder = "/data/cubes1";
     std::string host = "0.0.0.0";
