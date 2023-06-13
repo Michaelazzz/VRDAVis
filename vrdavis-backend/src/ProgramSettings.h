@@ -24,6 +24,8 @@ struct ProgramSettings {
     bool version = false;
     bool help = false;
     std::vector<int> port;
+    int omp_thread_count = OMP_THREAD_COUNT;
+    int event_thread_count = 2;
     std::string folder = "/data/cubes1";
     std::string host = "0.0.0.0";
     std::vector<std::string> files;

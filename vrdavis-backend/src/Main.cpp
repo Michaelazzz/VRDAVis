@@ -12,6 +12,7 @@
 #include "ProgramSettings.h"
 #include "Session/OnMessageTask.h"
 #include "Session/SessionManager.h"
+#include "ThreadingManager/ThreadingManager.h"
 
 using namespace vrdavis;
 using namespace std;
@@ -32,7 +33,7 @@ int main(int argc, char* argv[]) {
 
         sig_handler.sa_handler = [](int s) {
             spdlog::info("Exiting backend.");
-            // ThreadManager::ExitEventHandlingThreads();
+            ThreadManager::ExitEventHandlingThreads();
             vrdavis::logger::FlushLogFile();
             exit(0);
         };
@@ -58,6 +59,9 @@ int main(int argc, char* argv[]) {
         if (settings.init_wait_time >= 0) {
             Session::SetInitExitTimeout(settings.init_wait_time);
         }
+
+        vrdavis::ThreadManager::StartEventHandlingThreads(settings.event_thread_count);
+        vrdavis::ThreadManager::SetThreadLimit(settings.omp_thread_count);
 
         // One FileListHandler works for all sessions.
         file_list_handler = std::make_shared<FileListHandler>(settings.folder);

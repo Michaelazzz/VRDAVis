@@ -6,9 +6,12 @@ namespace vrdavis {
 template <typename T>
 class GeneralMessageTask : public OnMessageTask {
     OnMessageTask* execute() {
-        if constexpr (std::is_same_v<T, VRDAVis::FileListRequest>) {
-            std::cout << "onmessage task" << std::endl;
+        if constexpr (std::is_same_v<T, VRDAVis::AddRequiredCubes>) {
+            _session->OnAddRequiredCubes(_message, _request_id);
+        } else if constexpr (std::is_same_v<T, VRDAVis::FileListRequest>) {
             _session->OnFileListRequest(_message, _request_id);
+        } else {
+            spdlog::warn("Bad event type for GeneralMessageTask!");
         }
         return nullptr;
     };

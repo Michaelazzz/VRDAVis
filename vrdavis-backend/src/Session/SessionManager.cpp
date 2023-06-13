@@ -2,6 +2,7 @@
 
 #include "Session/SessionManager.h"
 #include "OnMessageTask.h"
+#include "ThreadingManager/ThreadingManager.h"
 #include "Message.h"
 
 using json = nlohmann::json;
@@ -21,10 +22,10 @@ void SessionManager::DeleteSession(uint32_t session_id) {
         // session->CloseAllScriptingRequests();
 
         if (!session->GetRefCount()) {
-            std::cout << "Sessions in Session Map :" << std::endl;
+            spdlog::info("Sessions in Session Map :");
             for (const std::pair<uint32_t, Session*>& ssp : _sessions) {
                 Session* ss = ssp.second;
-                std::cout << "\tMap id " << ssp.first << ", session id " << ss->GetId() << std::endl;
+                spdlog::info("\tMap id {}, session id {}, session ptr {}", ssp.first, ss->GetId(), fmt::ptr(ss));
             }
             delete session;
             _sessions.erase(session_id);
@@ -157,12 +158,21 @@ void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpC
                     }
                     break;
                 }
+                case VRDAVis::EventType::RESUME_SESSION: {
+                    VRDAVis::ResumeSession message;
+                    spdlog::debug("({})({}) resuming session", fmt::ptr(session), session->GetId());
+                    if (message.ParseFromArray(event_buf, event_length)) {
+                        session->OnResumeSession(message, head.request_id);
+                        message_parsed = true;
+                    }
+                    break;
+                }
                 case VRDAVis::EventType::FILE_LIST_REQUEST: {
                     spdlog::info("File list request message received");
                     VRDAVis::FileListRequest message;
                     if (message.ParseFromArray(event_buf, event_length)) {
-                        // tsk = new GeneralMessageTask<VRDAVis::FileListRequest>(session, message, head.request_id);
-                        session->OnFileListRequest(message, head.request_id);
+                        tsk = new GeneralMessageTask<VRDAVis::FileListRequest>(session, message, head.request_id);
+                        // session->OnFileListRequest(message, head.request_id);
                         message_parsed = true;
                     }
                     break;
@@ -186,7 +196,6 @@ void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpC
                 case VRDAVis::EventType::ADD_REQUIRED_CUBES: {
                     VRDAVis::AddRequiredCubes message;
                     if (message.ParseFromArray(event_buf, event_length)) {
-                        // tsk has to go through task manager
                         // tsk = new GeneralMessageTask<VRDAVis::AddRequiredCubes>(session, message, head.request_id);
                         session->OnAddRequiredCubes(message, head.request_id);
                         message_parsed = true;
@@ -203,9 +212,9 @@ void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpC
                 spdlog::warn("Bad {} message!", event_type_name);
             }
 
-            // if (tsk) {
-            //     ThreadManager::QueueTask(tsk);
-            // }
+            if (tsk) {
+                ThreadManager::QueueTask(tsk);
+            }
         }
     } else if (op_code == uWS::OpCode::TEXT) {
         if (sv_message == "PING") {
@@ -233,7 +242,6 @@ void SessionManager::Listen(std::string host, int port) {
             spdlog::info("Listening on port {}", port);
         } else {
             spdlog::error("Could not listen on port {}!\n", port);
-            // std::cout << "Could not listen on port " << port << std::endl;
         }
     });
 }

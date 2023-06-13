@@ -18,6 +18,7 @@
 #include "OnMessageTask.h"
 #include "Message.h"
 #include "DataStream/Cube.h"
+#include "ThreadingManager/ThreadingManager.h"
 
 using json = nlohmann::json;
 
@@ -39,7 +40,7 @@ Session::Session(uWS::WebSocket<false, true, PerSocketData>* ws, uWS::Loop* loop
     ++_num_sessions;
 
     UpdateLastMessageTimestamp();
-    std::cout << fmt::ptr(this) << "::Session ({" << _id << "}:{" << _num_sessions << "})" << std::endl;
+    spdlog::info("{}::Session ({}:{})", fmt::ptr(this), _id, _num_sessions);
 }
 
 static int __exit_backend_timer = 0;
@@ -54,7 +55,8 @@ void ExitNoSessions(int s) {
     } else {
         --__exit_backend_timer;
         if (!__exit_backend_timer) {
-            std::cout << "No sessions timeout." << std::endl;
+            spdlog::info("No sessions timeout.");
+            ThreadManager::ExitEventHandlingThreads();
             exit(0);
         }
         alarm(1);
@@ -67,8 +69,7 @@ Session::~Session() {
         std::cout << "No remaining sessions." << std::endl;
         if (_exit_when_all_sessions_closed) {
             if (_exit_after_num_seconds == 0) {
-                // spdlog::debug("Exiting due to no sessions remaining");
-                std::cout << "Exiting due to no sessions remaining." << std::endl;
+                spdlog::debug("Exiting due to no sessions remaining");
                 __exit_backend_timer = 1;
             } else {
                 __exit_backend_timer = _exit_after_num_seconds;
@@ -253,6 +254,8 @@ void Session::OnCloseFile(const VRDAVis::CloseFile& message) {
 void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, bool skip_data) {
     auto file_id = message.file_id();
     int num_cubes = message.cubes_size();
+
+    ThreadManager::ApplyThreadLimit();
 
     // for (int i = 0; i < num_cubes; i++) {
         // const auto& encoded_coordinate = message.cubes(i);
@@ -470,7 +473,7 @@ void Session::SendEvent(VRDAVis::EventType event_type, u_int32_t event_id, const
                 // _socket->cork([&]() {
                     auto status = _socket->send(sv, uWS::OpCode::BINARY, false);
                     if (status == uWS::WebSocket<false, true, PerSocketData>::DROPPED) {
-                        std::cout << "Failed to send message of size " << sv.size() / 1024.0 << " kB" << std::endl;
+                        spdlog::error("Failed to send message of size {} kB", sv.size() / 1024.0);
                     }
                 // });
             }
