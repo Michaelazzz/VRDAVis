@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { XR, Controllers, Interactive, RayGrab, XRButton, VRButton} from "@react-three/xr";
 import { Canvas } from '@react-three/fiber'
-// import {Box, Plane} from "@react-three/drei";
+import { CameraControls } from '@react-three/drei'
 import * as THREE from "three";
 import CssBaseline from '@mui/material/CssBaseline';
 import { ConnectionStatus } from "./stores/backend.store";
@@ -51,6 +51,7 @@ const AppView: React.FC = () => {
             <VRButton />
             <Canvas>
                 <XR>
+                    {/* <CameraControls/> */}
                     <color 
                         attach="background" 
                         args={["#DBE9EE"]} 
@@ -71,7 +72,7 @@ const AppView: React.FC = () => {
 
                     {/* <HandMenu /> */}
 
-                    {/* <WorldspaceMenu position={[1,1.5,-1.5]} /> */}
+                    <WorldspaceMenu position={[1,1.5,-1.5]} />
                     
                     { backendStore.connectionStatus === ConnectionStatus.ACTIVE && <DataObject /> }
                     

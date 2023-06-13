@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { RayGrab, useController, useInteraction, useXR, useXREvent } from '@react-three/xr';
+import { RayGrab, XRInteractionEvent, useController, useInteraction, useXR, useXREvent } from '@react-three/xr';
 import { useFrame } from '@react-three/fiber'
 
 import * as THREE from 'three';
@@ -41,6 +41,21 @@ const DataObjectView: React.FC = () => {
 
     let cmData = new Float32Array(100*4);
 
+    let cm = createColormap({
+        colormap: 'jet',
+        nshades: 100,
+        format: 'float',
+        alpha: 1
+    });
+
+    for(let i=0; i<100; i++){
+        const stride = i * 4;
+        cmData[stride] = cm[i][0];
+        cmData[stride+1] = cm[i][1];
+        cmData[stride+2] = cm[i][2];
+        cmData[stride+3] = cm[i][3];
+    }
+
     // @ts-ignore
     let texture: THREE.Data3DTexture;
     texture = new THREE.Data3DTexture(data, width, height, depth);
@@ -60,24 +75,9 @@ const DataObjectView: React.FC = () => {
         side: THREE.BackSide,
         transparent: true
     });
-    let geometry = new THREE.BoxGeometry(1,1,1);
+    let geometry = new THREE.BoxGeometry(width, height, depth);
     let dataCube: THREE.Mesh;
     dataCube = new THREE.Mesh(geometry, material);
-
-    let cm = createColormap({
-        colormap: 'jet',
-        nshades: 100,
-        format: 'float',
-        alpha: 1
-    });
-
-    for(let i=0; i<100; i++){
-        const stride = i * 4;
-        cmData[stride] = cm[i][0];
-        cmData[stride+1] = cm[i][1];
-        cmData[stride+2] = cm[i][2];
-        cmData[stride+3] = cm[i][3];
-    }
 
     useEffect(() => {
         if(!ref.current)
@@ -107,7 +107,7 @@ const DataObjectView: React.FC = () => {
             return;
         }
 
-        const leftPos = leftController.controller.position;
+        const leftPos = leftController.controller.position
         const rightPos = rightController.controller.position;
         
         // scale controls
@@ -137,16 +137,16 @@ const DataObjectView: React.FC = () => {
                 ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
                 ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
             }
-            // else if(leftSqueeze)
-            // {
-            //     ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
-            //     ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
-            // }
-            // else if(rightSqueeze)
-            // {
-            //     ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetRight.x*rotationMultiplier);
-            //     ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetRight.y*rotationMultiplier);
-            // }
+            else if(leftSqueeze)
+            {
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
+            }
+            else if(rightSqueeze)
+            {
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetRight.x*rotationMultiplier);
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetRight.y*rotationMultiplier);
+            }
             else if(leftSelect) // translation controls
             {
                 ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
@@ -161,17 +161,14 @@ const DataObjectView: React.FC = () => {
         }
 
     });
-    
-    // @ts-ignore
-    useInteraction(ref, 'onSqueezeStart', (e) => {
-        // if(e.controller.inputSource.handedness == 'right'){
-        //     rightSqueeze = true;
-        // }
 
-        // if(e.controller.inputSource.handedness == 'left'){
-        //     leftSqueeze = true;
-        // }
-    });
+    useXREvent('squeezestart', () => {
+        rightSqueeze = true;
+    }, {handedness: 'right'});
+
+    useXREvent('squeezestart', () => {
+        leftSqueeze = true;
+    }, {handedness: 'left'});
 
     useXREvent('squeezeend', () => {
         rightSqueeze = false;
@@ -181,16 +178,13 @@ const DataObjectView: React.FC = () => {
         leftSqueeze = false;
     }, {handedness: 'left'});
 
-    // @ts-ignore
-    useInteraction(ref, 'onSelectStart', (e) => {
-        // if(e.controller.inputSource.handedness == 'right'){
-        //     rightSelect = true;
-        // }
+    useXREvent('selectstart', () => { 
+        rightSelect = true; 
+    }, {handedness: 'right'});
 
-        // if(e.controller.inputSource.handedness == 'left'){
-        //     leftSelect = true;
-        // }
-    });
+    useXREvent('selectstart', () => {
+        leftSelect = true;
+    }, {handedness: 'left'});
 
     useXREvent('selectend', () => { 
         rightSelect = false; 

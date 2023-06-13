@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { useController, useInteraction, useXREvent, useXR } from '@react-three/xr';
+import { useController, useXREvent, useXR } from '@react-three/xr';
 import * as THREE from "three";
 import Panel from './Panel'
 import PanelText from './PanelText';
@@ -44,11 +44,11 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
             
             // translation controls
             if(leftSelect){
-                // if((ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1]) && (ref.current.position.y >= yRange[0] || ref.current.position.y <= yRange[1]))
+                if((ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1]) && (ref.current.position.y >= yRange[0] || ref.current.position.y <= yRange[1]))
                     ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
             }
             else if(rightSelect){
-                // if(ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1])
+                if(ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1])
                     ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
             }
 
@@ -59,16 +59,13 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
         ref.current.lookAt(player.position.y, ref.current.position.y, player.position.z);
     });
 
-    // @ts-ignore
-    useInteraction(ref, 'onSqueezeStart', (e) => {
-        // if(e.controller.inputSource.handedness == 'right'){
-        //     rightSqueeze = true;
-        // }
+    useXREvent('squeezestart', () => {
+        rightSqueeze = true;
+    }, {handedness: 'right'});
 
-        // if(e.controller.inputSource.handedness == 'left'){
-        //     leftSqueeze = true;
-        // }
-    });
+    useXREvent('squeezestart', () => {
+        leftSqueeze = true;
+    }, {handedness: 'left'});
 
     useXREvent('squeezeend', () => {
         rightSqueeze = false;
@@ -78,16 +75,13 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
         leftSqueeze = false;
     }, {handedness: 'left'});
 
-    // @ts-ignore
-    useInteraction(ref, 'onSelectStart', (e) => {
-        // if(e.controller.inputSource.handedness == 'right'){
-        //     rightSelect = true;
-        // }
+    useXREvent('selectstart', () => { 
+        rightSelect = true; 
+    }, {handedness: 'right'});
 
-        // if(e.controller.inputSource.handedness == 'left'){
-        //     leftSelect = true;
-        // }
-    });
+    useXREvent('selectstart', () => {
+        leftSelect = true;
+    }, {handedness: 'left'});
 
     useXREvent('selectend', () => { 
         rightSelect = false; 
