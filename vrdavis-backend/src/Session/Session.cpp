@@ -9,15 +9,16 @@
 #include <thread>
 #include <tuple>
 #include <vector>
+#include <string>
 
 #include <vrdavis-protobuf/defs.pb.h>
 #include <vrdavis-protobuf/error.pb.h>
 #include <vrdavis-protobuf/cubes.pb.h>
-#include <vrdavis-protobuf/volume.pb.h>
+#include <vrdavis-protobuf/cubelet.pb.h>
 
 #include "OnMessageTask.h"
 #include "Message.h"
-#include "DataStream/Cube.h"
+#include "DataStream/Cubelet.h"
 #include "ThreadingManager/ThreadingManager.h"
 
 using json = nlohmann::json;
@@ -66,7 +67,7 @@ void ExitNoSessions(int s) {
 Session::~Session() {
     --_num_sessions;
     if (!_num_sessions) {
-        std::cout << "No remaining sessions." << std::endl;
+        spdlog::info("No remaining sessions.");
         if (_exit_when_all_sessions_closed) {
             if (_exit_after_num_seconds == 0) {
                 spdlog::debug("Exiting due to no sessions remaining");
@@ -105,6 +106,38 @@ bool Session::FillFileInfo(VRDAVis::FileInfo& file_info, const std::string& fold
             fullname = name;
             file_info.set_name(entry.path());
             file_info.set_size(entry.file_size());
+            // file_info.set_type(name.substr(name.find_last_of(".") + 1));
+            file_info_ok = true;
+        }
+    }
+    
+    if (fullname.empty()) {
+        message = fmt::format("File {} does not exist.", filename);
+        return file_info_ok;
+    }
+
+    if (!file_info_ok) {
+        message = fmt::format("File info for {} failed.", filename);
+    }
+
+    return file_info_ok;
+}
+
+bool Session::FillExtendedFileInfo(VRDAVis::FileInfoExtended& file_info, const std::string& folder, const std::string& filename, const int& dims, const int& width, const int& height, const int& length, std::string& message) {
+    bool file_info_ok(false);
+    bool success(false);
+
+    std::string fullname;
+
+    // check if selected file exists
+    for (const auto & entry : fs::directory_iterator(folder)) {
+        std::string name = entry.path().filename();
+        if(name == filename) {
+            fullname = name;
+            file_info.set_dimensions(dims);
+            file_info.set_width(width);
+            file_info.set_height(height);
+            file_info.set_length(length);
             // file_info.set_type(name.substr(name.find_last_of(".") + 1));
             file_info_ok = true;
         }
@@ -203,8 +236,8 @@ bool Session::OnOpenFile(const VRDAVis::OpenFile& message, uint32_t request_id, 
     std::string err_message;
     std::string fullname;
 
-    VRDAVis::FileInfo file_info;
-    bool info_loaded = FillFileInfo(file_info, directory, filename, file_message);
+    VRDAVis::FileInfoExtended file_info;
+    bool info_loaded = FillExtendedFileInfo(file_info, directory, filename, 0, 0, 0, 0, file_message);
 
     if (info_loaded) {
         try
@@ -217,10 +250,11 @@ bool Session::OnOpenFile(const VRDAVis::OpenFile& message, uint32_t request_id, 
             return false;
         }
 
-        VRDAVis::FileInfo response_file_info = VRDAVis::FileInfo();
-        response_file_info.set_name(file_info.name());
-        // response_file_info.set_type(file_info.type());
-        response_file_info.set_size(file_info.size());
+        VRDAVis::FileInfoExtended response_file_info = VRDAVis::FileInfoExtended();
+        response_file_info.set_dimensions(3);
+        response_file_info.set_width(_loader->getXDimensions());
+        response_file_info.set_height(_loader->getYDimensions());
+        response_file_info.set_length(_loader->getZDimensions());
         *ack.mutable_file_info() = response_file_info;
 
         success = true;
@@ -253,51 +287,61 @@ void Session::OnCloseFile(const VRDAVis::CloseFile& message) {
 
 void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, bool skip_data) {
     auto file_id = message.file_id();
-    int num_cubes = message.cubes_size();
+    int num_cubes = message.cubelets_size();
 
     ThreadManager::ApplyThreadLimit();
 
-    // for (int i = 0; i < num_cubes; i++) {
-        // const auto& encoded_coordinate = message.cubes(i);
+    for (int i = 0; i < num_cubes; i++) {
+        const std::string encoded_coordinate = message.cubelets(i);
 
-        VRDAVis::VolumeData volume_data_message;
-        volume_data_message.set_file_id(file_id);
+        VRDAVis::CubeletData cubelet_data_message;
+        cubelet_data_message.set_file_id(file_id);
 
-        // auto cube = Cube::Decode(encoded_coordinate);
+        auto cubelet = Cubelet::Decode(encoded_coordinate);
 
-        if (volume_data_message.cubes_size()) {
-            volume_data_message.clear_cubes();
+        if (cubelet_data_message.cubelets_size()) {
+            cubelet_data_message.clear_cubelets();
         }
 
-        VRDAVis::CubeParams* cube_ptr = volume_data_message.add_cubes();
-        // cube_ptr->set_layer(cube.layer);
-        // cube_ptr->set_x(cube.x);
-        // cube_ptr->set_y(cube.y);
-        // cube_ptr->set_z(cube.z);
+        VRDAVis::CubeletParams* cubelet_ptr = cubelet_data_message.add_cubelets();
+        cubelet_ptr->set_layerxy(cubelet.mipXY); // mipmap XY layer
+        cubelet_ptr->set_layerz(cubelet.mipZ); // mipmap Z layer
+        cubelet_ptr->set_x(cubelet.x); // x position/offset
+        cubelet_ptr->set_y(cubelet.y); // y position/offset
+        cubelet_ptr->set_z(cubelet.z); // z position/offset
 
-        cube_ptr->set_layer(1);
-        cube_ptr->set_x(0);
-        cube_ptr->set_y(0);
-        cube_ptr->set_z(0);
+        int xDims = 256;
+        int yDims = 256;
+        int zDims = 256;
 
-        int xDims = _loader->getXDimensions();
-        int yDims = _loader->getYDimensions();
-        int zDims = _loader->getZDimensions();
-        size_t cube_data_length = xDims * yDims * zDims;
-        float* volume_data_out = new float[cube_data_length];
+        size_t volume_data_length = xDims * yDims * zDims;
+        float* volume_data_out = new float[volume_data_length];
         // std::shared_ptr<std::vector<float>> volume_data_out;
-        if (_loader->ReadAllData(volume_data_out)) {
-            for (size_t i = 0; i < cube_data_length; i++)
+        if (num_cubes == 1 && _loader->ReadAllData(volume_data_out)) {
+            for (size_t i = 0; i < volume_data_length; i++)
             {
-                cube_ptr->add_volume_data(volume_data_out[i]);
+                cubelet_ptr->add_volume_data(volume_data_out[i]);
             }
             // size_t cube_data_size = sizeof(float) * volume_data_out->size(); // cube data size in bytes
-            cube_ptr->set_height(xDims);
-            cube_ptr->set_width(yDims);
-            cube_ptr->set_length(zDims);
-            // cube_ptr->set_volume_data(cube_data_length, *volume_data_out);
+            cubelet_ptr->set_height(xDims);
+            cubelet_ptr->set_width(yDims);
+            cubelet_ptr->set_length(zDims);
+            // cubelet_ptr->set_volume_data(volume_data_length, *volume_data_out);
             // SendFileEvent(file_id, VRDAVis::EventType::VOLUME_CUBE_DATA, 0, volume_data, compression_type == VRDAVis::CompressionType::NONE);
-            SendFileEvent(file_id, VRDAVis::EventType::VOLUME_CUBE_DATA, request_id, volume_data_message);
+            SendFileEvent(file_id, VRDAVis::EventType::CUBELET_DATA, request_id, cubelet_data_message);
+
+        } else if (_loader->GetChunk(volume_data_out, xDims, yDims, zDims, xDims * cubelet.x, yDims * cubelet.y, zDims * cubelet.z)) {
+            for (size_t i = 0; i < volume_data_length; i++)
+            {
+                cubelet_ptr->add_volume_data(volume_data_out[i]);
+            }
+            // size_t cube_data_size = sizeof(float) * volume_data_out->size(); // cube data size in bytes
+            cubelet_ptr->set_height(xDims);
+            cubelet_ptr->set_width(yDims);
+            cubelet_ptr->set_length(zDims);
+            // cubelet_ptr->set_volume_data(volume_data_length, *volume_data_out);
+            // SendFileEvent(file_id, VRDAVis::EventType::VOLUME_CUBE_DATA, 0, volume_data, compression_type == VRDAVis::CompressionType::NONE);
+            SendFileEvent(file_id, VRDAVis::EventType::CUBELET_DATA, request_id, cubelet_data_message);
         } 
         else {
             spdlog::error("Data could not be loaded");
@@ -308,7 +352,7 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
 
         // delete pointer
         delete[] volume_data_out;
-    // }
+    }
 }
 
 void Session::OnResumeSession(const VRDAVis::ResumeSession& message, uint32_t request_id) {

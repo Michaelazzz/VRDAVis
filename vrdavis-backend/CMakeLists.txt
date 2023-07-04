@@ -64,7 +64,7 @@ endif ()
 set(SOURCE_FILES
     ${SOURCE_FILES}
     src/DataStream/Compression.cpp
-    src/DataStream/Cube.cpp
+    src/DataStream/Cubelet.cpp
     src/FileList/FileListHandler.cpp
     src/HttpServer/HttpServer.cpp
     src/FileData/Hdf5Loader.cpp

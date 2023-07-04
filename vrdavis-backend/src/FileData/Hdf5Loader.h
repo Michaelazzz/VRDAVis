@@ -17,9 +17,9 @@ public:
     virtual ~Hdf5Loader();
 
     void OpenFile(const std::string& filename, const std::string& directory, const std::string& dataset);
+    void OpenFileAlternative(const std::string& filename, const std::string& directory, const std::string& dataset);
 
     // bool ReadData(std::shared_ptr<std::vector<float>>& volume_data_out);
-    bool ReadData(float* volume_data_out);
     bool ReadAllData(float* volume_data_out);
 
     int getXDimensions();
@@ -28,7 +28,10 @@ public:
 
     // void ReadData(float* data_out, int X, int Y, int Z, int Xoffset, int Yoffset, int Zoffset);
 
-    // virtual bool GetChunk(std::vector<float>& data, int& data_width, int& data_height, int min_x, int min_y, int z, int stokes, std::mutex& image_mutex);
+    // virtual bool GetChunk(std::vector<float>& data, int& data_width, int& data_height, int min_x, int min_y, int z, std::mutex& image_mutex);
+    // bool GetChunk(float* volume_data_out, int* chunk_dims, int* offset);
+    bool GetChunk(float* volume_data_out, int chunk_width, int chunk_height, int chunk_depth, int xOffset, int yOffset, int zOffset);
+    bool GetChunkAlternative(float* volume_data_out, int chunk_width, int chunk_height, int chunk_depth, int xOffset, int yOffset, int zOffset);
 
     std::string GetFileName();
     std::string GetDirectory();
@@ -47,7 +50,7 @@ private:
     H5::DataSet _set;
     H5::DataSpace _space;
     int _NX, _NZ, _NY;
-    hid_t _memspace;
+    // H5::DataSpace _memspace;
     hsize_t _rank;
 };
 

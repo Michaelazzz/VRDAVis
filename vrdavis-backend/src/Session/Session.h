@@ -88,6 +88,7 @@ public:
     std::chrono::high_resolution_clock::time_point GetLastMessageTimestamp();
 protected:
     bool FillFileInfo(VRDAVis::FileInfo& file_info, const std::string& folder, const std::string& filename, std::string& message);
+    bool FillExtendedFileInfo(VRDAVis::FileInfoExtended& file_info, const std::string& folder, const std::string& filename, const int& dims, const int& width, const int& height, const int& length, std::string& message);
 
     // Send protobuf messages
     void SendEvent(VRDAVis::EventType event_type, u_int32_t event_id, const google::protobuf::MessageLite& message);
