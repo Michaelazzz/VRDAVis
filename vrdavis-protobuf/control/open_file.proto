@@ -22,5 +22,5 @@ message OpenFileAck {
     // Error message (if applicable)
     string message = 2;
     // Basic file info (type, size)
-    FileInfo file_info = 3;
+    FileInfoExtended file_info = 3;
 }

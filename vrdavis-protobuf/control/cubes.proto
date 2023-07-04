@@ -10,7 +10,7 @@ message AddRequiredCubes {
     // The file ID that the view corresponds to
     sfixed32 file_id = 1;
     // The list of tiles required, in encoded coordinate
-    repeated sfixed32 cubes = 2;
+    repeated string cubelets = 2;
     // The compression algorithm used
     // CompressionType compression_type = 3;
     // Compression quality switch
