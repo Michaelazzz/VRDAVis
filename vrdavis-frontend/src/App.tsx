@@ -15,27 +15,17 @@ import { observer } from "mobx-react";
 import { BackendMenu } from "./components/browser UI/BackendMenu";
 import { DeviceCredentials } from "./components/browser UI/DeviceCredentials";
 import { WebRTCMenu } from "./components/browser UI/WebRTCMenu";
+import { FileCredentials } from "./components/browser UI/FileCredentials";
+import { TestDataObject } from "./components/TestDataObject";
 
 const AppView: React.FC = () => {
 
-    const { signallingStore, backendStore } = useContext(RootContext);
+    // const { signallingStore, backendStore } = useContext(RootContext);
+    const { rootStore } = useContext(RootContext);
 
     useEffect(() => {
-        signallingStore.start();
-        backendStore.start();
-    }, [signallingStore, backendStore]);
-
-    let height = 128;
-    let width = 128;
-    let depth = 128;
-
-    let size = height*width*depth;
-    let data = new Float32Array(size);
-
-    for(let i = 0; i < size; i++)
-    {
-        data[i] = Math.random();
-    }
+        rootStore.connectToServer('ws://localhost:3002'); // 'wss://vrdavis01.idia.ac.za/server'
+    }, [rootStore]);
 
     return (
         <>
@@ -46,6 +36,7 @@ const AppView: React.FC = () => {
                 <WebRTCMenu/>
                 <PairingMenu/>
                 <BackendMenu/>
+                <FileCredentials/>
             </BrowserMenu>
             
             <VRButton />
@@ -60,21 +51,21 @@ const AppView: React.FC = () => {
                     <ambientLight intensity={0.5} />
                     {/* <pointLight position={[10, 10, 10]} /> */}
 
-                    <mesh
+                    {/* <mesh
                         position={new THREE.Vector3(0, 0, 0)}
                         rotation={new THREE.Euler(-Math.PI / 2, 0, 0)} 
                     >
                         <planeGeometry attach="geometry" args={[10, 10]} />
-                        <meshPhongMaterial attach="material" color="C0D6DF" />
-                    </mesh>
+                        <meshPhongMaterial attach="material" color="#C0D6DF" />
+                    </mesh> */}
 
                     <Controllers />
-
                     {/* <HandMenu /> */}
-
-                    <WorldspaceMenu position={[1,1.5,-1.5]} />
+                    {/* <WorldspaceMenu position={[1,1.5,-1.5]} /> */}
                     
-                    { backendStore.connectionStatus === ConnectionStatus.ACTIVE && <DataObject /> }
+                    
+                    {/* <DataObject /> */}
+                    <TestDataObject />
                     
                 </XR>
             </Canvas>

@@ -6,7 +6,8 @@ import { DropdownSelect } from "./DropdownSelect";
 
 
 const BackendMenuView: React.FC = () => {
-    const { backendStore } = useContext(RootContext);
+    const { rootStore } = useContext(RootContext);
+    const backendStore = rootStore.backendStore;
     
     return (
         <>

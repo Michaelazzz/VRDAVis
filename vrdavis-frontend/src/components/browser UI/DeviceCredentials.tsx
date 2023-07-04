@@ -11,7 +11,8 @@ import BasicModal from "./BasicModal";
 import { observer } from "mobx-react";
 
 const DeviceCredentialsView: React.FC = () => {
-    const { signallingStore } = useContext(RootContext);
+    const { rootStore } = useContext(RootContext);
+    const signallingStore = rootStore.signallingStore;
     let deviceName = signallingStore.getDeviceName();
 
     const [name, setName] = useState('');

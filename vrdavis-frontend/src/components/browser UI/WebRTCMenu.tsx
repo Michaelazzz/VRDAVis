@@ -8,7 +8,8 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
 const WebRTCMenuView: React.FC = () => {
-    const { signallingStore } = useContext(RootContext);
+    const { rootStore } = useContext(RootContext);
+    const signallingStore = rootStore.signallingStore;
     const sendChannelState = signallingStore.sendChannelState;
     const receiveChannelState = signallingStore.receiveChannelState;
 

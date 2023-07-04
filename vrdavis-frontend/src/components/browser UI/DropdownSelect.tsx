@@ -4,15 +4,16 @@ import { useContext, useState } from "react";
 import { RootContext } from "../../store.context";
 
 const DropdownSelectView: React.FC = () => {
-    const { backendStore } = useContext(RootContext);
-    const files = backendStore.fileList;
+    const { rootStore } = useContext(RootContext);
+    const backendStore = rootStore.backendStore;
+    const fileStore = rootStore.fileStore;
+    const files = fileStore.fileList;
 
     const [fileName, setFileName] = useState('');
 
-    const onClick = (name: string, size: number) => {
-        backendStore.fileName = name;
-        backendStore.fileSize = size;
-        backendStore.getFileInfo(backendStore.directory, backendStore.fileName)
+    const onClick = (name: string) => {
+        backendStore.getFileInfo(name);
+        backendStore.loadFile(name);
     }
 
     const handleChange = (event: SelectChangeEvent) => {
@@ -29,7 +30,8 @@ const DropdownSelectView: React.FC = () => {
                 label="Files"
                 onChange={handleChange}
             >
-                {files && files.map((file, index) => <MenuItem onClick={event => onClick(file.name, file.size)} key={index} value={file.name}>{file.name}</MenuItem>)}
+                {/* {files && files.map((file, index) => <MenuItem onClick={event => onClick(file.name, file.size)} key={index} value={file.name}>{file.name}</MenuItem>)} */}
+                {files && files.map((file, index) => <MenuItem onClick={event => onClick(file.name)} key={index} value={file.name}>{file.name}</MenuItem>)}
             </Select>
         </FormControl>
     )

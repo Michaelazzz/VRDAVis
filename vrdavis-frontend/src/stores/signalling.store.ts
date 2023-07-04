@@ -3,11 +3,9 @@ import { makeAutoObservable } from "mobx";
 import { v1 as uuidv1 } from 'uuid';
 
 export class SignallingStore {
-
-    // webRTCService: WebRTCService = new WebRTCService();
+    rootStore: RootStore;
 
     // pairing
-
     private socket: WebSocket;
     connected: boolean;
     serverUrl: string;
@@ -38,8 +36,9 @@ export class SignallingStore {
 
     dataChannelParams:any = {ordered: false};
 
-    constructor() {
-        makeAutoObservable(this);
+    constructor(rootStore: RootStore) {
+        makeAutoObservable(this, { rootStore: false });
+        this.rootStore = rootStore;
 
         this.devices = new Array<any>();
         this.pairs = new Array<any>();

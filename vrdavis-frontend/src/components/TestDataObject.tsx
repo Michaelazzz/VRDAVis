@@ -9,7 +9,7 @@ import createColormap from 'colormap';
 import { RootContext } from '../store.context';
 import { observer } from 'mobx-react';
 
-const DataObjectView: React.FC = () => {
+const TestDataObjectView: React.FC = () => {
     const { rootStore } = useContext(RootContext);
     // const backendStore = rootStore.backendStore;
     const reconstructionStore = rootStore.reconstructionStore;
@@ -17,7 +17,6 @@ const DataObjectView: React.FC = () => {
     const width = reconstructionStore.width;
     const height = reconstructionStore.height;
     const length = reconstructionStore.length;
-    const cubeUpdated = reconstructionStore.cubeUpdated;
 
     const ref = useRef<THREE.Mesh>();
 
@@ -60,10 +59,13 @@ const DataObjectView: React.FC = () => {
     }, []);
 
     let geometry = useMemo(() => new THREE.BoxGeometry(width, height, length), [width, length, height]);
+    // let geometry = useMemo(() => new THREE.BoxGeometry(1, 1, 1), []);
 
     // @ts-ignore
     let texture: THREE.Data3DTexture = useMemo(() => {
         console.log('texture updated')
+        // console.log(`${data.length} with ${data.byteLength} byte length`)
+        // console.log(`${width} ${height} ${length}`)
         return new THREE.Data3DTexture(data, width, height, length)
     }, [data, width, height, length]);
     texture.format = THREE.RedFormat;
@@ -82,7 +84,7 @@ const DataObjectView: React.FC = () => {
     let material: THREE.ShaderMaterial = useMemo(() => { 
         console.log('material updated')
         return new THREE.ShaderMaterial({
-            uniforms: {
+            uniforms: {                                            
                 u_textureData: { value: texture },
                 // u_threshold: { value: 0.25 },
                 // u_range: { value: 0.1 },
@@ -107,8 +109,7 @@ const DataObjectView: React.FC = () => {
         if(!ref.current)
             return;
         ref.current.add(dataCube);
-        console.log('use effect')
-    }, []);
+    }, [dataCube]);
     
 
     useFrame(() => {
@@ -207,10 +208,10 @@ const DataObjectView: React.FC = () => {
         <group 
             // @ts-ignore
             ref={ref}
-            position={[0,1.5,-2.5]}
+            position={[0,1.5,-1.5]}
         ></group>
     )
 };
 
-const DataObject = observer(DataObjectView);
-export { DataObject };
+const TestDataObject = observer(TestDataObjectView);
+export { TestDataObject };

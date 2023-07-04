@@ -43,7 +43,7 @@ function HandMenu({children, ...rest}: any) {
 
     const raycaster = new THREE.Raycaster();
 
-    // const buttonRef = useRef();
+    const buttonRef = useRef();
     const [accentColor] = useState(() => new THREE.Color("red"));
 
     const titleRef = useRef();
@@ -79,8 +79,8 @@ function HandMenu({children, ...rest}: any) {
         
     }
 
-    // useXREvent("squeeze", () => accentColor.offsetHSL(1 / 3, 0, 0));
-    // useXREvent("select", () => accentColor.offsetHSL(1 / 3, 0, 0));
+    useXREvent("squeeze", () => accentColor.offsetHSL(1 / 3, 0, 0));
+    useXREvent("select", () => accentColor.offsetHSL(1 / 3, 0, 0));
     // useInteraction(buttonRef, 'onSelect', () => accentColor.offsetHSL(1 / 3, 0, 0));
 
     return (

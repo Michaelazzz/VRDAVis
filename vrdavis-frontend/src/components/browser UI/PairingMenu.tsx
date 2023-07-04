@@ -10,7 +10,8 @@ import BasicModal from "./BasicModal";
 import { observer } from "mobx-react";
 
 const PairingMenuView: React.FC = () => {
-    const { signallingStore } = useContext(RootContext);
+    const { rootStore } = useContext(RootContext);
+    const signallingStore = rootStore.signallingStore;
     const availableDevices = signallingStore.getDevices();
     const connectionStatus = signallingStore.getConnectionStatus();
     const codeConfirmationStatus = signallingStore.getCodeConfirmation();

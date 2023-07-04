@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import { VRDAVis } from "vrdavis-protobuf";
 import { Subject } from "rxjs";
-import Long from "long";
+import { RootStore } from "./root.store";
 
 // adapted from CARTA
 
@@ -43,6 +43,9 @@ export class Deferred<T> {
 
 export class BackendStore {
 
+    rootStore: RootStore;
+    // fileStore: FileStore;
+
     private static readonly IcdVersion = 1;
     private static readonly MaxConnectionAttempts = 15;
     private static readonly ConnectionAttemptDelay = 1000;
@@ -53,7 +56,7 @@ export class BackendStore {
     endToEndPing: number;
 
     public sessionId: number;
-    public serverUrl: string;
+    public serverUrl: string = '';
 
     private connection: WebSocket;
     private lastPingTime: number;
@@ -62,28 +65,26 @@ export class BackendStore {
     private deferredMap: Map<number, Deferred<IBackendResponse>>;
     private eventCounter: number;
 
-    // readonly cubeDataStream: Subject<VRDAVis.CubeData>;
+    readonly cubeletStream: Subject<VRDAVis.CubeletData>;
 
     private readonly decoderMap: Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>;
 
-    directory: string = '../../test-data';
+    directory: string = '../../test-data'; //'/data/cubes1'
 
-    fileList: any[];
-    fileName: string = '';
-    fileSize: number = 0;
+    // remove
+    // volumeData: Float32Array;
+    // layerXY: number = 0;
+    // layerZ: number = 0;
+    // height: number = 0;
+    // width: number = 0;
+    // length: number = 0;
 
-    volumeData: Float32Array;
-    layer: number = 0;
-    height: number = 0;
-    width: number = 0;
-    depth: number = 0;
-
-    constructor () {
-        makeAutoObservable(this);
+    constructor (rootStore: RootStore) {
+        makeAutoObservable(this, {rootStore: false});
+        this.rootStore = rootStore;
 
         this.loggingEnabled = true;
         this.connectionDropped = false;
-        // this.serverUrl = 'wss://vrdavis01.idia.ac.za/server'
         this.serverUrl = 'ws://localhost:3002';
 
         this.connection = new WebSocket(this.serverUrl);
@@ -97,31 +98,25 @@ export class BackendStore {
         this.sessionId = 0;
         this.endToEndPing = NaN;
         this.connectionStatus = ConnectionStatus.CLOSED;
-        // this.volumeDataStream = new Subject<VRDAVis.CubeData>();
+        this.cubeletStream = new Subject<VRDAVis.CubeletData>();
 
         // Construct handler and decoder maps
         this.decoderMap = new Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>([
             [VRDAVis.EventType.REGISTER_VIEWER_ACK, {decoder: VRDAVis.RegisterViewerAck.decode, handler: this.onRegisterViewerAck}],
             [VRDAVis.EventType.FILE_LIST_RESPONSE, {decoder: VRDAVis.FileListResponse.decode, handler: this.onFileListResponse}],
-            [VRDAVis.EventType.FILE_INFO_RESPONSE, {decoder: VRDAVis.FileInfoResponse.decode, handler: this.onDeferredResponse}],
+            [VRDAVis.EventType.FILE_INFO_RESPONSE, {decoder: VRDAVis.FileInfoResponse.decode, handler: this.onFileInfoResponse}],
             [VRDAVis.EventType.OPEN_FILE_ACK, {decoder: VRDAVis.OpenFileAck.decode, handler: this.onOpenFileAck}],
-            [VRDAVis.EventType.VOLUME_CUBE_DATA, {decoder: VRDAVis.VolumeData.decode, handler: this.onStreamedVolumeCubeData}]
-            // [VRDAVis.EventType.CUBE_DATA, {decoder: VRDAVis.CubeData.decode, handler: this.onStreamedCubeData}],
+            [VRDAVis.EventType.CUBELET_DATA, {decoder: VRDAVis.CubeletData.decode, handler: this.onStreamedCubeletData}]
         ]);
 
         // check ping every 5 seconds
         setInterval(this.sendPing, 5000);
 
-        this.fileList = [];
-        this.volumeData = new Float32Array();
-    }
-
-    start = async () => {
-        await this.connectToServer(this.serverUrl);
+        // remove
+        // this.volumeData = new Float32Array();
     }
 
     connectToServer = async (url: string) : Promise<VRDAVis.IRegisterViewerAck> => {
-
         if (this.connection) {
             this.connection.onclose = null;
             this.connection.close();
@@ -165,15 +160,17 @@ export class BackendStore {
             if (this.connectionStatus === ConnectionStatus.CLOSED) {
                 this.connectionDropped = true;
                 // reset values
-                this.fileList = [];
-                this.fileName = '';
-                this.fileSize = 0;
+                // this.fileList = [];
+                // this.fileName = '';
+                // this.fileSize = 0;
 
-                this.volumeData = new Float32Array();
-                this.layer = 0;
-                this.height = 0;
-                this.width = 0;
-                this.depth = 0;
+                // remove
+                // this.volumeData = new Float32Array();
+                // this.layerXY = 0;
+                // this.layerZ = 0;
+                // this.height = 0;
+                // this.width = 0;
+                // this.length = 0;
 
                 this.eventCounter = 1;
                 this.sessionId = 0;
@@ -192,9 +189,6 @@ export class BackendStore {
             } else {
                 throw new Error("Could not send REGISTER_VIEWER event");
             }
-
-            this.getFileList(this.directory)
-            // this.getFileList('/data/cubes1')
         }
 
         return await deferredResponse.promise;
@@ -215,6 +209,8 @@ export class BackendStore {
         if (this.connectionStatus !== ConnectionStatus.ACTIVE) {
             throw new Error("Not connected");
         } else {
+            this.rootStore.fileStore.setDirectory(directory);
+            this.directory = directory;
             const message = VRDAVis.FileListRequest.create({directory});
             const requestId = this.eventCounter;
             this.logEvent(VRDAVis.EventType.FILE_LIST_REQUEST, requestId, message, false);
@@ -227,10 +223,12 @@ export class BackendStore {
         }
     }
 
-    getFileInfo = (directory: string, file: string) => {
+    getFileInfo = (file: string) => {
         if (this.connectionStatus !== ConnectionStatus.ACTIVE) {
             throw new Error("Not connected");
         } else {
+            this.rootStore.fileStore.setFileName(file);
+            const directory = this.directory;
             const message = VRDAVis.FileInfoRequest.create({directory, file});
             const requestId = this.eventCounter;
             this.logEvent(VRDAVis.EventType.FILE_INFO_REQUEST, requestId, message, false);
@@ -242,14 +240,15 @@ export class BackendStore {
             }
 
             // load file on backend
-            this.loadFile(directory, file);
+            // this.loadFile(file);
         }
     }
 
-    loadFile = (directory: string, file: string) => {
+    loadFile = (file: string) => {
         if (this.connectionStatus !== ConnectionStatus.ACTIVE) {
             throw new Error("Not connected");
         } else {
+            const directory = this.directory;
             const message = VRDAVis.OpenFile.create({
                 directory, 
                 file
@@ -266,16 +265,12 @@ export class BackendStore {
         }
     }
 
-    requestCubes = () => {
-        this.addRequiredCubes(0, [], 0);
-    }
-
-    addRequiredCubes = (fileId: number, cubes: Array<number>, quality: number) => {
+    addRequiredCubes = (fileId: number, cubelets: string[]) => {
         if (this.connectionStatus !== ConnectionStatus.ACTIVE) {
             throw new Error("Not connected");
         }
         else {
-            const message = VRDAVis.AddRequiredCubes.create({fileId, cubes});
+            const message = VRDAVis.AddRequiredCubes.create({fileId, cubelets});
             this.logEvent(VRDAVis.EventType.ADD_REQUIRED_CUBES, this.eventCounter, message, false)
             if (!this.sendEvent(VRDAVis.EventType.ADD_REQUIRED_CUBES, VRDAVis.AddRequiredCubes.encode(message).finish())) {
                 throw new Error("Could not send FILE_INFO_REQUEST event");
@@ -341,36 +336,42 @@ export class BackendStore {
     private onRegisterViewerAck = (eventId: number, ack: VRDAVis.RegisterViewerAck) => {
         this.sessionId = ack.sessionId;
         this.onDeferredResponse(eventId, ack);
+        // const directory = this.rootStore.fileStore.directory;
+        this.getFileList(this.directory)
     }
 
     private onFileListResponse = (eventId: number, res: VRDAVis.FileListResponse) => {
-        this.fileList = res.files;
+        this.rootStore.fileStore.setFileList(res.files)
         this.onDeferredResponse(eventId, res);
     }
 
     private onOpenFileAck = (eventId: number, ack: VRDAVis.OpenFileAck) => {
-        this.requestCubes()
+        if(ack.fileInfo)
+        this.rootStore.fileStore.setDimensions(
+            ack.fileInfo.dimensions || 0, 
+            ack.fileInfo.width || 0, 
+            ack.fileInfo.height || 0, 
+            ack.fileInfo.length || 0)
         this.onDeferredResponse(eventId, ack);
+
+        // get initial cubes
+        this.rootStore.cropCube()
     }
 
-    // private onFileInfoResponse = (eventId: number, res: VRDAVis.FileInfoResponse) => {
-    //     if(!res.fileInfo)
-    //         return;
-    //     const size = res.fileInfo.size;
-    //     this.fileName = res.fileInfo.name || '';
-    //     this.fileSize = size?.valueOf();
-    //     this.onDeferredResponse(eventId, res);
-    // }
+    private onFileInfoResponse = (eventId: number, res: VRDAVis.FileInfoResponse) => {
+        if(!res.fileInfo)
+            return;
+        // this.rootStore.fileStore.setFileName(res.fileInfo.name || '');
+        this.rootStore.fileStore.setFileSize(Number(res.fileInfo.size) || 0);
+        this.onDeferredResponse(eventId, res);
+    }
 
-    private onStreamedVolumeCubeData = (eventId: number, volumeData: VRDAVis.VolumeData) => {
-        this.layer = volumeData.cubes[0].layer || 0;
-        this.height = volumeData.cubes[0].height || 0;
-        this.width = volumeData.cubes[0].width || 0;
-        this.depth = volumeData.cubes[0].length || 0;
-        // this.volumeData = new Float32Array(this.height*this.width*this.depth);
-        if(volumeData.cubes[0].volumeData != null && volumeData.cubes[0].volumeData !== undefined)
-            this.volumeData = Float32Array.from(volumeData.cubes[0].volumeData);
-        // console.log(this.volumeData);
+    private onStreamedCubeletData = (_eventId: number, cubeletData: VRDAVis.CubeletData) => {
+        // this.rootStore.reconstructionStore.setDimensions(cubeletData.cubelets[0].width || 0, cubeletData.cubelets[0].height || 0, cubeletData.cubelets[0].length || 0)
+        // if(cubeletData.cubelets[0].volumeData != null && cubeletData.cubelets[0].volumeData !== undefined)
+        // this.rootStore.reconstructionStore.setData(cubeletData.cubelets[0].volumeData)
+        
+        this.cubeletStream.next(cubeletData)
     }
 
     private sendEvent = (eventType: VRDAVis.EventType, payload: Uint8Array): boolean => {
