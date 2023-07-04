@@ -119,9 +119,9 @@ bool Hdf5Loader::GetChunk(float* volume_data_out, int chunk_width, int chunk_hei
         spdlog::info("Offset: {} {} {}", xOffset, yOffset, zOffset);
         
         hsize_t chunk_dims[3]; // number of elements to read
-        chunk_dims[0] = chunk_width;
+        chunk_dims[2] = chunk_width;
         chunk_dims[1] = chunk_height;
-        chunk_dims[2] = chunk_depth;
+        chunk_dims[0] = chunk_depth;
 
         // spdlog::info("Chunk Size: {} {} {}", chunk_width, chunk_height, chunk_depth);
 
