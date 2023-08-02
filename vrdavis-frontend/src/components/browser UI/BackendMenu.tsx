@@ -2,18 +2,24 @@ import { observer } from "mobx-react";
 import { useContext } from "react";
 import { RootContext } from "../../store.context";
 import { ConnectionStatus } from "../../stores/backend.store";
+import { DropdownSelect } from "./DropdownSelect";
 
 
 const BackendMenuView: React.FC = () => {
-    const { backendStore } = useContext(RootContext);
+    const { rootStore } = useContext(RootContext);
+    const backendStore = rootStore.backendStore;
     
     return (
         <>
             <h2>Remote Server</h2>
-            {backendStore.connectionStatus === ConnectionStatus.CLOSED && <p>No Connection</p>}
-            {backendStore.connectionStatus === ConnectionStatus.PENDING && <p>Connection pending...</p>}
-            {backendStore.connectionStatus === ConnectionStatus.ACTIVE && <p>Connected to server!</p>}
-            {backendStore.sessionId !== 0 &&<p>Current Session ID: <br/> {backendStore.sessionId}</p>}
+            <p>
+                Connection: {(backendStore.connectionStatus === ConnectionStatus.CLOSED || backendStore.connectionDropped) && <span>CLOSED</span>}
+                {backendStore.connectionStatus === ConnectionStatus.PENDING && <span>PENDING</span>}
+                {backendStore.connectionStatus === ConnectionStatus.ACTIVE && <span>OPEN</span>}
+                <br/>
+                {backendStore.connectionStatus === ConnectionStatus.ACTIVE && backendStore.sessionId !== 0 && <span>Current Session ID: {backendStore.sessionId}</span>}
+            </p>
+            {backendStore.connectionStatus === ConnectionStatus.ACTIVE && <DropdownSelect/>}
         </>
     )
 }

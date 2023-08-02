@@ -1,13 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { RayGrab, useController, useInteraction, useXR, useXREvent } from '@react-three/xr';
+import React, { useContext, useEffect, useRef, useState, useMemo } from 'react';
+import { useController, useXREvent } from '@react-three/xr';
 import { useFrame } from '@react-three/fiber'
 
 import * as THREE from 'three';
 
 import { VolumeShader } from '../shaders/VolumeShader';
 import createColormap from 'colormap';
+import { RootContext } from '../store.context';
+import { observer } from 'mobx-react';
 
-const DataObject = ({data, width, height, depth}: any) => {
+const DataObjectView: React.FC = () => {
+    const { rootStore } = useContext(RootContext);
+    // const backendStore = rootStore.backendStore;
+    const reconstructionStore = rootStore.reconstructionStore;
+    const data = reconstructionStore.data;
+    const width = reconstructionStore.width;
+    const height = reconstructionStore.height;
+    const length = reconstructionStore.length;
+    const cubeUpdated = reconstructionStore.cubeUpdated;
 
     const ref = useRef<THREE.Mesh>();
 
@@ -31,67 +41,74 @@ const DataObject = ({data, width, height, depth}: any) => {
     let prevRightPos = rightController?.controller.position;
     let prevLeftPos = leftController?.controller.position;
 
-    let cmData = new Float32Array(100*4);
+    let cmData = useMemo(() => {
+        const cmArray = new Float32Array(100*4);
+        let cm = createColormap({
+            colormap: 'jet',
+            nshades: 100,
+            format: 'float',
+            alpha: 1
+        });
+        for(let i=0; i<100; i++){
+            const stride = i * 4;
+            cmArray[stride] = cm[i][0];
+            cmArray[stride+1] = cm[i][1];
+            cmArray[stride+2] = cm[i][2];
+            cmArray[stride+3] = cm[i][3];
+        }
+        return cmArray;
+    }, []);
+
+    let geometry = useMemo(() => new THREE.BoxGeometry(width, height, length), [width, length, height]);
 
     // @ts-ignore
-    let texture: THREE.Data3DTexture;
-    texture = new THREE.Data3DTexture(data, width, height, depth);
-    let colormap: THREE.DataTexture;
-    colormap = new THREE.DataTexture(cmData, 100, 1);
-    let material: THREE.ShaderMaterial;
-    material = new THREE.ShaderMaterial({
-        uniforms: {
-            u_textureData: { value: texture },
-            // u_threshold: { value: 0.25 },
-            // u_range: { value: 0.1 },
-            // u_steps: { value: 100 },
-            u_colourMap: { value: colormap },
-        },
-        vertexShader: VolumeShader.vertexShader,
-        fragmentShader: VolumeShader.fradgmentShader,
-        side: THREE.BackSide,
-        transparent: true
-    });
-    let geometry = new THREE.BoxGeometry(1,1,1);
-    let dataCube: THREE.Mesh;
-    dataCube = new THREE.Mesh(geometry, material);
+    let texture: THREE.Data3DTexture = useMemo(() => {
+        console.log('texture updated')
+        return new THREE.Data3DTexture(data, width, height, length)
+    }, [data, width, height, length]);
+    texture.format = THREE.RedFormat;
+    texture.type = THREE.FloatType;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.unpackAlignment = 1;
+    texture.needsUpdate = true;
 
-    let cm = createColormap({
-        colormap: 'jet',
-        nshades: 100,
-        format: 'float',
-        alpha: 1
-    });
+    let colormap: THREE.DataTexture = useMemo(() => 
+        new THREE.DataTexture(cmData, 100, 1)
+    , [cmData]);
+    colormap.type = THREE.FloatType;
+    colormap.needsUpdate = true;
+    
+    let material: THREE.ShaderMaterial = useMemo(() => { 
+        console.log('material updated')
+        return new THREE.ShaderMaterial({
+            uniforms: {
+                u_textureData: { value: texture },
+                // u_threshold: { value: 0.25 },
+                // u_range: { value: 0.1 },
+                // u_steps: { value: 100 },
+                u_colourMap: { value: colormap },
+                // map: { value: texture },
+                // cameraPos: { value: new THREE.Vector3() }
+            },
+            vertexShader: VolumeShader.vertexShader,
+            fragmentShader: VolumeShader.fradgmentShader,
+            side: THREE.BackSide,
+            transparent: true
+        })
+    }, [colormap, texture]);
 
-    for(let i=0; i<100; i++){
-        const stride = i * 4;
-        cmData[stride] = cm[i][0];
-        cmData[stride+1] = cm[i][1];
-        cmData[stride+2] = cm[i][2];
-        cmData[stride+3] = cm[i][3];
-    }
+    let dataCube: THREE.Mesh = useMemo(() => 
+        new THREE.Mesh(geometry, material), 
+    [geometry, material]);
+    dataCube.frustumCulled = false;
 
     useEffect(() => {
         if(!ref.current)
             return;
-
-        // @ts-ignore
-        
-        texture.format = THREE.RedFormat;
-        texture.type = THREE.FloatType;
-        texture.minFilter = THREE.LinearFilter;
-        texture.magFilter = THREE.LinearFilter;
-        texture.unpackAlignment = 1;
-        texture.needsUpdate = true;
-
-        colormap.type = THREE.FloatType;
-        colormap.needsUpdate = true;
-        
-        // material.map = texture;
-        
-        dataCube.frustumCulled = false;
         ref.current.add(dataCube);
-    }, [data]);
+        console.log('use effect')
+    }, []);
     
 
     useFrame(() => {
@@ -99,7 +116,7 @@ const DataObject = ({data, width, height, depth}: any) => {
             return;
         }
 
-        const leftPos = leftController.controller.position;
+        const leftPos = leftController.controller.position
         const rightPos = rightController.controller.position;
         
         // scale controls
@@ -129,16 +146,16 @@ const DataObject = ({data, width, height, depth}: any) => {
                 ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
                 ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
             }
-            // else if(leftSqueeze)
-            // {
-            //     ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
-            //     ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
-            // }
-            // else if(rightSqueeze)
-            // {
-            //     ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetRight.x*rotationMultiplier);
-            //     ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetRight.y*rotationMultiplier);
-            // }
+            else if(leftSqueeze)
+            {
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
+            }
+            else if(rightSqueeze)
+            {
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(0,1,0), offsetRight.x*rotationMultiplier);
+                ref.current.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -offsetRight.y*rotationMultiplier);
+            }
             else if(leftSelect) // translation controls
             {
                 ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
@@ -153,17 +170,14 @@ const DataObject = ({data, width, height, depth}: any) => {
         }
 
     });
-    
-    // @ts-ignore
-    useInteraction(ref, 'onSqueezeStart', (e) => {
-        // if(e.controller.inputSource.handedness == 'right'){
-        //     rightSqueeze = true;
-        // }
 
-        // if(e.controller.inputSource.handedness == 'left'){
-        //     leftSqueeze = true;
-        // }
-    });
+    useXREvent('squeezestart', () => {
+        rightSqueeze = true;
+    }, {handedness: 'right'});
+
+    useXREvent('squeezestart', () => {
+        leftSqueeze = true;
+    }, {handedness: 'left'});
 
     useXREvent('squeezeend', () => {
         rightSqueeze = false;
@@ -173,16 +187,13 @@ const DataObject = ({data, width, height, depth}: any) => {
         leftSqueeze = false;
     }, {handedness: 'left'});
 
-    // @ts-ignore
-    useInteraction(ref, 'onSelectStart', (e) => {
-        // if(e.controller.inputSource.handedness == 'right'){
-        //     rightSelect = true;
-        // }
+    useXREvent('selectstart', () => { 
+        rightSelect = true; 
+    }, {handedness: 'right'});
 
-        // if(e.controller.inputSource.handedness == 'left'){
-        //     leftSelect = true;
-        // }
-    });
+    useXREvent('selectstart', () => {
+        leftSelect = true;
+    }, {handedness: 'left'});
 
     useXREvent('selectend', () => { 
         rightSelect = false; 
@@ -193,29 +204,13 @@ const DataObject = ({data, width, height, depth}: any) => {
     }, {handedness: 'left'});
 
     return (
-        // <Box 
-        //     castShadow
-        //     receiveShadow
-        //     ref={ref} 
-        //     position={[0,1.5,-2.5]}
-        // >
-        //     <meshPhongMaterial attach='material' color={new THREE.Color(0xf92a82)} />
-        // </Box>
-        // <mesh
-        //     ref={ref}
-        //     position={[0,1.5,-2.5]}
-        // >
-        //     <boxGeometry args={[1, 1, 1]} />
-        //     <meshBasicMaterial color={'hotpink'} />
-        // </mesh>
         <group 
             // @ts-ignore
             ref={ref}
             position={[0,1.5,-2.5]}
-        >
-
-        </group>
+        ></group>
     )
 };
 
-export default DataObject;
+const DataObject = observer(DataObjectView);
+export { DataObject };

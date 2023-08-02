@@ -22,4 +22,6 @@ message RegisterViewerAck {
     bool success = 2;
     // Error message (if applicable)
     string message = 3;
+    // Defines the type of session established
+    SessionType session_type = 4;
 }

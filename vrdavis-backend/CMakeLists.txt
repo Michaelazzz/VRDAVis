@@ -22,13 +22,13 @@ endif ()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 FIND_PACKAGE(GSL REQUIRED)
-# FIND_PACKAGE(ZFP CONFIG REQUIRED)
+FIND_PACKAGE(ZFP CONFIG REQUIRED)
 FIND_PACKAGE(PkgConfig REQUIRED)
 
 FIND_PACKAGE(Protobuf REQUIRED)
 INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
-FIND_PACKAGE(Threads)
-
+# FIND_PACKAGE(Threads)
+INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIR})
 ADD_SUBDIRECTORY(vrdavis-protobuf)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -47,21 +47,35 @@ set(LINK_LIBS
     ${PROTOBUF_LIBRARY}
     uSockets
     z
+    zfp
     ${OpenMP_CXX_LIBRARIES}
     ${HDF5_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
+find_package(HDF5 REQUIRED COMPONENTS CXX)
+if (HDF5_FOUND)
+    include_directories(${HDF5_INCLUDE_DIR})
+    set(LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES})
+else ()
+    message(FATAL_ERROR "Could not find HDF5.")
+endif ()
+
 set(SOURCE_FILES
     ${SOURCE_FILES}
+    src/DataStream/Compression.cpp
+    src/DataStream/Cubelet.cpp
     src/FileList/FileListHandler.cpp
     src/HttpServer/HttpServer.cpp
+    src/FileData/Hdf5Loader.cpp
     src/Logger/Logger.cpp
     src/Main.cpp
     src/ProgramSettings.cpp
     src/Message.cpp
+    src/Session/OnMessageTask.cpp
     src/Session/Session.cpp
     src/Session/SessionManager.cpp
+    src/ThreadingManager/ThreadingManager.cpp
     src/Util/File.cpp
     src/Util/String.cpp
 )

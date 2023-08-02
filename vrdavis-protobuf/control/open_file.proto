@@ -1,0 +1,26 @@
+syntax = "proto3";
+package VRDAVis;
+
+import "defs.proto";
+import "enums.proto";
+
+// OPEN_FILE:
+// Requests the opening of a specific file.
+// Backend responds with  OPEN_FILE_ACK
+message OpenFile {
+    // Required directory name
+    string directory = 1;
+    // File name or LEL expression
+    string file = 2;
+}
+
+// OPEN_FILE_ACK
+// Response for OPEN_FILE. Also supplies file information
+message OpenFileAck {
+    // Defines whether OPEN_FILE was successful
+    bool success = 1;
+    // Error message (if applicable)
+    string message = 2;
+    // Basic file info (type, size)
+    FileInfoExtended file_info = 3;
+}

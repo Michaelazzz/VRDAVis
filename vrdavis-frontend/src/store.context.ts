@@ -1,22 +1,14 @@
 // COMPOSISTION ROOT
 
 import { createContext } from 'react';
-import { BackendStore } from './stores/backend.store';
-import { CubeStore } from './stores/cube.store';
-import { SignallingStore } from './stores/signalling.store';
+import { RootStore } from './stores/root.store';
 
 interface RootContextInterface {
-    backendStore: BackendStore;
-    cubeStore: CubeStore;
-    signallingStore: SignallingStore;
+    rootStore: RootStore;
 }
 
-const backendStore = new BackendStore();
-const cubeStore = new CubeStore();
-const signallingStore = new SignallingStore();
+const rootStore = new RootStore();
 
 export const RootContext = createContext<RootContextInterface>({
-    backendStore,
-    cubeStore,
-    signallingStore
+    rootStore
 });

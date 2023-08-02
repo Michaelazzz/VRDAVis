@@ -3,14 +3,16 @@
 #include <thread>
 #include <vector>
 
-#include <nlohmann/json.hpp>
+// #include <nlohmann/json.hpp>
 // #include <spdlog/spdlog.h>
 
 #include "FileList/FileListHandler.h"
 #include "HttpServer/HttpServer.h"
 #include "Logger/Logger.h"
 #include "ProgramSettings.h"
+#include "Session/OnMessageTask.h"
 #include "Session/SessionManager.h"
+#include "ThreadingManager/ThreadingManager.h"
 
 using namespace vrdavis;
 using namespace std;
@@ -23,7 +25,7 @@ int main(int argc, char* argv[]) {
     std::unique_ptr<HttpServer> http_server;
     std::shared_ptr<SessionManager> session_manager;
 
-    std::cout << "VRDAVis backend" << std::endl;
+    spdlog::info("Data Server is on.");
 
     try {
         // set up interrupt signal handler
@@ -31,7 +33,7 @@ int main(int argc, char* argv[]) {
 
         sig_handler.sa_handler = [](int s) {
             spdlog::info("Exiting backend.");
-            // ThreadManager::ExitEventHandlingThreads();
+            ThreadManager::ExitEventHandlingThreads();
             vrdavis::logger::FlushLogFile();
             exit(0);
         };
@@ -43,23 +45,30 @@ int main(int argc, char* argv[]) {
         // Main
         vrdavis::ProgramSettings settings(argc, argv);
 
+        if (settings.help || settings.version) {
+            exit(0);
+        }
+
         // vrdavis::logger::InitLogger(settings.no_log, settings.verbosity, settings.log_performance, settings.log_protocol_messages, settings.user_directory);
         // settings.FlushMessages(); // flush log messages produced during Program Settings setup
 
-        // if (settings.wait_time >= 0) {
-        //     Session::SetExitTimeout(settings.wait_time);
-        // }
+        if (settings.wait_time >= 0) {
+            Session::SetExitTimeout(settings.wait_time);
+        }
 
-        // if (settings.init_wait_time >= 0) {
-        //     Session::SetInitExitTimeout(settings.init_wait_time);
-        // }
+        if (settings.init_wait_time >= 0) {
+            Session::SetInitExitTimeout(settings.init_wait_time);
+        }
+
+        vrdavis::ThreadManager::StartEventHandlingThreads(settings.event_thread_count);
+        vrdavis::ThreadManager::SetThreadLimit(settings.omp_thread_count);
 
         // One FileListHandler works for all sessions.
         file_list_handler = std::make_shared<FileListHandler>(settings.folder);
-        file_list_handler->GetFileList();
 
         // Session manager
         session_manager = std::make_shared<SessionManager>(settings, file_list_handler);
+        vrdavis::OnMessageTask::SetSessionManager(session_manager);
 
         // HTTP server
         http_server = std::make_unique<HttpServer>(session_manager);

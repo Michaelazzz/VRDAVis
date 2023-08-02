@@ -24,8 +24,8 @@ message FileInfo {
     string name = 1;
     // FileType type = 2;
     sfixed64 size = 2;
-    repeated string HDU_list = 3;
-    sfixed64 date = 4;
+    // repeated string HDU_list = 3;
+    // sfixed64 date = 4;
 }
 
 // Directory info message structure (internal use only)
@@ -51,36 +51,47 @@ message FileInfoExtended {
     // Height of the XY plane
     sfixed32 height = 3;
     // Number of channels
-    sfixed32 depth = 4;
+    sfixed32 length = 4;
     // Number of Stokes parameters
-    sfixed32 stokes = 5;
+    // sfixed32 stokes = 5;
     // List of Stokes parameters contained in the file (if applicable). For files that do not explicitly specify Stokes files, this will be blank.
-    repeated string stokes_vals = 6;
+    // repeated string stokes_vals = 6;
     // Header entries from header string or attributes
-    repeated HeaderEntry header_entries = 7;
-    repeated HeaderEntry computed_entries = 8;
+    // repeated HeaderEntry header_entries = 7;
+    // repeated HeaderEntry computed_entries = 8;
 }
 
-message CubeData {
+message ImageBounds {
+    sfixed32 x_min = 1;
+    sfixed32 x_max = 2;
+    sfixed32 y_min = 3;
+    sfixed32 y_max = 4;
+    sfixed32 z_min = 5;
+    sfixed32 z_max = 6;
+}
+
+message CubeletParams {
     // Cube layer coordinate. If this is < 0, the ``mip`` value is used for coordinates instead
-    sfixed32 layer = 1;
+    sfixed32 layerXY = 1;
+    sfixed32 layerZ = 2;
     // Cube x coordinate
-    sfixed32 x = 2;
+    sfixed32 x = 3;
     // Cube y coordinate
-    sfixed32 y = 3;
+    sfixed32 y = 4;
     // Cube z coordinate
-    sfixed32 z = 4;
+    sfixed32 z = 5;
     // Width of the cube data. If this is left as zero, the default tile size should be used
-    sfixed32 width = 5;
+    sfixed32 width = 6;
     // Height of the cube data. If this is left as zero, the default tile size should be used
-    sfixed32 height = 6;
+    sfixed32 height = 7;
     // Height of the cube data. If this is left as zero, the default tile size should be used
-    sfixed32 length = 7;
+    sfixed32 length = 8;
     // Volume data. For uncompressed data, this is converted into FP32, while for compressed data,
     // this is passed to the compression library for decompression.
-    bytes volume_data = 8;
+    // bytes volume_data = 8;
+    repeated float volume_data = 9 [packed=true];
     // Run-length encodings of NaN values. These values are used to restore the NaN values after decompression.
-    bytes nan_encodings = 9;
+    // bytes nan_encodings = 9;
     // Mip coordinate. Ignored if ``layer`` >= 0
-    sfixed32 mip = 10;
+    // sfixed32 mip = 10;
 }
