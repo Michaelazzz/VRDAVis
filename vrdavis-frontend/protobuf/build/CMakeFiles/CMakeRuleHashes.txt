@@ -1,6 +1,0 @@
-# Hashes of file build rules.
-a605c3c33e79a88757c048f1814269b0 cube.pb.h
-a3c5da04a9806feb16e31080038247c1 cubes.pb.h
-c1e332738d53e30e09c0fd4c3ce3669f defs.pb.h
-a2920287e431abb05eeb505f52473379 enums.pb.h
-d6bbce453a9810d436a2dff6f1aa2543 register_viewer.pb.h
