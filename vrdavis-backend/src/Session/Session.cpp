@@ -241,9 +241,9 @@ bool Session::OnOpenFile(const VRDAVis::OpenFile& message, uint32_t request_id, 
 
     if (info_loaded) {
         try
-        {
+        {                                                                                                                                                                                                                                                                                                                                                             
             _loader = new Hdf5Loader();
-            _loader->OpenFile(filename, directory, "0/DATA");
+            _loader->OpenFile(filename, directory);
         }
         catch(const std::exception& e) {
             spdlog::error("Opening file error");
@@ -285,15 +285,16 @@ void Session::OnCloseFile(const VRDAVis::CloseFile& message) {
     // DeleteFrame(message.file_id());
 }
 
-void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, bool skip_data) {
+void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, VRDAVis::CompressionType compression_type, bool skip_data) {
     auto file_id = message.file_id();
     int num_cubes = message.cubelets_size();
 
     ThreadManager::ApplyThreadLimit();
+    // _loader->OpenDataset("0/DATA");
 
     for (int i = 0; i < num_cubes; i++) {
         const std::string encoded_coordinate = message.cubelets(i);
-
+        // spdlog::info("Encoded Coordinates {}", encoded_coordinate);
         VRDAVis::CubeletData cubelet_data_message;
         cubelet_data_message.set_file_id(file_id);
 
@@ -310,40 +311,41 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
         cubelet_ptr->set_y(cubelet.y); // y position/offset
         cubelet_ptr->set_z(cubelet.z); // z position/offset
 
-        int xDims = 256;
-        int yDims = 256;
-        int zDims = 256;
+        int xDims = (cubelet.x+256 > _loader->getXDimensions()) ? 256 - ((cubelet.x+256) - _loader->getXDimensions()) : 256;
+        int yDims = (cubelet.y+256 > _loader->getYDimensions()) ? 256 - ((cubelet.y+256) - _loader->getYDimensions()) : 256;
+        int zDims = (cubelet.z+256 > _loader->getZDimensions()) ? 256 - ((cubelet.z+256) - _loader->getZDimensions()) : 256;
+
+        
+        // spdlog::info("{} {} {}", cubelet.x, cubelet.y, cubelet.z);
+        // spdlog::info("Cubelet Dimensions {} {} {}", xDims, yDims, zDims);
 
         size_t volume_data_length = xDims * yDims * zDims;
         float* volume_data_out = new float[volume_data_length];
         // std::shared_ptr<std::vector<float>> volume_data_out;
-        if (num_cubes == 1 && _loader->ReadAllData(volume_data_out)) {
-            for (size_t i = 0; i < volume_data_length; i++)
-            {
-                cubelet_ptr->add_volume_data(volume_data_out[i]);
-            }
+        
+        if(_loader->readHdf5Data(
+        volume_data_out, 
+        { hsize_t(zDims), hsize_t(yDims), hsize_t(xDims) }, 
+        { hsize_t(zDims), hsize_t(yDims), hsize_t(xDims) }, 
+        { hsize_t(cubelet.z), hsize_t(cubelet.y), hsize_t(cubelet.x) })) {
             // size_t cube_data_size = sizeof(float) * volume_data_out->size(); // cube data size in bytes
             cubelet_ptr->set_height(xDims);
             cubelet_ptr->set_width(yDims);
             cubelet_ptr->set_length(zDims);
             // cubelet_ptr->set_volume_data(volume_data_length, *volume_data_out);
             // SendFileEvent(file_id, VRDAVis::EventType::VOLUME_CUBE_DATA, 0, volume_data, compression_type == VRDAVis::CompressionType::NONE);
-            SendFileEvent(file_id, VRDAVis::EventType::CUBELET_DATA, request_id, cubelet_data_message);
 
-        } else if (_loader->GetChunk(volume_data_out, xDims, yDims, zDims, xDims * cubelet.x, yDims * cubelet.y, zDims * cubelet.z)) {
-            for (size_t i = 0; i < volume_data_length; i++)
-            {
-                cubelet_ptr->add_volume_data(volume_data_out[i]);
+            if (compression_type == VRDAVis::CompressionType::NONE) {
+                // uncompressed data
+                for (size_t i = 0; i < volume_data_length; i++)
+                {
+                    cubelet_ptr->add_volume_data(volume_data_out[i]);
+                }
+            } else {
+                // compressed data
             }
-            // size_t cube_data_size = sizeof(float) * volume_data_out->size(); // cube data size in bytes
-            cubelet_ptr->set_height(xDims);
-            cubelet_ptr->set_width(yDims);
-            cubelet_ptr->set_length(zDims);
-            // cubelet_ptr->set_volume_data(volume_data_length, *volume_data_out);
-            // SendFileEvent(file_id, VRDAVis::EventType::VOLUME_CUBE_DATA, 0, volume_data, compression_type == VRDAVis::CompressionType::NONE);
             SendFileEvent(file_id, VRDAVis::EventType::CUBELET_DATA, request_id, cubelet_data_message);
-        } 
-        else {
+        } else {
             spdlog::error("Data could not be loaded");
             // send error to frontend
             std::vector<std::string> tags;

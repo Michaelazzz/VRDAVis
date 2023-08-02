@@ -47,7 +47,7 @@ public:
     void OnFileInfoRequest(const VRDAVis::FileInfoRequest& request, uint32_t request_id);
     bool OnOpenFile(const VRDAVis::OpenFile& message, uint32_t request_id, bool silent = false);
     void OnCloseFile(const VRDAVis::CloseFile& message);
-    void OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, bool skip_data = false);
+    void OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, VRDAVis::CompressionType compression_type, bool skip_data = false);
     void OnResumeSession(const VRDAVis::ResumeSession& message, uint32_t request_id);
 
     int IncreaseRefCount() {

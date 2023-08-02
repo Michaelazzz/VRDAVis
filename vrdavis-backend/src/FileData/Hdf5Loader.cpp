@@ -13,60 +13,17 @@ Hdf5Loader::Hdf5Loader() {}
 
 Hdf5Loader::~Hdf5Loader() {}
 
-void Hdf5Loader::OpenFile(const std::string& filename, const std::string& directory, const std::string& dataset) {
+void Hdf5Loader::OpenFile(const std::string& filename, const std::string& directory) {
     _filename = filename;
     _directory = directory;
-    _dataset = dataset; // dataset name -> 0/DATA
-    std::string path = _directory + "/" + _filename;
-    // std::string path = "../../test-data/WFPC2u5780205r_c0fx.hdf5";
-    try {
-        // open file
-        file_id = H5Fopen(path.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
-        // open dataset
-        dataset_id = H5Dopen2(file_id, _dataset.c_str(), H5P_DEFAULT);
-        // get dataspace of the dataset
-        dataspace_id = H5Dget_space(dataset_id);
-
-        hsize_t dims_out[3];
-        // number of dimensions in the file
-        H5Sget_simple_extent_dims(dataspace_id, dims_out, NULL);
-        // std::cout << "dimensions " << (unsigned long)(dims_out[0]) << " x " << (unsigned long)(dims_out[1]) << " x " << (unsigned long)(dims_out[2]) <<  std::endl;
-
-        _NZ = dims_out[0];
-        _NY = dims_out[1];
-        _NX = dims_out[2];
-    } catch (H5::FileIException &file_exists_err) {
-        spdlog::error(file_exists_err.getDetailMsg());
-    } catch( H5::DataSetIException &dataset_exists_err ) {
-        spdlog::error(dataset_exists_err.getDetailMsg());
-    } catch( H5::DataTypeIException &error ) {
-        spdlog::error(error.getDetailMsg());
-    }
-}
-
-void Hdf5Loader::OpenFileAlternative(const std::string& filename, const std::string& directory, const std::string& dataset) {
-    _filename = filename;
-    _directory = directory;
-    _dataset = dataset; // dataset name -> 0/DATA
     std::string path = _directory + "/" + _filename;
     // std::string path = "../../test-data/WFPC2u5780205r_c0fx.hdf5";
     try {
         // open file
         _file = H5Fopen(path.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
-        // open dataset
-        _set = _file.openDataSet(_dataset.c_str());
-        // get dataspace of the dataset
-        _space = _set.getSpace();
-        _filespace = H5Dget_space(_set.getId());
 
-        hsize_t dims_out[3];
-        // number of dimensions in the file
-        H5Sget_simple_extent_dims(dataspace_id, dims_out, NULL);
-        // std::cout << "dimensions " << (unsigned long)(dims_out[0]) << " x " << (unsigned long)(dims_out[1]) << " x " << (unsigned long)(dims_out[2]) <<  std::endl;
-
-        _NZ = dims_out[0];
-        _NY = dims_out[1];
-        _NX = dims_out[2];
+        //open dataset
+        OpenDataset("0/DATA");
     } catch (H5::FileIException &file_exists_err) {
         spdlog::error(file_exists_err.getDetailMsg());
     } catch( H5::DataSetIException &dataset_exists_err ) {
@@ -74,9 +31,36 @@ void Hdf5Loader::OpenFileAlternative(const std::string& filename, const std::str
     } catch( H5::DataTypeIException &error ) {
         spdlog::error(error.getDetailMsg());
     }
+    spdlog::info("File opened");
 }
 
-// bool Hdf5Loader::ReadData(std::shared_ptr<std::vector<float>>& volume_data_out) {
+void Hdf5Loader::OpenDataset(const std::string& dataset) {
+    _dataset = dataset; // dataset name -> 0/DATA
+    _set = _file.openDataSet(_dataset.c_str());
+    spdlog::info("Dataset opened");
+
+    hsize_t dims_out[3];
+    // number of dimensions in the file
+    auto filespace = _set.getSpace();
+    filespace.getSimpleExtentDims( dims_out, NULL);
+
+    _NZ = dims_out[0];
+    _NY = dims_out[1];
+    _NX = dims_out[2];
+
+    spdlog::info("{} {} {}", _NX, _NY, _NZ);
+}
+
+void Hdf5Loader::getFullResDims() {
+    hsize_t dims_out[3];
+    // number of dimensions in the file
+    auto filespace = _set.getSpace();
+    filespace.getSimpleExtentDims( dims_out, NULL);
+
+    _NZ = dims_out[0];
+    _NY = dims_out[1];
+    _NX = dims_out[2];
+}
 
 bool Hdf5Loader::ReadAllData(float* volume_data_out) {
     try {
@@ -107,7 +91,7 @@ int Hdf5Loader::getZDimensions() {
     return _NZ;
 }
 
-bool Hdf5Loader::GetChunk(float* volume_data_out, int chunk_width, int chunk_height, int chunk_depth, int xOffset, int yOffset, int zOffset) {
+/*bool Hdf5Loader::GetChunk(float* volume_data_out, int chunk_width, int chunk_height, int chunk_depth, int xOffset, int yOffset, int zOffset) {
     try {
 
         hsize_t offset[3]; // starting positions of the hyperslab
@@ -142,9 +126,9 @@ bool Hdf5Loader::GetChunk(float* volume_data_out, int chunk_width, int chunk_hei
         return false;
     }
     return true;
-}
+}*/
 
-bool Hdf5Loader::GetChunkAlternative(float* volume_data_out, int chunk_width, int chunk_height, int chunk_depth, int xOffset, int yOffset, int zOffset) {
+bool Hdf5Loader::GetChunk(float* volume_data_out, int chunk_width, int chunk_height, int chunk_depth, int xOffset, int yOffset, int zOffset) {
     try {
 
         /*
@@ -197,6 +181,33 @@ bool Hdf5Loader::GetChunkAlternative(float* volume_data_out, int chunk_width, in
         return false;
     }
     return true;
+}
+
+bool Hdf5Loader::readHdf5Data(float* volume_data_out, const std::vector<hsize_t>& dims, const std::vector<hsize_t>& count, const std::vector<hsize_t>& start) {
+    try {
+        spdlog::info("dims {} {} {}", dims.at(0), dims.at(1), dims.at(2));
+        // spdlog::info("count {} {} {}", count.at(0), count.at(1), count.at(2));
+        spdlog::info("start {} {} {}", start.at(0), start.at(1), start.at(2));
+        
+        H5::DataSpace memspace(dims.size(), dims.data());
+        auto filespace = _set.getSpace();
+        
+        if (!count.empty() && !start.empty()) {
+            filespace.selectHyperslab(H5S_SELECT_SET, count.data(), start.data());
+        }
+        _set.read(volume_data_out, H5::PredType::NATIVE_FLOAT, memspace, filespace);
+        return true;
+    } catch( H5::FileIException &error ) {
+        spdlog::error(error.getDetailMsg());
+        return false;
+    } catch (H5::DataSetIException &error ) {
+        spdlog::error(error.getDetailMsg());
+        return false;
+    } catch( H5::DataTypeIException &error ) {
+        spdlog::error(error.getDetailMsg());
+        return false;
+    }
+    return false;
 }
 
 std::string Hdf5Loader::GetFileName() {

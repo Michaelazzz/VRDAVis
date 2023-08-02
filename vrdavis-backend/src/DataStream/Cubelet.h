@@ -27,16 +27,25 @@ struct Cubelet {
         strcpy(str, encoded_value.c_str());
 
         char *token = strtok(str, "_");
+        
+        std::string s = token;
+        int64_t x = std::stoi(s);
+        token = strtok(NULL, "_");
 
-        int64_t x = *token - 48;
+        s = token;
+        int64_t y = std::stoi(s);
         token = strtok(NULL, "_");
-        int64_t y = *token - 48;
+
+        s = token;
+        int64_t z = std::stoi(s);
         token = strtok(NULL, "_");
-        int64_t z = *token - 48;
+
+        s = token;
+        int64_t mipXY = std::stoi(s);
         token = strtok(NULL, "_");
-        int64_t mipXY = *token - 48;
-        token = strtok(NULL, "_");
-        int64_t mipZ = *token - 48;
+        
+        s = token;
+        int64_t mipZ = std::stoi(s);
         token = strtok(NULL, "_");
 
         return Cubelet{x, y, z, mipXY, mipZ};

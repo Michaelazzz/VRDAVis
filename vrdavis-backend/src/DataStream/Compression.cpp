@@ -7,7 +7,7 @@
 
 namespace vrdavis {
 
-int Compress(std::vector<float>& array, size_t offset, std::vector<char>& compression_buffer, size_t& compressed_size, uint32_t size, uint32_t precision) {
+int Compress(float* array, std::vector<char>& compression_buffer, std::size_t& compressed_size, uint32_t nx,uint32_t ny, uint32_t nz, uint32_t precision) {
     int status = 0;     /* return value: 0 = success */
     zfp_type type;      /* array scalar type */
     zfp_field* field;   /* array meta data */
@@ -16,7 +16,7 @@ int Compress(std::vector<float>& array, size_t offset, std::vector<char>& compre
     bitstream* stream;  /* bit stream to write to or read from */
 
     type = zfp_type_float;
-    field = zfp_field_1d(array.data(), type, size);
+    field = zfp_field_3d((void*)array, type, nx, ny, nz);
 
     /* allocate meta data for a compressed stream */
     zfp = zfp_stream_open(nullptr);
@@ -46,15 +46,15 @@ int Compress(std::vector<float>& array, size_t offset, std::vector<char>& compre
     return status;
 }
 
-int Decompress(std::vector<float>& array, std::vector<char>& compression_buffer, int size, int precision) {
+int Decompress(float* array, std::vector<char>& compression_buffer, int nx, int ny, int nz, int precision) {
     int status = 0;    /* return value: 0 = success */
     zfp_type type;     /* array scalar type */
     zfp_field* field;  /* array meta data */
     zfp_stream* zfp;   /* compressed stream */
     bitstream* stream; /* bit stream to write to or read from */
     type = zfp_type_float;
-    array.resize(size); // resize the resulting data
-    field = zfp_field_1d(array.data(), type, size);
+    // array.resize(size); // resize the resulting data
+    field = zfp_field_3d((void*)array, type, nx, ny, nz);
     zfp = zfp_stream_open(NULL);
 
     zfp_stream_set_precision(zfp, precision);

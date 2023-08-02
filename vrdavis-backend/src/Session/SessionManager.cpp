@@ -197,7 +197,7 @@ void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpC
                     VRDAVis::AddRequiredCubes message;
                     if (message.ParseFromArray(event_buf, event_length)) {
                         // tsk = new GeneralMessageTask<VRDAVis::AddRequiredCubes>(session, message, head.request_id);
-                        session->OnAddRequiredCubes(message, head.request_id);
+                        session->OnAddRequiredCubes(message, head.request_id, VRDAVis::CompressionType::NONE);
                         message_parsed = true;
                     }
                     break;
