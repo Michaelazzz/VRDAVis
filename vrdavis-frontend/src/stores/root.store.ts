@@ -33,6 +33,11 @@ export class RootStore {
     //     this.backendStore.getFileList(directory);
     // }
 
+    initialCube = () => {
+        // const cubelets = 
+        // this.cubeletStore.requestCubelets(cubelets, 0, midPointCubeletCoords);
+    }
+
     // cropCube = (fileId: number, focusPoint: Point3D) => {
     cropCube = () => {
         console.log('crop cube')

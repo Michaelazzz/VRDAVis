@@ -16,7 +16,9 @@ import { BackendMenu } from "./components/browser UI/BackendMenu";
 import { DeviceCredentials } from "./components/browser UI/DeviceCredentials";
 import { WebRTCMenu } from "./components/browser UI/WebRTCMenu";
 import { FileCredentials } from "./components/browser UI/FileCredentials";
-import { TestDataObject } from "./components/TestDataObject";
+import { DataCube } from "./components/DataCube";
+import { CubeControls } from "./components/CubeControls";
+import { CropControls } from "./components/CropControls";
 
 const AppView: React.FC = () => {
 
@@ -65,8 +67,11 @@ const AppView: React.FC = () => {
                     
                     
                     {/* <DataObject /> */}
-                    <TestDataObject />
-                    
+                    {/* <CubeControls> */}
+                        <CropControls/>
+                        <DataCube />
+                        {/* </CropControls> */}
+                    {/* </CubeControls> */}
                 </XR>
             </Canvas>
         </>

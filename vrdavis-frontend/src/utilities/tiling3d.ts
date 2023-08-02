@@ -79,23 +79,38 @@ export function GetRequiredCubelets(cubeState: CubeView, fullCubeState: Point3D,
     //     z: cubeState.mipZ * cubeSize.z
     // };
 
-    const xStart = Math.ceil(boundedCubeView.xMin / cubeSize.x);
-    const xEnd = Math.floor(boundedCubeView.xMax / cubeSize.x);
-    const yStart = Math.ceil(boundedCubeView.yMin / cubeSize.y);
-    const yEnd = Math.floor(boundedCubeView.yMax / cubeSize.y);
-    const zStart = Math.ceil(boundedCubeView.zMin / cubeSize.z);
-    const zEnd = Math.floor(boundedCubeView.zMax / cubeSize.z);
+    // rounded method
+    // const xStart = Math.ceil(boundedCubeView.xMin / cubeSize.x);
+    // const xEnd = Math.floor(boundedCubeView.xMax / cubeSize.x);
+    // const yStart = Math.ceil(boundedCubeView.yMin / cubeSize.y);
+    // const yEnd = Math.floor(boundedCubeView.yMax / cubeSize.y);
+    // const zStart = Math.ceil(boundedCubeView.zMin / cubeSize.z);
+    // const zEnd = Math.floor(boundedCubeView.zMax / cubeSize.z);
 
-    const numCubesX = xEnd - xStart;
-    const numCubesY = yEnd - yStart;
-    const numCubesZ = zEnd - zStart;
+    const xStart = Math.ceil(boundedCubeView.xMin);
+    const xEnd = Math.floor(boundedCubeView.xMax);
+    const yStart = Math.ceil(boundedCubeView.yMin);
+    const yEnd = Math.floor(boundedCubeView.yMax);
+    const zStart = Math.ceil(boundedCubeView.zMin);
+    const zEnd = Math.floor(boundedCubeView.zMax);
+
+    // console.log(xStart + ' ' + xEnd);
+    // console.log(yStart + ' ' + yEnd);
+    // console.log(zStart + ' ' + zEnd);
+
+    // const numCubesX = xEnd - xStart;
+    // const numCubesY = yEnd - yStart;
+    // const numCubesZ = zEnd - zStart;
+
+    // console.log(numCubesX)
+    // console.log(numCubesY)
+    // console.log(numCubesZ)
     
-    const cubeletSet: CubeletCoordinate[] = new Array<CubeletCoordinate>(numCubesX * numCubesY * numCubesZ);
-    for (let x = xStart, i = 0; x < xEnd; x++) {
-        for (let y = yStart; y < yEnd; y++) {
-            for (let z = zStart; z < zEnd; z++) {
-                cubeletSet[i] = new CubeletCoordinate(x, y, z, cubeState.mipXY, cubeState.mipZ);
-                i++;
+    const cubeletSet: CubeletCoordinate[] = new Array<CubeletCoordinate>();
+    for (let x = xStart; x < xEnd; x=x+cubeSize.x) {
+        for (let y = yStart; y < yEnd; y=y+cubeSize.y) {
+            for (let z = zStart; z < zEnd; z=z+cubeSize.z) {
+                cubeletSet.push(new CubeletCoordinate(x, y, z, cubeState.mipXY, cubeState.mipZ));
             }
         }
     }

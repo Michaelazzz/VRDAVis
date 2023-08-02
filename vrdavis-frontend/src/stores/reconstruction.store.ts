@@ -39,8 +39,8 @@ export class ReconstructionStore {
             if(cubelet.z > max.z)
                 max.z = cubelet.z;
         }
-        // console.log(`${max.x} ${max.y} ${max.z}`);
-        this.setDimensions((max.x+1)*CUBELET_SIZE, (max.y+1)*CUBELET_SIZE, (max.z+1)*CUBELET_SIZE);
+        // this.setDimensions((max.x+1)*CUBELET_SIZE, (max.y+1)*CUBELET_SIZE, (max.z+1)*CUBELET_SIZE);
+        this.setDimensions((max.x+1), (max.y+1), (max.z+1));
     }
 
     setData = (data: Float32Array) => {
@@ -60,9 +60,9 @@ export class ReconstructionStore {
 
     setCubelets = (cubelets: CubeletCoordinate[]) => {
         this.cubelets = [...cubelets];
-        this.setNewCubeDimensions()
-        const data = new Float32Array(this.width*this.height*this.length);
-        this.data = Float32Array.from(data);
+        // this.setNewCubeDimensions();
+        // const data = new Float32Array(this.width*this.height*this.length);
+        // this.data = Float32Array.from(data);
     }
 
     // reconstructCube = () => {
@@ -86,31 +86,35 @@ export class ReconstructionStore {
     addCubeToTexture = (coord: CubeletCoordinate, cubelet: Cubelet) => {
         if(cubelet === undefined) return;
         this.cubeUpdated = false;
-        console.log(`adding cubelet ${coord.encode()}`)
-        const cubeletWidth = (coord.x+1)*cubelet.width;
-        const cubeletHeight = (coord.y+1)*cubelet.height;
-        const cubeletLength = (coord.z+1)*cubelet.length;
-        const data = new Float32Array(this.data);
-        let m = 0;
-        console.log(`start: ${ coord.x*CUBELET_SIZE} => end: ${cubeletWidth}`)
-        console.log(`start: ${ coord.y*CUBELET_SIZE} => end: ${cubeletHeight}`)
-        console.log(`start: ${ coord.z*CUBELET_SIZE} => end: ${cubeletLength}`)
+        console.log(`adding cubelet ${coord.encode()}`);
+
+        this.setDimensions(cubelet.width, cubelet.height, cubelet.length);
+        this.rootStore.reconstructionStore.setData(cubelet.data);
+
+        // const cubeletWidth = cubelet.width;
+        // const cubeletHeight = cubelet.height;
+        // const cubeletLength = cubelet.length;
+        // const data = new Float32Array(this.data);
+        // let m = 0;
+        // console.log(`start: ${ coord.x} => end: ${cubeletWidth}`)
+        // console.log(`start: ${ coord.y} => end: ${cubeletHeight}`)
+        // console.log(`start: ${ coord.z} => end: ${cubeletLength}`)
         
-        for(let l = coord.z*CUBELET_SIZE; l < cubeletLength; l++) {
-            for(let k = coord.y*CUBELET_SIZE; k < cubeletHeight; k++) {
-                for(let j = coord.x*CUBELET_SIZE; j < cubeletWidth; j++) {
-                    const widthIndex = j
-                    const heightIndex = k * CUBELET_SIZE
-                    const lengthIndex = l * CUBELET_SIZE * CUBELET_SIZE
-                    const index = widthIndex + heightIndex + lengthIndex;
-                    // data[index] = cubelet.data[m] === 0 ? 1 : cubelet.data[m];
-                    data[index] = cubelet.data[m];
-                    // this.setPoint(j+k+l, cubelet.data[m]);
-                    m++;
-                }
-            }
-        }
-        this.rootStore.reconstructionStore.setData(data)
+        // for(let l = coord.z; l < cubeletLength; l++) {
+        //     for(let k = coord.y; k < cubeletHeight; k++) {
+        //         for(let j = coord.x; j < cubeletWidth; j++) {
+        //             const widthIndex = j;
+        //             const heightIndex = k * CUBELET_SIZE;
+        //             const lengthIndex = l * CUBELET_SIZE * CUBELET_SIZE;
+        //             const index = widthIndex + heightIndex + lengthIndex;
+        //             // data[index] = cubelet.data[m] === 0 ? 1 : cubelet.data[m];
+        //             data[index] = cubelet.data[m];
+        //             // this.setPoint(j+k+l, cubelet.data[m]);
+        //             m++;
+        //         }
+        //     }
+        // }
+        
         // this.rootStore.reconstructionStore.setData(data)
         console.log(`cubelet ${coord.encode()} added`)
         this.cubeUpdated = true;
