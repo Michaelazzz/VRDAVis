@@ -26,7 +26,8 @@ const AppView: React.FC = () => {
     const { rootStore } = useContext(RootContext);
 
     useEffect(() => {
-        rootStore.connectToServer('ws://localhost:3002'); // 'wss://vrdavis01.idia.ac.za/server'
+        // rootStore.connectToServer('ws://localhost:3002');
+        rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
     }, [rootStore]);
 
     return (

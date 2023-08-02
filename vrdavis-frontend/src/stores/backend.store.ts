@@ -85,8 +85,7 @@ export class BackendStore {
 
         this.loggingEnabled = true;
         this.connectionDropped = false;
-        // this.serverUrl = 'ws://localhost:3002';
-        this.serverUrl = 'wss://vrdavis01.idia.ac.za/server'
+        this.serverUrl = 'ws://localhost:3002';
 
         this.connection = new WebSocket(this.serverUrl);
         this.endToEndPing = NaN;
