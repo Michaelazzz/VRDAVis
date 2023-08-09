@@ -1,9 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-vrdavis-frontend/node_modules
 vrdavis-signaling-server/node_modules
+vrdavis-signaling-server/.vscode
 vrdavis-protobuf/build
+test-data
+fits
 /.pnp
 .pnp.js
 
