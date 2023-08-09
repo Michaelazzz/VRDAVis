@@ -12,9 +12,9 @@ message AddRequiredCubes {
     // The list of tiles required, in encoded coordinate
     repeated string cubelets = 2;
     // The compression algorithm used
-    // CompressionType compression_type = 3;
+    CompressionType compression_type = 3;
     // Compression quality switch
-    // float compression_quality = 4;
+    float compression_quality = 4;
 }
 
 // REMOVE_REQUIRED_CUBELETS

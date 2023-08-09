@@ -25,11 +25,11 @@ message CubeletData {
     // The image stokes coordinate
     // sfixed32 stokes = 3;
     // The compression algorithm used.
-    // CompressionType compression_type = 4;
+    CompressionType compression_type = 2;
     // Compression quality switch
-    // float compression_quality = 5;
+    float compression_quality = 3;
     // The ID of the animation (if any)
     // sfixed32 animation_id = 6;
     // List of tile data
-    repeated CubeletParams cubelets = 2;
+    repeated CubeletParams cubelets = 4;
 }
