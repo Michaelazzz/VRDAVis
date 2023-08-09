@@ -355,7 +355,8 @@ export class BackendStore {
         this.onDeferredResponse(eventId, ack);
 
         // get initial cubes
-        this.rootStore.cropCube()
+        this.rootStore.initialCube();
+        // this.rootStore.cropCube();
     }
 
     private onFileInfoResponse = (eventId: number, res: VRDAVis.FileInfoResponse) => {

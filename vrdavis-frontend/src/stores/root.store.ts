@@ -34,8 +34,15 @@ export class RootStore {
     // }
 
     initialCube = () => {
-        // const cubelets = 
-        // this.cubeletStore.requestCubelets(cubelets, 0, midPointCubeletCoords);
+        const midPointCubeletCoords = {
+            x: 0.5, 
+            y: 0.5,
+            z: 0.5
+        };
+        const coord = new Array<CubeletCoordinate>();
+        coord.push(new CubeletCoordinate(0, 0, 0, 1, 1));
+        this.reconstructionStore.setCubelets(coord);
+        this.cubeletStore.requestCubelets(coord, 0, midPointCubeletCoords);
     }
 
     // cropCube = (fileId: number, focusPoint: Point3D) => {
