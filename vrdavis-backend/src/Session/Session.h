@@ -47,7 +47,7 @@ public:
     void OnFileInfoRequest(const VRDAVis::FileInfoRequest& request, uint32_t request_id);
     bool OnOpenFile(const VRDAVis::OpenFile& message, uint32_t request_id, bool silent = false);
     void OnCloseFile(const VRDAVis::CloseFile& message);
-    void OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, VRDAVis::CompressionType compression_type, bool skip_data = false);
+    void OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, bool skip_data = false);
     void OnResumeSession(const VRDAVis::ResumeSession& message, uint32_t request_id);
 
     int IncreaseRefCount() {
@@ -91,9 +91,8 @@ protected:
     bool FillExtendedFileInfo(VRDAVis::FileInfoExtended& file_info, const std::string& folder, const std::string& filename, const int& dims, const int& width, const int& height, const int& length, std::string& message);
 
     // Send protobuf messages
-    void SendEvent(VRDAVis::EventType event_type, u_int32_t event_id, const google::protobuf::MessageLite& message);
-    // void SendFileEvent(int file_id, VRDAVis::EventType event_type, u_int32_t event_id, google::protobuf::MessageLite& message, bool compress = true);
-    void SendFileEvent(int file_id, VRDAVis::EventType event_type, u_int32_t event_id, google::protobuf::MessageLite& message);
+    void SendEvent(VRDAVis::EventType event_type, u_int32_t event_id, const google::protobuf::MessageLite& message, bool compress = true);
+    void SendFileEvent(int file_id, VRDAVis::EventType event_type, u_int32_t event_id, google::protobuf::MessageLite& message, bool compress = true);
     void SendLogEvent(const std::string& message, std::vector<std::string> tags, VRDAVis::ErrorSeverity severity);
 
     // uWebSockets

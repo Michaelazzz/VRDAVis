@@ -18,6 +18,7 @@
 
 #include "OnMessageTask.h"
 #include "Message.h"
+#include "DataStream/Compression.h"
 #include "DataStream/Cubelet.h"
 #include "ThreadingManager/ThreadingManager.h"
 
@@ -285,9 +286,12 @@ void Session::OnCloseFile(const VRDAVis::CloseFile& message) {
     // DeleteFrame(message.file_id());
 }
 
-void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, VRDAVis::CompressionType compression_type, bool skip_data) {
+void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, bool skip_data) {
     auto file_id = message.file_id();
     int num_cubes = message.cubelets_size();
+
+    VRDAVis::CompressionType compression_type = message.compression_type();
+    float compression_quality = message.compression_quality();
 
     ThreadManager::ApplyThreadLimit();
     // _loader->OpenDataset("0/DATA");
@@ -297,6 +301,7 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
         // spdlog::info("Encoded Coordinates {}", encoded_coordinate);
         VRDAVis::CubeletData cubelet_data_message;
         cubelet_data_message.set_file_id(file_id);
+        cubelet_data_message.set_compression_type(compression_type);
 
         auto cubelet = Cubelet::Decode(encoded_coordinate);
 
@@ -305,6 +310,7 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
         }
 
         VRDAVis::CubeletParams* cubelet_ptr = cubelet_data_message.add_cubelets();
+        
         cubelet_ptr->set_layerxy(cubelet.mipXY); // mipmap XY layer
         cubelet_ptr->set_layerz(cubelet.mipZ); // mipmap Z layer
         cubelet_ptr->set_x(cubelet.x); // x position/offset
@@ -341,8 +347,15 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
                 {
                     cubelet_ptr->add_volume_data(volume_data_out[i]);
                 }
-            } else {
-                // compressed data
+            } else if (compression_type == VRDAVis::CompressionType::ZFP) {
+                // compressed data using zfp
+                std::vector<char> compression_buffer;
+                size_t compressed_size;
+                int precision = lround(compression_quality);
+                Compress(volume_data_out, compression_buffer, compressed_size, xDims, yDims, zDims, precision);
+                
+                cubelet_data_message.set_compression_quality(compression_quality);
+                cubelet_ptr->set_volume_data(compression_buffer.data(), compressed_size);
             }
             SendFileEvent(file_id, VRDAVis::EventType::CUBELET_DATA, request_id, cubelet_data_message);
         } else {
@@ -489,7 +502,7 @@ void Session::ConnectCalled() {
 // SEND uWEBSOCKET MESSAGES
 
 // Sends an event to the client with a given event name (padded/concatenated to 32 characters) and a given ProtoBuf message
-void Session::SendEvent(VRDAVis::EventType event_type, u_int32_t event_id, const google::protobuf::MessageLite& message) {
+void Session::SendEvent(VRDAVis::EventType event_type, u_int32_t event_id, const google::protobuf::MessageLite& message, bool compress) {
     // std::cout << "Session::SendEvent" << std::endl;
     // std::cout << "\ttype: " << event_type << std::endl;
     // std::cout << "\tid: " << event_id << std::endl;
@@ -527,12 +540,11 @@ void Session::SendEvent(VRDAVis::EventType event_type, u_int32_t event_id, const
     }
 }
 
-// void Session::SendFileEvent(int32_t file_id, VRDAVis::EventType event_type, uint32_t event_id, google::protobuf::MessageLite& message, bool compress) {
-void Session::SendFileEvent(int file_id, VRDAVis::EventType event_type, u_int32_t event_id, google::protobuf::MessageLite& message) {
+void Session::SendFileEvent(int file_id, VRDAVis::EventType event_type, u_int32_t event_id, google::protobuf::MessageLite& message, bool compress) {
     // do not send if file is closed
     // if (_frames.count(file_id)) {
         // SendEvent(event_type, event_id, message, compress);
-        SendEvent(event_type, event_id, message);
+        SendEvent(event_type, event_id, message, compress);
     // }
 }
 
