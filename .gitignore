@@ -4,6 +4,8 @@
 vrdavis-frontend/node_modules
 vrdavis-signaling-server/node_modules
 vrdavis-protobuf/build
+test-data
+fits
 /.pnp
 .pnp.js
 
