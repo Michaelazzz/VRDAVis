@@ -4,3 +4,6 @@
 [submodule "vrdavis-backend/third-party/cxxopts"]
 	path = vrdavis-backend/third-party/cxxopts
 	url = git@github.com:jarro2783/cxxopts.git
+[submodule "vrdavis-backend/third-party/spdlog"]
+	path = vrdavis-backend/third-party/spdlog
+	url = git@github.com:gabime/spdlog.git

@@ -34,8 +34,13 @@ export class RootStore {
     // }
 
     initialCube = () => {
-        // const cubelets = 
-        // this.cubeletStore.requestCubelets(cubelets, 0, midPointCubeletCoords);
+        const cubelets = new Array<CubeletCoordinate>();
+        cubelets.push(new CubeletCoordinate(0, 0, 0, 1, 1));
+        cubelets.push(new CubeletCoordinate(1, 0, 0, 1, 1));
+        cubelets.push(new CubeletCoordinate(0, 1, 0, 1, 1));
+        cubelets.push(new CubeletCoordinate(1, 1, 0, 1, 1));
+        // this.reconstructionStore.setCubelets(cubelets);
+        this.cubeletStore.requestCubelets(cubelets, 0, { x: 0, y: 0, z: 0 });
     }
 
     // cropCube = (fileId: number, focusPoint: Point3D) => {
@@ -50,7 +55,7 @@ export class RootStore {
             z: this.fileStore.fileLength
         };
         const cubelets = GetRequiredCubelets(cubeCoords, worldCubeState, {x: CUBELET_SIZE, y: CUBELET_SIZE, z: CUBELET_SIZE});
-        this.reconstructionStore.setCubelets(cubelets);
+        // this.reconstructionStore.setCubelets(cubelets);
         // remember previous cube
         this.cubeStore.setPrevious()
         
@@ -71,7 +76,8 @@ export class RootStore {
         } else {
             const coord = new Array<CubeletCoordinate>();
             coord.push(new CubeletCoordinate(0, 0, 0, 1, 1));
-            this.reconstructionStore.setCubelets(coord);
+            coord.push(new CubeletCoordinate(1, 0, 0, 1, 1));
+            // this.reconstructionStore.setCubelets(coord);
             this.cubeletStore.requestCubelets(coord, 0, midPointCubeletCoords);
         }
     }

@@ -311,10 +311,10 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
         cubelet_ptr->set_y(cubelet.y); // y position/offset
         cubelet_ptr->set_z(cubelet.z); // z position/offset
 
-        int xDims = (cubelet.x+256 > _loader->getXDimensions()) ? 256 - ((cubelet.x+256) - _loader->getXDimensions()) : 256;
-        int yDims = (cubelet.y+256 > _loader->getYDimensions()) ? 256 - ((cubelet.y+256) - _loader->getYDimensions()) : 256;
-        int zDims = (cubelet.z+256 > _loader->getZDimensions()) ? 256 - ((cubelet.z+256) - _loader->getZDimensions()) : 256;
-
+        int CUBELET_SIZE = 64;
+        int xDims = (cubelet.x+CUBELET_SIZE > _loader->getXDimensions()) ? CUBELET_SIZE - ((cubelet.x+CUBELET_SIZE) - _loader->getXDimensions()) : CUBELET_SIZE;
+        int yDims = (cubelet.y+CUBELET_SIZE > _loader->getYDimensions()) ? CUBELET_SIZE - ((cubelet.y+CUBELET_SIZE) - _loader->getYDimensions()) : CUBELET_SIZE;
+        int zDims = (cubelet.z+CUBELET_SIZE > _loader->getZDimensions()) ? CUBELET_SIZE - ((cubelet.z+CUBELET_SIZE) - _loader->getZDimensions()) : CUBELET_SIZE;
         
         // spdlog::info("{} {} {}", cubelet.x, cubelet.y, cubelet.z);
         // spdlog::info("Cubelet Dimensions {} {} {}", xDims, yDims, zDims);
@@ -327,7 +327,7 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
         volume_data_out, 
         { hsize_t(zDims), hsize_t(yDims), hsize_t(xDims) }, 
         { hsize_t(zDims), hsize_t(yDims), hsize_t(xDims) }, 
-        { hsize_t(cubelet.z), hsize_t(cubelet.y), hsize_t(cubelet.x) })) {
+        { hsize_t(cubelet.z*CUBELET_SIZE), hsize_t(cubelet.y*CUBELET_SIZE), hsize_t(cubelet.x*CUBELET_SIZE) })) {
             // size_t cube_data_size = sizeof(float) * volume_data_out->size(); // cube data size in bytes
             cubelet_ptr->set_height(xDims);
             cubelet_ptr->set_width(yDims);

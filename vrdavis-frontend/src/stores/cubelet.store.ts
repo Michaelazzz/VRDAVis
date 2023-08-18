@@ -21,7 +21,7 @@ export interface CubeletStreamDetails {
     fileId: number;
 }
 
-export const CUBELET_SIZE = 256;
+export const CUBELET_SIZE = 64;
 
 interface CubeletMessageArgs {
     width: number;
@@ -46,7 +46,7 @@ export class CubeletStore {
     private pendingSynchronisedCubelets: Map<string, Array<string>>;
     private receivedSynchronisedCubelets: Map<string, Array<{coordinate: string; cubelet: Cubelet}>>;
     
-    private cachedCubelets: Map<string, Cubelet>;
+    cachedCubelets: Map<string, Cubelet>;
 
     remainingCubelets: number;
 
@@ -107,7 +107,6 @@ export class CubeletStore {
                 this.updateRemainingCubeletCount();
                 newRequests.push(cubelet);
             }
-            
         }
         if (newRequests.length) {
             const sortedRequests = newRequests
@@ -190,9 +189,8 @@ export class CubeletStore {
         }
     }
 
-    updateStream = (fileId: number, decompressedData: Float32Array, width: number, height: number, length: number, layerXY: number, layerZ: number, encodedCoordinate: string) => {
+    updateStream = async (fileId: number, decompressedData: Float32Array, width: number, height: number, length: number, layerXY: number, layerZ: number, encodedCoordinate: string) => {
         const key = `${encodedCoordinate}_${fileId}`;
-
         const pendingCubelets = this.pendingSynchronisedCubelets.get(key);
         if (pendingCubelets?.length) {
             if (pendingCubelets) {
@@ -220,15 +218,19 @@ export class CubeletStore {
             this.cachedCubelets.set(key, cubelet);
             
             this.cubeletStream.next({cubeletCount, fileId});
-            this.rootStore.reconstructionStore.addCubeToTexture(CubeletCoordinate.Decode(encodedCoordinate), cubelet);
+            
+            this.rootStore.reconstructionStore.addCubelet(encodedCoordinate, cubelet);
+            if(this.remainingCubelets === 0) {
+                await this.rootStore.reconstructionStore.reconstructCube();
+            }
+            
         } else {
-            // const cubelet: Cubelet = {
-            //     width,
-            //     height,
-            //     length,
-            //     data: decompressedData
-            // };
-            this.cubeletStream.next({ cubeletCount: 1, fileId });
+            // construct texture when all the cubes have arrived
+            // this.cachedCubelets.forEach((value, key, map) => {
+            //     console.log(key);
+                // this.rootStore.reconstructionStore.addCubeToTexture(CubeletCoordinate.Decode(encodedCoordinate), value);
+            // })
+            
         }
     }
 
