@@ -64,7 +64,7 @@ endif ()
 
 set(SOURCE_FILES
     ${SOURCE_FILES}
-    src/DataStream/Compression.cpp
+    # src/DataStream/Compression.cpp
     src/DataStream/Cubelet.cpp
     src/FileList/FileListHandler.cpp
     src/HttpServer/HttpServer.cpp
