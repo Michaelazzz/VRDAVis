@@ -21,8 +21,8 @@ export class CubeStore {
     // public readonly cubeInfo: CubeInfo;
     // private readonly cubeVoxelRatio: number;
 
-    prevCenter: Point3D ={x: 0, y: 0, z: 0};
     prevCube: Point3D = { x: 1, y: 1, z: 1 };
+    prevCenter: Point3D ={x: 0, y: 0, z: 0};
 
     cropCube: Point3D = { x: 1, y: 1, z: 1 };
     cropCenter: Point3D = {x: 0, y: 0, z: 0};
@@ -94,5 +94,21 @@ export class CubeStore {
     setPrevious = () => {
         this.prevCenter = { x: this.cropCenter.x, y: this.cropCenter.y, z: this.cropCenter.z };
         this.prevCube = { x: this.cropCube.x, y: this.cropCube.y, z: this.cropCube.z };
+    }
+
+    getCubeState = () => {
+        return {
+            prevCenter: this.prevCenter,
+            prevCube: this.prevCube,
+            cropCenter: this.cropCenter,
+            cropCube: this.cropCube
+        }
+    }
+
+    setCubeState = (prevCenter: Point3D, prevCube: Point3D, cropCenter: Point3D, cropCube: Point3D) => {
+        this.prevCenter = prevCenter;
+        this.prevCube = prevCube;
+        this.cropCenter = cropCenter;
+        this.cropCube = cropCube;
     }
 }

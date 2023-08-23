@@ -70,7 +70,7 @@ export class BackendStore {
     private readonly decoderMap: Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>;
 
     // directory: string = '../../test-data'; // test directory route
-    directory: string = '/data/cubes1';
+    directory: string = '/data/cubes1/hdf5';
 
     // remove
     // volumeData: Float32Array;
@@ -354,10 +354,12 @@ export class BackendStore {
             ack.fileInfo.height || 0, 
             ack.fileInfo.length || 0)
         this.onDeferredResponse(eventId, ack);
-
+        
+        this.rootStore.fileStore.setFileOpen(true);
         // get initial cubes
         // this.rootStore.cropCube();
         this.rootStore.initialCube();
+        // change to crop cube later
     }
 
     private onFileInfoResponse = (eventId: number, res: VRDAVis.FileInfoResponse) => {

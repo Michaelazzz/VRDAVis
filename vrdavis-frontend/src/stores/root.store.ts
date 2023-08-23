@@ -29,6 +29,10 @@ export class RootStore {
         await this.backendStore.connectToServer(url);
     }
 
+    connectToSignallingServer = async () => {
+        await this.signallingStore.start();
+    }
+
     // loadFileList = (directory: string) => {
     //     this.backendStore.getFileList(directory);
     // }
@@ -82,7 +86,27 @@ export class RootStore {
         }
     }
 
-    resumeSession = () => {
+    // send cube state and cubelet list to headset
+    transferState = () => {
+        const message = {
+            type: 'transfer',
+            data: {
+                filename: this.fileStore.getFilename(),
+                cubeState: this.cubeStore.getCubeState()
+            }
+        }
+        this.signallingStore.sendDataToPeer(JSON.stringify(message));
+    }
 
+    resumeSession = (data: any) => {
+        // set cube state
+        this.cubeStore.setCubeState(
+            data.prevCenter, 
+            data.prevCube, 
+            data.cropCenter, 
+            data.cropCube
+        );
+        // load file
+        this.backendStore.loadFile(data.filename);
     }
 }
