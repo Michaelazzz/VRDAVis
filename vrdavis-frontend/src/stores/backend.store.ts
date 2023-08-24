@@ -71,7 +71,7 @@ export class BackendStore {
 
     // directory: string = '../../test-data'; // test directory route
     // directory: string = '/data/cubes1/hdf5';
-    directory: string = 'VRDAVis/test-data';
+    directory: string = '~VRDAVis/test-data';
 
     // remove
     // volumeData: Float32Array;
