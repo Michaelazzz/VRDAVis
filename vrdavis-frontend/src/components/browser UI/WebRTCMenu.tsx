@@ -25,7 +25,6 @@ const WebRTCMenuView: React.FC = () => {
             <p>Send channel state: <b>{sendChannelState}</b></p>
             <p>Receive channel state: <b>{receiveChannelState}</b></p>
             {sendChannelState === 'open' && <>
-                <p>Send something:</p>
                 <Stack spacing={2} direction="column">
                     {/* <TextField 
                         value={data}
@@ -43,7 +42,7 @@ const WebRTCMenuView: React.FC = () => {
                     <Button 
                         variant="contained"
                         onClick={rootStore.transferState}
-                    >Transfer</Button>
+                    >Transfer State</Button>
                 </Stack>
             </>}
             {receiveChannelState === 'open' && <>

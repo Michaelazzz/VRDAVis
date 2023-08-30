@@ -417,6 +417,7 @@ export class SignallingStore {
 
         console.log(`[received] ${event.data}`);
         const msg = JSON.parse(event.data);
+        this.dataChannelReceive = msg;
 
         switch (msg.type) {
             case 'transfer':

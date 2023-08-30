@@ -107,6 +107,7 @@ export class RootStore {
             data.cropCube
         );
         // load file
+        this.backendStore.getFileInfo(data.filename);
         this.backendStore.loadFile(data.filename);
     }
 }
