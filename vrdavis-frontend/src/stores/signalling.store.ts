@@ -413,11 +413,10 @@ export class SignallingStore {
       }
 
     onReceiveChannelMessageCallback = (event: any) => {
-        // this.dataChannelReceive = event.data;
+        this.dataChannelReceive = event.data;
 
         console.log(`[received] ${event.data}`);
         const msg = JSON.parse(event.data);
-        this.dataChannelReceive = event.data;
 
         switch (msg.type) {
             case 'transfer':
@@ -435,6 +434,6 @@ export class SignallingStore {
         } else {
             this.receiveChannel.send(data);
         }
-        console.log('sent data: ' + data);
+        console.log('[sent] ' + data);
     }
 }
