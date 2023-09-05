@@ -311,7 +311,7 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
         cubelet_ptr->set_y(cubelet.y); // y position/offset
         cubelet_ptr->set_z(cubelet.z); // z position/offset
 
-        int CUBELET_SIZE = 64;
+        int CUBELET_SIZE = 256;
         int xDims = (cubelet.x+CUBELET_SIZE > _loader->getXDimensions()) ? CUBELET_SIZE - ((cubelet.x+CUBELET_SIZE) - _loader->getXDimensions()) : CUBELET_SIZE;
         int yDims = (cubelet.y+CUBELET_SIZE > _loader->getYDimensions()) ? CUBELET_SIZE - ((cubelet.y+CUBELET_SIZE) - _loader->getYDimensions()) : CUBELET_SIZE;
         int zDims = (cubelet.z+CUBELET_SIZE > _loader->getZDimensions()) ? CUBELET_SIZE - ((cubelet.z+CUBELET_SIZE) - _loader->getZDimensions()) : CUBELET_SIZE;

@@ -21,7 +21,7 @@ export interface CubeletStreamDetails {
     fileId: number;
 }
 
-export const CUBELET_SIZE = 64;
+export const CUBELET_SIZE = 256;
 
 interface CubeletMessageArgs {
     width: number;
