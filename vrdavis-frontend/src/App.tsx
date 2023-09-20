@@ -6,7 +6,6 @@ import * as THREE from "three";
 import CssBaseline from '@mui/material/CssBaseline';
 import { ConnectionStatus } from "./stores/backend.store";
 import HandMenu from "./components/vr UI/HandMenu";
-import { DataObject } from "./components/DataObject";
 import WorldspaceMenu from "./components/vr UI/WorldspaceMenu";
 import { PairingMenu } from "./components/browser UI/PairingMenu";
 import BrowserMenu from "./components/browser UI/BrowserMenu";
@@ -17,17 +16,33 @@ import { DeviceCredentials } from "./components/browser UI/DeviceCredentials";
 import { WebRTCMenu } from "./components/browser UI/WebRTCMenu";
 import { FileCredentials } from "./components/browser UI/FileCredentials";
 import { DataCube } from "./components/DataCube";
-import { CubeControls } from "./components/CubeControls";
 import { CropControls } from "./components/CropControls";
+import ExamplePanel from "./components/vr UI/ExamplePanel";
+import Panel from "./components/vr UI/Panel";
+import HandMenuControls from "./components/vr UI/HandMenuControls";
+import Button from "./components/vr UI/Button";
+import CropPanel from "./components/vr UI/CropPanel";
+import { CubeControls } from "./components/CubeControls";
 
 const AppView: React.FC = () => {
 
     // const { signallingStore, backendStore } = useContext(RootContext);
     const { rootStore } = useContext(RootContext);
 
+    const [mode, setMode] = useState('move');
+
+    const toggleCropMode = () => {
+        if(mode === 'crop')
+            setMode('move')
+        else
+            setMode('crop')
+
+        console.log(mode);
+    }
+
     useEffect(() => {
-        // rootStore.connectToServer('ws://localhost:3002'); // local testing
-        rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
+        rootStore.connectToServer('ws://localhost:3002'); // local testing
+        // rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
         rootStore.connectToSignallingServer();
     }, [rootStore]);
 
@@ -64,16 +79,37 @@ const AppView: React.FC = () => {
                     </mesh> */}
 
                     <Controllers />
+                    <group position={[0,1,-1.5]}>
+                        
+                        
+                    </group>
+                    <HandMenuControls>
+                        {/* <ExamplePanel/> */}
+                        {/* <Panel text='hello from the UI'/> */}
+                        <>
+                            <Button 
+                                text="crop" 
+                                position={[0.55, -0.45]}
+                                onSelect={rootStore.cropCube}
+                            />
+                            <Button 
+                                text="crop mode" 
+                                position={[0.55, -0.25]}
+                                onSelect={toggleCropMode}
+                            />
+                            <CropPanel/>
+                        </>
+                        
+                    </HandMenuControls>
                     {/* <HandMenu /> */}
                     {/* <WorldspaceMenu position={[1,1.5,-1.5]} /> */}
                     
-                    
-                    {/* <DataObject /> */}
-                    {/* <CubeControls> */}
-                        <CropControls/>
+                    <CropControls/>
+                    { mode==='move' && 
+                    <CubeControls>
                         <DataCube />
-                        {/* </CropControls> */}
-                    {/* </CubeControls> */}
+                    </CubeControls>}
+                    
                 </XR>
             </Canvas>
         </>

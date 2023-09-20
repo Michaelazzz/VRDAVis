@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useController, useXREvent, useXR } from '@react-three/xr';
 import * as THREE from "three";
-import Panel from './Panel'
+import Panel from './ExamplePanel'
 import PanelText from './PanelText';
 import { Vector3 } from 'three';
 import { useFrame } from '@react-three/fiber';
@@ -95,14 +95,14 @@ const WorldspaceMenu = ({position = [0,0,0]}: any) => {
     return (
         // @ts-ignore
         <group ref={ref} position={ position }>
-            <Panel 
+            {/* <Panel 
                 height={1}
             >
                 <PanelText>
                     Worldspace Menu
                 </PanelText>
                 
-            </Panel>
+            </Panel> */}
         </group>
     )
 }

@@ -69,6 +69,7 @@ export class ReconstructionStore {
     //     this.cubelets = [...cubelets];
     // }
 
+    // waits for all cubelets to arrive before constructing the texture
     reconstructCube = async () => {
         console.log('reconstruction in progress');
         this.getTextureDimensions();
@@ -126,6 +127,7 @@ export class ReconstructionStore {
         // (z * prevWidth * prevHeight) + (y * prevWidth) + x;
     }
 
+    // resizes data cube and adds new cubelet to the texture
     addCubeToTexture = (coord: CubeletCoordinate, cubelet: Cubelet) => {
         if(cubelet === undefined) return;
         this.cubeUpdated = false;

@@ -22,8 +22,8 @@ const WebRTCMenuView: React.FC = () => {
     return (
         <>
             <h2>Web RTC</h2>
-            <p>Send channel state: <b>{sendChannelState}</b></p>
-            <p>Receive channel state: <b>{receiveChannelState}</b></p>
+            <p>VR channel: <b>{sendChannelState}</b></p>
+            <p>Desktop channel: <b>{receiveChannelState}</b></p>
             {sendChannelState === 'open' && <>
                 <Stack spacing={2} direction="column">
                     {/* <TextField 

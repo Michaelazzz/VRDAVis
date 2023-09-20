@@ -7,7 +7,7 @@ import FontImage from '../../assets/Roboto-msdf.png'
 
 extend(ThreeMeshUI);
 
-const Panel = (text) => {
+const ExamplePanel = () => {
     const mountRef = useRef(null);
 
     useEffect(() => {
@@ -22,17 +22,26 @@ const Panel = (text) => {
             // interLine: 0,
         } );
     
+        // container.position.set( position[0], position[1], position[2] );
+        // container.position.set(3,3,3);
+        // container.rotation.x = -0.55;
         mountRef.current.add( container );
     
         container.add(
             new ThreeMeshUI.Text( {
-                content: 'hello from the UI',
+                // content: 'This library supports line-break-friendly-characters,',
+                content: 'This library supports line break friendly characters',
+                fontSize: 0.055
+            } ),
+    
+            new ThreeMeshUI.Text( {
+                content: ' As well as multi font size lines with consistent vertical spacing',
                 fontSize: 0.08
             } )
         );
     
+    
         return container.onAfterUpdate = function (){
-            
             // console.log( container.lines );
     
             if( !container.lines ) return;
@@ -59,7 +68,7 @@ const Panel = (text) => {
     
             container.add( plane );
         }
-    }, [text])
+    }, [])
 
     useFrame(() => {
         // requestAnimationFrame( animate );
@@ -67,9 +76,8 @@ const Panel = (text) => {
     });
 
     return (
-        <block ref={mountRef}>
-        </block>
+        <block ref={mountRef}></block>
     );
 }
 
-export default Panel;
+export default ExamplePanel;
