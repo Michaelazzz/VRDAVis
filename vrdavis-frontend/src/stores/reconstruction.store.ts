@@ -1,7 +1,7 @@
 import { makeAutoObservable, computed, action } from "mobx";
 import { RootStore } from "./root.store";
 import { CubeletCoordinate, Point3D } from "../models";
-import { CUBELET_SIZE, Cubelet } from "./cubelet.store";
+import { CUBELET_SIZE_XY, CUBELET_SIZE_Z, Cubelet } from "./cubelet.store";
 
 export class ReconstructionStore {
     rootStore: RootStore;
@@ -80,36 +80,39 @@ export class ReconstructionStore {
             const coord = CubeletCoordinate.Decode(key);
             // add cubelet
             let n = 0;
-            for(let l = cubelet.width*coord.z; l < cubelet.width*coord.z+cubelet.length; l++) {
-                for(let k = cubelet.width*coord.y; k < cubelet.width*coord.y+cubelet.height; k++) {
+            console.log(`coord ${coord.x} ${coord.y} ${coord.z}`);
+            console.log(`cubelet ${cubelet.width} ${cubelet.height} ${cubelet.length}`);
+            for(let l = cubelet.length*coord.z; l < cubelet.length*coord.z+cubelet.length; l++) {
+                for(let k = cubelet.height*coord.y; k < cubelet.height*coord.y+cubelet.height; k++) {
                     for(let j = cubelet.width*coord.x; j < cubelet.width*coord.x+cubelet.width; j++) {
                         data[this.convertCoordToIndex(j, k, l)] = cubelet.data[n];
                         n++;
                     }
                 }
             }
+            // this.data = Float32Array.from(cubelet.data);
         });
         this.data = Float32Array.from(data);
     }
 
     addToTextureDimensions = (coord: CubeletCoordinate, cubelet: Cubelet) => {
         if(coord.x === 0 && cubelet.width === 0) this.width = cubelet.width;
-        else if(((coord.x)*CUBELET_SIZE) >= this.width) this.width += cubelet.width;
+        else if(((coord.x)*CUBELET_SIZE_XY) >= this.width) this.width += cubelet.width;
         if(coord.y === 0 && cubelet.height === 0) this.height = cubelet.height;
-        else if(((coord.y)*CUBELET_SIZE) >= this.height) this.height += cubelet.height;
+        else if(((coord.y)*CUBELET_SIZE_XY) >= this.height) this.height += cubelet.height;
         if(coord.z === 0 && cubelet.length === 0) this.length = cubelet.length;
-        else if(((coord.z)*CUBELET_SIZE) >= this.length) this.length += cubelet.length;
+        else if(((coord.z)*CUBELET_SIZE_Z) >= this.length) this.length += cubelet.length;
     }
 
     getTextureDimensions = () => {
         this.cubelets.forEach((cubelet, key, map) => {
             const coord = CubeletCoordinate.Decode(key);
             if(coord.x === 0 && cubelet.width === 0) this.width = cubelet.width;
-            else if(((coord.x)*CUBELET_SIZE) >= this.width) this.width += cubelet.width;
+            else if(((coord.x)*CUBELET_SIZE_XY) >= this.width) this.width += cubelet.width;
             if(coord.y === 0 && cubelet.height === 0) this.height = cubelet.height;
-            else if(((coord.y)*CUBELET_SIZE) >= this.height) this.height += cubelet.height;
+            else if(((coord.y)*CUBELET_SIZE_XY) >= this.height) this.height += cubelet.height;
             if(coord.z === 0 && cubelet.length === 0) this.length = cubelet.length;
-            else if(((coord.z)*CUBELET_SIZE) >= this.length) this.length += cubelet.length;
+            else if(((coord.z)*CUBELET_SIZE_Z) >= this.length) this.length += cubelet.length;
         });
         
     }
@@ -122,9 +125,8 @@ export class ReconstructionStore {
     }
 
     convertCoordToIndex = (x: number, y: number, z: number) => {
-        return x + this.height * (y + this.width* z);
-        // alternative
-        // (z * prevWidth * prevHeight) + (y * prevWidth) + x;
+        // return x + this.height * (y + this.width* z);
+        return x + (y*this.width) + (z * this.width * this.height);
     }
 
     // resizes data cube and adds new cubelet to the texture

@@ -71,7 +71,6 @@ export class BackendStore {
 
     // directory: string = '../../test-data'; // test directory route
     directory: string = '/data/cubes1/hdf5';
-    // directory: string = '~VRDAVis/test-data';
 
     // remove
     // volumeData: Float32Array;
@@ -358,9 +357,9 @@ export class BackendStore {
         
         this.rootStore.fileStore.setFileOpen(true);
         // get initial cubes
-        // this.rootStore.cropCube();
-        this.rootStore.initialCube();
+        // this.rootStore.initialCube();
         // change to crop cube later
+        this.rootStore.cropCube();
     }
 
     private onFileInfoResponse = (eventId: number, res: VRDAVis.FileInfoResponse) => {

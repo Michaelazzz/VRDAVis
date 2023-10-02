@@ -1,8 +1,9 @@
-import { makeAutoObservable, computed } from "mobx";
+import { makeAutoObservable} from "mobx";
 import { RootStore } from "./root.store";
 import { VRDAVis } from "vrdavis-protobuf";
 import { CubeView, Point3D } from "../models";
-import { subtract3D } from "../utilities";
+import { minMax3D, subtract3D } from "../utilities";
+import { CUBELET_SIZE_XY, CUBELET_SIZE_Z } from "./cubelet.store";
 
 export interface CubeInfo {
     fileId: number;
@@ -17,6 +18,7 @@ export interface CubeInfo {
 
 export class CubeStore {
     rootStore: RootStore;
+    cropMode: boolean;
     private readonly worldspaceCenter: Point3D;
     // public readonly cubeInfo: CubeInfo;
     // private readonly cubeVoxelRatio: number;
@@ -29,6 +31,7 @@ export class CubeStore {
 
     constructor (rootStore: RootStore) {
         makeAutoObservable(this, { rootStore: false });
+        this.cropMode = false;
         this.rootStore = rootStore;
         this.worldspaceCenter = {
             x: ( this.rootStore.fileStore.fileWidth / 2.0 ), 
@@ -41,9 +44,13 @@ export class CubeStore {
         return subtract3D(this.worldspaceCenter, this.cropCenter);
     }
 
-    // get maxMip(): number {
-        // return Math.pow(2, Math.ceil(Math.log2(this.frameInfo.fileInfoExtended.width / CUBE_SIZE)));
-    // }
+    get maxXYMip(): number {
+        return Math.pow(2, Math.ceil(Math.log2(this.rootStore.fileStore.fileWidth/this.cropCube.x)))/CUBELET_SIZE_XY;
+    }
+
+    get maxZMip(): number {
+        return Math.pow(2, Math.ceil(Math.log2(this.rootStore.fileStore.fileLength/this.cropCube.z)))/CUBELET_SIZE_Z;
+    }
 
     get localCubeToWorldCubeCoords(): CubeView {
         // worldspace cube dimensions
@@ -57,24 +64,42 @@ export class CubeStore {
             y: this.cropCube.y * this.prevCube.y * worldHeight,
             z: this.cropCube.z * this.prevCube.z * worldLength
         };
+        // adjust crop center to position in worldspace
+        const adjustedCenter = {
+            x: (this.cropCenter.x + this.prevCube.x)*cropDims.x,
+            y: (this.cropCenter.y + this.prevCube.y)*cropDims.y,
+            z: (this.cropCenter.z + this.prevCube.z)*cropDims.z
+        }
+        // get the position of the corners of the crop cube in worldspace context
+        const corners = [
+            { x: adjustedCenter.x - cropDims.x / 2.0, y: adjustedCenter.y - cropDims.y / 2.0, z: adjustedCenter.z - cropDims.z / 2.0 },
+            { x: adjustedCenter.x - cropDims.x / 2.0, y: adjustedCenter.y - cropDims.y / 2.0, z: adjustedCenter.z + cropDims.z / 2.0 },
+            { x: adjustedCenter.x - cropDims.x / 2.0, y: adjustedCenter.y + cropDims.y / 2.0, z: adjustedCenter.z - cropDims.z / 2.0 },
+            { x: adjustedCenter.x - cropDims.x / 2.0, y: adjustedCenter.y + cropDims.y / 2.0, z: adjustedCenter.z + cropDims.z / 2.0 },
+            { x: adjustedCenter.x + cropDims.x / 2.0, y: adjustedCenter.y - cropDims.y / 2.0, z: adjustedCenter.z - cropDims.z / 2.0 },
+            { x: adjustedCenter.x + cropDims.x / 2.0, y: adjustedCenter.y - cropDims.y / 2.0, z: adjustedCenter.z + cropDims.z / 2.0 },
+            { x: adjustedCenter.x + cropDims.x / 2.0, y: adjustedCenter.y + cropDims.y / 2.0, z: adjustedCenter.z - cropDims.z / 2.0 },
+            { x: adjustedCenter.x + cropDims.x / 2.0, y: adjustedCenter.y + cropDims.y / 2.0, z: adjustedCenter.z + cropDims.z / 2.0 }
+        ];
 
         // const mipAdjustment = PreferenceStore.Instance.lowBandwidthMode ? 2.0 : 1.0; // bias
-        const mipXYExact = Math.max(1.0, 1.0);
+        const {minPoint, maxPoint} = minMax3D(corners);
+        const mipXYExact = Math.max(1.0, this.maxXYMip);
         const mipXYLog2 = Math.log2(mipXYExact);
         const mipXYLog2Rounded = Math.round(mipXYLog2);
         const mipXYRoundedPow2 = Math.pow(2, mipXYLog2Rounded);
-        const mipZExact = Math.max(1.0, 1.0);
+        const mipZExact = Math.max(1.0, this.maxZMip);
         const mipZLog2 = Math.log2(mipZExact);
         const mipZLog2Rounded = Math.round(mipZLog2);
         const mipZRoundedPow2 = Math.pow(2, mipZLog2Rounded);
 
         return {
-            xMin: this.cropCenter.x - cropDims.x / 2.0,
-            xMax: this.cropCenter.x + cropDims.x / 2.0,
-            yMin: this.cropCenter.y - cropDims.y / 2.0,
-            yMax: this.cropCenter.y + cropDims.y / 2.0,
-            zMin: this.cropCenter.z - cropDims.z / 2.0,
-            zMax: this.cropCenter.z + cropDims.z / 2.0,
+            xMin: minPoint.x,
+            xMax: maxPoint.x,
+            yMin: minPoint.y,
+            yMax: maxPoint.y,
+            zMin: minPoint.z,
+            zMax: maxPoint.z,
             mipXY: mipXYRoundedPow2,
             mipZ: mipZRoundedPow2,
         };
@@ -110,5 +135,22 @@ export class CubeStore {
         this.prevCube = prevCube;
         this.cropCenter = cropCenter;
         this.cropCube = cropCube;
+    }
+
+    setCubeDims = (dims: Point3D, center: Point3D) => {
+        this.cropCube.x = dims.x
+        this.cropCube.y = dims.y
+        this.cropCube.z = dims.z
+        this.cropCenter.x = center.x
+        this.cropCenter.y = center.y
+        this.cropCenter.z = center.z
+    }
+
+    setCropMode = (mode: boolean) => {
+        this.cropMode = mode;
+    }
+
+    getCropMode = () => {
+        return this.cropMode;
     }
 }

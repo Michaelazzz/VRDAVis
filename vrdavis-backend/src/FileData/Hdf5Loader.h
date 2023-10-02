@@ -19,6 +19,8 @@ public:
     void OpenFile(const std::string& filename, const std::string& directory);
     void OpenDataset(const std::string& dataset);
 
+    // bool HasData(const std::string& dataset) const;
+
     void getFullResDims();
 
     // bool ReadData(std::shared_ptr<std::vector<float>>& volume_data_out);
@@ -40,6 +42,8 @@ public:
 
     void Closefile();
 
+    int _NX, _NZ, _NY;
+
 protected:
     std::string _filename, _directory, _dataset;
 
@@ -50,7 +54,7 @@ private:
     H5::H5File _file;
     H5::DataSet _set;
     H5::DataSpace _space;
-    int _NX, _NZ, _NY;
+    
     // H5::DataSpace _memspace;
     hsize_t _rank;
 };

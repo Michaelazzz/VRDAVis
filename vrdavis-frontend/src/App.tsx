@@ -23,26 +23,16 @@ import HandMenuControls from "./components/vr UI/HandMenuControls";
 import Button from "./components/vr UI/Button";
 import CropPanel from "./components/vr UI/CropPanel";
 import { CubeControls } from "./components/CubeControls";
+import { BoundsCube } from "./components/BoundsCube";
 
 const AppView: React.FC = () => {
 
     // const { signallingStore, backendStore } = useContext(RootContext);
     const { rootStore } = useContext(RootContext);
 
-    const [mode, setMode] = useState('move');
-
-    const toggleCropMode = () => {
-        if(mode === 'crop')
-            setMode('move')
-        else
-            setMode('crop')
-
-        console.log(mode);
-    }
-
     useEffect(() => {
-        rootStore.connectToServer('ws://localhost:3002'); // local testing
-        // rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
+        // rootStore.connectToServer('ws://localhost:3002'); // local testing
+        rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
         rootStore.connectToSignallingServer();
     }, [rootStore]);
 
@@ -65,6 +55,7 @@ const AppView: React.FC = () => {
                     <color 
                         attach="background" 
                         args={["#DBE9EE"]} 
+                        // args={["#363537"]}
                     />
 
                     <ambientLight intensity={0.5} />
@@ -78,24 +69,21 @@ const AppView: React.FC = () => {
                         <meshPhongMaterial attach="material" color="#C0D6DF" />
                     </mesh> */}
 
-                    <Controllers />
-                    <group position={[0,1,-1.5]}>
-                        
-                        
-                    </group>
+                    <Controllers/>
+                    {/* <group position={[0,1,-1.5]}></group> */}
                     <HandMenuControls>
                         {/* <ExamplePanel/> */}
                         {/* <Panel text='hello from the UI'/> */}
                         <>
                             <Button 
-                                text="crop" 
-                                position={[0.55, -0.45]}
-                                onSelect={rootStore.cropCube}
-                            />
-                            <Button 
                                 text="crop mode" 
                                 position={[0.55, -0.25]}
-                                onSelect={toggleCropMode}
+                                onSelect={() => rootStore.cubeStore.setCropMode(true)}
+                            />
+                            <Button 
+                                text="crop" 
+                                position={[0.55, -0.45]}
+                                // onSelect={rootStore.cropCube}
                             />
                             <CropPanel/>
                         </>
@@ -104,11 +92,11 @@ const AppView: React.FC = () => {
                     {/* <HandMenu /> */}
                     {/* <WorldspaceMenu position={[1,1.5,-1.5]} /> */}
                     
-                    <CropControls/>
-                    { mode==='move' && 
+                    {/* { mode==='crop' && <CropControls/>} */}
+                     
                     <CubeControls>
                         <DataCube />
-                    </CubeControls>}
+                    </CubeControls>
                     
                 </XR>
             </Canvas>

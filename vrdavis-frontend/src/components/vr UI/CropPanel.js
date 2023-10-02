@@ -18,7 +18,7 @@ const CropPanel = (text) => {
             fontTexture: FontImage,
             fontColor: new THREE.Color(0xffffff),
             backgroundOpacity: 0,
-          });
+        });
         
         // container.position.set(0, 1, -1.8);
     
@@ -121,12 +121,7 @@ const CropPanel = (text) => {
 
     
         return container.onAfterUpdate = function (){
-            
-            // console.log( container.lines );
-    
             if( !container.lines ) return;
-    
-            // console.log("lines", container.lines);
     
             var plane = new THREE.Mesh(
                 new THREE.PlaneGeometry(container.lines.width, container.lines.height ),

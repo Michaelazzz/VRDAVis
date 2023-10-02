@@ -1,6 +1,4 @@
-import React, { useContext, useEffect, useRef, useState, useMemo } from 'react';
-import { useController, useXREvent } from '@react-three/xr';
-import { useFrame } from '@react-three/fiber'
+import React, { useContext, useEffect, useRef, useMemo } from 'react';
 
 import * as THREE from 'three';
 
@@ -17,6 +15,8 @@ const DataCubeView: React.FC = () => {
     const width = reconstructionStore.width;
     const height = reconstructionStore.height;
     const length = reconstructionStore.length;
+
+    const scaleFactor = 100;
 
     const ref = useRef<THREE.Mesh>();
 
@@ -38,8 +38,11 @@ const DataCubeView: React.FC = () => {
         return cmArray;
     }, []);
 
-    let geometry = useMemo(() => new THREE.BoxGeometry(width, height, length), [width, length, height]);
-    // let geometry = useMemo(() => new THREE.BoxGeometry(1, 1, 1), []);
+    let geometry = useMemo(() => {
+        console.log('geometry updated')
+        // return new THREE.BoxGeometry(width, height, length)
+        return new THREE.BoxGeometry(1, 1, 1)
+    }, []);
 
     // @ts-ignore
     let texture: THREE.Data3DTexture = useMemo(() => {
@@ -66,8 +69,9 @@ const DataCubeView: React.FC = () => {
         return new THREE.ShaderMaterial({
             uniforms: {                                            
                 u_textureData: { value: texture },
-                // u_threshold: { value: 0.25 },
-                // u_range: { value: 0.1 },
+                u_threshold: { value: 0.25 },
+                u_range: { value: 0.1 },
+                u_opacity: { value: 1.0 },
                 // u_steps: { value: 100 },
                 u_colourMap: { value: colormap },
                 // map: { value: texture },
@@ -85,17 +89,21 @@ const DataCubeView: React.FC = () => {
     [geometry, material]);
     dataCube.frustumCulled = false;
 
+    const bounds = useMemo(() => new THREE.BoxHelper( dataCube, 0xff0000 ), [dataCube]);
+
     useEffect(() => {
         if(!ref.current)
             return;
         ref.current.add(dataCube);
-    }, [dataCube]);
+        ref.current.add(bounds);
+    }, [dataCube, bounds]);
 
     return (
         <group 
             // @ts-ignore
             ref={ref}
-            position={[0,1.5,-1.5]}
+            scale={[width/scaleFactor, height/scaleFactor, length/scaleFactor]}
+            // position={[0,1.5,-1.5]}
         ></group>
     )
 };

@@ -73,11 +73,11 @@ export function GetRequiredCubelets(cubeState: CubeView, fullCubeState: Point3D,
         mipZ: cubeState.mipZ
     };
 
-    // const adjustedCubeSize: Point3D = {
-    //     x: cubeState.mipXY * cubeSize.x,
-    //     y: cubeState.mipXY * cubeSize.y,
-    //     z: cubeState.mipZ * cubeSize.z
-    // };
+    const adjustedCubeSize: Point3D = {
+        x: cubeState.mipXY * cubeSize.x,
+        y: cubeState.mipXY * cubeSize.y,
+        z: cubeState.mipZ * cubeSize.z
+    };
 
     // rounded method
     // const xStart = Math.ceil(boundedCubeView.xMin / cubeSize.x);
@@ -87,29 +87,32 @@ export function GetRequiredCubelets(cubeState: CubeView, fullCubeState: Point3D,
     // const zStart = Math.ceil(boundedCubeView.zMin / cubeSize.z);
     // const zEnd = Math.floor(boundedCubeView.zMax / cubeSize.z);
 
-    const xStart = Math.ceil(boundedCubeView.xMin);
-    const xEnd = Math.floor(boundedCubeView.xMax);
-    const yStart = Math.ceil(boundedCubeView.yMin);
-    const yEnd = Math.floor(boundedCubeView.yMax);
-    const zStart = Math.ceil(boundedCubeView.zMin);
-    const zEnd = Math.floor(boundedCubeView.zMax);
+    const xStart = Math.ceil(boundedCubeView.xMin / adjustedCubeSize.x);
+    const xEnd = Math.floor(boundedCubeView.xMax / adjustedCubeSize.x);
+    const yStart = Math.ceil(boundedCubeView.yMin / adjustedCubeSize.y);
+    const yEnd = Math.floor(boundedCubeView.yMax / adjustedCubeSize.y);
+    const zStart = Math.ceil(boundedCubeView.zMin / adjustedCubeSize.z);
+    const zEnd = Math.floor(boundedCubeView.zMax / adjustedCubeSize.z);
 
-    // console.log(xStart + ' ' + xEnd);
-    // console.log(yStart + ' ' + yEnd);
-    // console.log(zStart + ' ' + zEnd);
+    console.log(xStart + ' ' + xEnd);
+    console.log(yStart + ' ' + yEnd);
+    console.log(zStart + ' ' + zEnd);
 
-    // const numCubesX = xEnd - xStart;
-    // const numCubesY = yEnd - yStart;
-    // const numCubesZ = zEnd - zStart;
+    const numCubesX = xEnd - xStart;
+    const numCubesY = yEnd - yStart;
+    const numCubesZ = zEnd - zStart;
 
-    // console.log(numCubesX)
-    // console.log(numCubesY)
-    // console.log(numCubesZ)
+    console.log(numCubesX)
+    console.log(numCubesY)
+    console.log(numCubesZ)
+
+    console.log(adjustedCubeSize)
     
     const cubeletSet: CubeletCoordinate[] = new Array<CubeletCoordinate>();
     for (let x = xStart; x < xEnd; x=x+cubeSize.x) {
         for (let y = yStart; y < yEnd; y=y+cubeSize.y) {
             for (let z = zStart; z < zEnd; z=z+cubeSize.z) {
+                console.log(x + ' ' + y + ' ' + z)
                 cubeletSet.push(new CubeletCoordinate(x, y, z, cubeState.mipXY, cubeState.mipZ));
             }
         }

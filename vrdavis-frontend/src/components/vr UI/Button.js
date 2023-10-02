@@ -111,7 +111,7 @@ const Button = ({position=[0,0], text='Click', onSelect = () => console.log({tex
             }
         }
     
-    }, [text, hover, selected, buttonOptions, hoveredStateAttributes, idleStateAttributes, selectedAttributes]);
+    }, [text, position, hover, selected, buttonOptions, hoveredStateAttributes, idleStateAttributes, selectedAttributes]);
 
     useFrame(() => {
         ThreeMeshUI.update();

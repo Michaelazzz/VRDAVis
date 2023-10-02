@@ -21,8 +21,7 @@ void Hdf5Loader::OpenFile(const std::string& filename, const std::string& direct
     try {
         // open file
         _file = H5Fopen(path.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
-
-        //open dataset
+        // open full resolution dataset to get worldspace dimensions
         OpenDataset("0/DATA");
     } catch (H5::FileIException &file_exists_err) {
         spdlog::error(file_exists_err.getDetailMsg());

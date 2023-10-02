@@ -45,7 +45,7 @@ const CropControlsView: React.FC<PropsWithChildren> = ({children}) => {
             controller!.controller.position.y - offset[1], 
             controller!.controller.position.z + offset[2]
         );
-    }, [edges, controller, offset, scaleFactor]);
+    }, [edges, controller, offset]);
 
     useFrame(() => {
         if(selected) {
@@ -73,12 +73,12 @@ const CropControlsView: React.FC<PropsWithChildren> = ({children}) => {
     }, {handedness: 'right'});
 
     return (
-        <mesh 
+        <group 
             // @ts-ignore
             ref={mesh}
         >
             {children}
-        </mesh>
+        </group>
     )
 }
 

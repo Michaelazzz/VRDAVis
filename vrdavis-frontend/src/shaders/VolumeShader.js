@@ -14,14 +14,17 @@ const VolumeShader = {
     fradgmentShader: /* glsl */`
         #define STEPS 100.0
         #define MAX_DIST 100.
-        #define THRESHOLD .25
-        #define RANGE .1
-        #define OPACITY .1
+        // #define THRESHOLD .25
+        // #define RANGE .1
+        // #define OPACITY .1
 
         precision highp float;
         precision mediump sampler3D;
 
         uniform sampler3D u_textureData;
+        uniform float u_threshold;
+        uniform float u_range;
+        uniform float u_opacity;
         uniform sampler2D u_colourMap;
 
         varying vec3 v_origin;
@@ -49,8 +52,8 @@ const VolumeShader = {
             return texture(u_textureData, point).r;
         }
 
-        vec3 sampleColourMap(float value) {
-            return texture(u_colourMap, vec2(value, 0.5)).rgb;
+        vec4 sampleColourMap(float value) {
+            return texture(u_colourMap, vec2(value, 0.5));
         }
 
         void main() {
@@ -73,9 +76,9 @@ const VolumeShader = {
             // ray march through the volume
             for(float i = bounds.x; i < bounds.y; i+=delta){
                 float d = samplePoint(point + 0.5);
-                color.rgb = sampleColourMap(d);
-                //d = smoothstep(THRESHOLD - RANGE, THRESHOLD + RANGE, d) * OPACITY;
-                d *= OPACITY;
+                color.rgb = sampleColourMap(d).rgb;
+                //d = smoothstep(u_threshold - u_range, u_threshold + u_range, d) * u_opacity;
+                d *= u_opacity;
                 //color.rgb += (1.0 - color.a) * d * color.rgb;
                 color.a += (1.0 - color.a) * d;
                 
@@ -86,7 +89,7 @@ const VolumeShader = {
                 point += rayDirection * delta;
             }
             
-            gl_FragColor = color;
+            gl_FragColor = sampleColourMap(color.a);
 
             // discard point if it is empty
             if ( color.a == 0.0 ) discard;
