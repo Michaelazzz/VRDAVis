@@ -49,14 +49,9 @@ export class RootStore {
 
     // cropCube = (fileId: number, focusPoint: Point3D) => {
     cropCube = () => {
-        if(this.cubeStore.getCropMode()) return;
+        // if(!this.cubeStore.getCropMode()) return;
+        this.reconstructionStore.resetCube();
         console.log('crop cube');
-        // this.setCubeState(
-        //     {x: 0, y: 0, z: 0},
-        //     {x: this.rootStore.fileStore.fileWidth, y: this.rootStore.fileStore.fileHeight, z: this.rootStore.fileStore.fileLength},
-        //     {x: 0, y: 0, z: 0},
-        //     {x: this.rootStore.fileStore.fileWidth, y: this.rootStore.fileStore.fileHeight, z: this.rootStore.fileStore.fileLength}
-        // )
         // get the coordinates of the crop cube coords within the world cube dimensions
         const cubeCoords: CubeView = this.cubeStore.localCubeToWorldCubeCoords;
         // const cubeRatio = this.cubeStore.localCubeToWorldCubeRatio;

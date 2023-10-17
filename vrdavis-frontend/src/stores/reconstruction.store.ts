@@ -164,4 +164,13 @@ export class ReconstructionStore {
         console.log(`cubelet ${coord.encode()} added`)
         this.cubeUpdated = true;
     }
+
+    resetCube = () => {
+        this.cubelets = new Map<string, Cubelet>();
+
+        this.data = new Float32Array();
+        this.width = 0;
+        this.height = 0;
+        this.length = 0;
+    }
 }

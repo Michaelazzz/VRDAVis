@@ -5,6 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three';
 import { observer } from 'mobx-react';
 import { RootContext } from '../store.context';
+import { subtract3D } from '../utilities';
 
 const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
     const { rootStore } = useContext(RootContext);
@@ -169,18 +170,19 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
 
     useXREvent('selectend', () => { 
         rightSelect = false; 
-        // console.log(`${Math.abs(crop.current!.scale.x) / rootStore.fileStore.fileWidth} ${Math.abs(crop.current!.scale.y) / rootStore.fileStore.fileHeight} ${Math.abs(crop.current!.scale.z) / rootStore.fileStore.fileLength}`)
-        // console.log(`${crop.current?.position.x} ${crop.current?.position.y} ${crop.current?.position.z}`)
+        // console.log(`${Math.abs(crop.current!.scale.x)} ${Math.abs(crop.current!.scale.y)} ${Math.abs(crop.current!.scale.z)}`)
+        // console.log((subtract3D(crop.current!.position, {x: 0, y: 1.5, z:-1.5}).x*100) + rootStore.reconstructionStore.width/2)
+        const localCenter = subtract3D(crop.current!.position, {x: 0, y: 1.5, z:-1.5})
         rootStore.cubeStore.setCubeDims(
             {
-                x: Math.abs(crop.current!.scale.x) / rootStore.fileStore.fileWidth,
-                y: Math.abs(crop.current!.scale.y) / rootStore.fileStore.fileHeight,
-                z: Math.abs(crop.current!.scale.z) / rootStore.fileStore.fileLength
+                x: Math.abs(crop.current!.scale.x),
+                y: Math.abs(crop.current!.scale.y),
+                z: Math.abs(crop.current!.scale.z)
             },
             {
-                x: crop.current!.position.x,
-                y: crop.current!.position.y,
-                z: crop.current!.position.z
+                x: (localCenter.x * 100) + rootStore.reconstructionStore.width / 2,
+                y: (localCenter.y * 100) + rootStore.reconstructionStore.height / 2,
+                z: (localCenter.z * 100) + rootStore.reconstructionStore.length / 2
             }
         )
     }, {handedness: 'right'});

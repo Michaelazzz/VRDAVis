@@ -94,19 +94,19 @@ export function GetRequiredCubelets(cubeState: CubeView, fullCubeState: Point3D,
     const zStart = Math.ceil(boundedCubeView.zMin / adjustedCubeSize.z);
     const zEnd = Math.floor(boundedCubeView.zMax / adjustedCubeSize.z);
 
-    console.log(xStart + ' ' + xEnd);
-    console.log(yStart + ' ' + yEnd);
-    console.log(zStart + ' ' + zEnd);
+    // console.log(xStart + ' ' + xEnd);
+    // console.log(yStart + ' ' + yEnd);
+    // console.log(zStart + ' ' + zEnd);
 
-    const numCubesX = xEnd - xStart;
-    const numCubesY = yEnd - yStart;
-    const numCubesZ = zEnd - zStart;
+    // const numCubesX = xEnd - xStart;
+    // const numCubesY = yEnd - yStart;
+    // const numCubesZ = zEnd - zStart;
 
-    console.log(numCubesX)
-    console.log(numCubesY)
-    console.log(numCubesZ)
+    // console.log(numCubesX)
+    // console.log(numCubesY)
+    // console.log(numCubesZ)
 
-    console.log(adjustedCubeSize)
+    // console.log(adjustedCubeSize)
     
     const cubeletSet: CubeletCoordinate[] = new Array<CubeletCoordinate>();
     for (let x = xStart; x < xEnd; x=x+cubeSize.x) {

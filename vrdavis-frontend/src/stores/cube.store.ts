@@ -19,25 +19,23 @@ export interface CubeInfo {
 export class CubeStore {
     rootStore: RootStore;
     cropMode: boolean;
-    private readonly worldspaceCenter: Point3D;
+    worldspaceCenter: Point3D = { x: 0, y: 0, z: 0 };
     // public readonly cubeInfo: CubeInfo;
     // private readonly cubeVoxelRatio: number;
 
     prevCube: Point3D = { x: 1, y: 1, z: 1 };
-    prevCenter: Point3D ={x: 0, y: 0, z: 0};
+    prevCenter: Point3D = {x: 0, y: 0, z: 0};
 
     cropCube: Point3D = { x: 1, y: 1, z: 1 };
     cropCenter: Point3D = {x: 0, y: 0, z: 0};
+
+    currentXYMip: number = 1;
+    currentZMip: number = 1;
 
     constructor (rootStore: RootStore) {
         makeAutoObservable(this, { rootStore: false });
         this.cropMode = false;
         this.rootStore = rootStore;
-        this.worldspaceCenter = {
-            x: ( this.rootStore.fileStore.fileWidth / 2.0 ), 
-            y: ( this.rootStore.fileStore.fileHeight / 2.0),
-            z: ( this.rootStore.fileStore.fileLength / 2.0)
-        };
     }
 
     get centerMovement(): Point3D {
@@ -45,42 +43,45 @@ export class CubeStore {
     }
 
     get maxXYMip(): number {
-        return Math.pow(2, Math.ceil(Math.log2(this.rootStore.fileStore.fileWidth/this.cropCube.x)))/CUBELET_SIZE_XY;
+        return Math.pow(2, Math.ceil(Math.log2(this.cropCube.x)))/CUBELET_SIZE_XY;
     }
 
     get maxZMip(): number {
-        return Math.pow(2, Math.ceil(Math.log2(this.rootStore.fileStore.fileLength/this.cropCube.z)))/CUBELET_SIZE_Z;
+        return Math.pow(2, Math.ceil(Math.log2(this.cropCube.z)))/CUBELET_SIZE_Z;
     }
 
     get localCubeToWorldCubeCoords(): CubeView {
         // worldspace cube dimensions
-        const worldWidth = this.rootStore.fileStore.fileWidth;
-        const worldHeight = this.rootStore.fileStore.fileHeight;
-        const worldLength = this.rootStore.fileStore.fileLength;
+        // const worldWidth = this.rootStore.fileStore.fileWidth;
+        // const worldHeight = this.rootStore.fileStore.fileHeight;
+        // const worldLength = this.rootStore.fileStore.fileLength;
 
         // crop cube dimensions in world space
-        const cropDims: Point3D = { 
-            x: this.cropCube.x * this.prevCube.x * worldWidth,
-            y: this.cropCube.y * this.prevCube.y * worldHeight,
-            z: this.cropCube.z * this.prevCube.z * worldLength
+        const adjustedDims: Point3D = { 
+            x: this.cropCube.x * this.currentXYMip,
+            y: this.cropCube.y * this.currentXYMip,
+            z: this.cropCube.z * this.currentZMip
         };
         // adjust crop center to position in worldspace
         const adjustedCenter = {
-            x: (this.cropCenter.x + this.prevCube.x)*cropDims.x,
-            y: (this.cropCenter.y + this.prevCube.y)*cropDims.y,
-            z: (this.cropCenter.z + this.prevCube.z)*cropDims.z
+            x: this.cropCenter.x * this.currentXYMip,
+            y: this.cropCenter.y * this.currentXYMip,
+            z: this.cropCenter.z * this.currentZMip
         }
+        console.log(adjustedCenter)
         // get the position of the corners of the crop cube in worldspace context
         const corners = [
-            { x: adjustedCenter.x - cropDims.x / 2.0, y: adjustedCenter.y - cropDims.y / 2.0, z: adjustedCenter.z - cropDims.z / 2.0 },
-            { x: adjustedCenter.x - cropDims.x / 2.0, y: adjustedCenter.y - cropDims.y / 2.0, z: adjustedCenter.z + cropDims.z / 2.0 },
-            { x: adjustedCenter.x - cropDims.x / 2.0, y: adjustedCenter.y + cropDims.y / 2.0, z: adjustedCenter.z - cropDims.z / 2.0 },
-            { x: adjustedCenter.x - cropDims.x / 2.0, y: adjustedCenter.y + cropDims.y / 2.0, z: adjustedCenter.z + cropDims.z / 2.0 },
-            { x: adjustedCenter.x + cropDims.x / 2.0, y: adjustedCenter.y - cropDims.y / 2.0, z: adjustedCenter.z - cropDims.z / 2.0 },
-            { x: adjustedCenter.x + cropDims.x / 2.0, y: adjustedCenter.y - cropDims.y / 2.0, z: adjustedCenter.z + cropDims.z / 2.0 },
-            { x: adjustedCenter.x + cropDims.x / 2.0, y: adjustedCenter.y + cropDims.y / 2.0, z: adjustedCenter.z - cropDims.z / 2.0 },
-            { x: adjustedCenter.x + cropDims.x / 2.0, y: adjustedCenter.y + cropDims.y / 2.0, z: adjustedCenter.z + cropDims.z / 2.0 }
+            { x: adjustedCenter.x - adjustedDims.x / 2.0, y: adjustedCenter.y - adjustedDims.y / 2.0, z: adjustedCenter.z - adjustedDims.z / 2.0 },
+            { x: adjustedCenter.x - adjustedDims.x / 2.0, y: adjustedCenter.y - adjustedDims.y / 2.0, z: adjustedCenter.z + adjustedDims.z / 2.0 },
+            { x: adjustedCenter.x - adjustedDims.x / 2.0, y: adjustedCenter.y + adjustedDims.y / 2.0, z: adjustedCenter.z - adjustedDims.z / 2.0 },
+            { x: adjustedCenter.x - adjustedDims.x / 2.0, y: adjustedCenter.y + adjustedDims.y / 2.0, z: adjustedCenter.z + adjustedDims.z / 2.0 },
+            { x: adjustedCenter.x + adjustedDims.x / 2.0, y: adjustedCenter.y - adjustedDims.y / 2.0, z: adjustedCenter.z - adjustedDims.z / 2.0 },
+            { x: adjustedCenter.x + adjustedDims.x / 2.0, y: adjustedCenter.y - adjustedDims.y / 2.0, z: adjustedCenter.z + adjustedDims.z / 2.0 },
+            { x: adjustedCenter.x + adjustedDims.x / 2.0, y: adjustedCenter.y + adjustedDims.y / 2.0, z: adjustedCenter.z - adjustedDims.z / 2.0 },
+            { x: adjustedCenter.x + adjustedDims.x / 2.0, y: adjustedCenter.y + adjustedDims.y / 2.0, z: adjustedCenter.z + adjustedDims.z / 2.0 }
         ];
+
+        console.log(corners)
 
         // const mipAdjustment = PreferenceStore.Instance.lowBandwidthMode ? 2.0 : 1.0; // bias
         const {minPoint, maxPoint} = minMax3D(corners);
@@ -92,6 +93,9 @@ export class CubeStore {
         const mipZLog2 = Math.log2(mipZExact);
         const mipZLog2Rounded = Math.round(mipZLog2);
         const mipZRoundedPow2 = Math.pow(2, mipZLog2Rounded);
+
+        this.currentXYMip = mipXYRoundedPow2;
+        this.currentZMip = mipZRoundedPow2;
 
         return {
             xMin: minPoint.x,

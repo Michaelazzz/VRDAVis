@@ -83,7 +83,7 @@ const AppView: React.FC = () => {
                             <Button 
                                 text="crop" 
                                 position={[0.55, -0.45]}
-                                // onSelect={rootStore.cropCube}
+                                onSelect={rootStore.cropCube}
                             />
                             <CropPanel/>
                         </>

@@ -347,7 +347,8 @@ export class BackendStore {
     }
 
     private onOpenFileAck = (eventId: number, ack: VRDAVis.OpenFileAck) => {
-        if(ack.fileInfo)
+        if(!ack.fileInfo) return;
+        if(!ack.fileInfo.width || !ack.fileInfo.height || !ack.fileInfo.length) return;
         this.rootStore.fileStore.setDimensions(
             ack.fileInfo.dimensions || 0, 
             ack.fileInfo.width || 0, 
@@ -355,6 +356,18 @@ export class BackendStore {
             ack.fileInfo.length || 0)
         this.onDeferredResponse(eventId, ack);
         
+        // const dims = { x: ack.fileInfo.width, y: ack.fileInfo.height, z: ack.fileInfo.length }
+        // const center = { x: ack.fileInfo.width / 2, y: ack.fileInfo.height / 2, z: ack.fileInfo.length / 2 }
+        this.rootStore.cubeStore.worldspaceCenter = {
+            x: ( ack.fileInfo.width / 2.0 ), 
+            y: ( ack.fileInfo.height / 2.0),
+            z: ( ack.fileInfo.length / 2.0)
+        };
+        this.rootStore.cubeStore.setCubeDims(
+            { x: ack.fileInfo.width, y: ack.fileInfo.height, z: ack.fileInfo.length },
+            { x: ack.fileInfo.width / 2, y: ack.fileInfo.height / 2, z: ack.fileInfo.length / 2 }
+        );
+        this.rootStore.cubeStore.setPrevious();
         this.rootStore.fileStore.setFileOpen(true);
         // get initial cubes
         // this.rootStore.initialCube();
