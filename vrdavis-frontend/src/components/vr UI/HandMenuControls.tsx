@@ -18,8 +18,8 @@ const HandMenuControls = ({children, ...rest}: any) => {
         }
         const controller = leftController.controller;
         const x = 0;
-        const y = 0.6;
-        const z = -0.5;
+        const y = 0.3;
+        const z = -0.3;
         const offset = new THREE.Vector3(-controller.position.x + x, -controller.position.y + y, -controller.position.z + z);
         if (ref.current) {
             ref.current.position.copy(controller.position).add(offset);

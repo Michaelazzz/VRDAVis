@@ -112,26 +112,26 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
                     ref.current.rotateOnAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
                     ref.current.rotateOnAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
                 }
-                else if(leftSqueeze)
+                else if(leftSqueeze && !rightSqueeze)
                 {
                     ref.current.rotateOnAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
                     ref.current.rotateOnAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
                 }
-                else if(rightSqueeze)
+                else if(rightSqueeze && !leftSqueeze)
                 {
                     // ref.current.rotation.y += offsetRight.x*rotationMultiplier / 100;
                     // ref.current.rotation.x += -offsetRight.x*rotationMultiplier / 100;
                     ref.current.rotateOnAxis(new THREE.Vector3(0,1,0), offsetRight.x*rotationMultiplier);
                     ref.current.rotateOnAxis(new THREE.Vector3(1,0,0), -offsetRight.y*rotationMultiplier);
                 }
-                else if(leftSelect) // translation controls
-                {
-                    ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
-                }
-                else if(rightSelect)
-                {
-                    ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
-                }
+                // else if(leftSelect) // translation controls
+                // {
+                //     ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
+                // }
+                // else if(rightSelect)
+                // {
+                //     ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
+                // }
 
                 prevRightPos = rightPos.clone();
                 prevLeftPos = leftPos.clone();
@@ -173,6 +173,7 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
         // console.log(`${Math.abs(crop.current!.scale.x)} ${Math.abs(crop.current!.scale.y)} ${Math.abs(crop.current!.scale.z)}`)
         // console.log((subtract3D(crop.current!.position, {x: 0, y: 1.5, z:-1.5}).x*100) + rootStore.reconstructionStore.width/2)
         const localCenter = subtract3D(crop.current!.position, {x: 0, y: 1.5, z:-1.5})
+        // console.log(localCenter)
         rootStore.cubeStore.setCubeDims(
             {
                 x: Math.abs(crop.current!.scale.x),

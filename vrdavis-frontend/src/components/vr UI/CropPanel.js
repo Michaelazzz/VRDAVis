@@ -16,8 +16,8 @@ const CropPanel = (text) => {
             padding: 0.025,
             fontFamily: FontJSON,
             fontTexture: FontImage,
-            fontColor: new THREE.Color(0xffffff),
-            backgroundOpacity: 0,
+            fontColor: new THREE.Color(0x333333),
+            backgroundOpacity: 0
         });
         
         // container.position.set(0, 1, -1.8);
@@ -25,11 +25,12 @@ const CropPanel = (text) => {
         mountRef.current.add( container );
     
         const title = new ThreeMeshUI.Block({
-            height: 0.2,
-            width: 1.5,
-            margin: 0.025,
+            height: 0.1,
+            width: 1,
+            margin: 0.01,
             justifyContent: "center",
-            fontSize: 0.09,
+            fontSize: 0.05,
+            backgroundColor: new THREE.Color(0xffffff),
         });
     
         title.add(
@@ -41,12 +42,13 @@ const CropPanel = (text) => {
         container.add(title);
 
         const leftSubBlock = new ThreeMeshUI.Block({
-            height: 0.95,
-            width: 1.0,
-            margin: 0.025,
+            height: 0.4,
+            width: 0.5,
+            margin: 0.01,
             padding: 0.025,
             textAlign: "left",
             justifyContent: "end",
+            backgroundColor: new THREE.Color(0xffffff)
         });
         
         const caption = new ThreeMeshUI.Block({
@@ -54,11 +56,12 @@ const CropPanel = (text) => {
             width: 0.37,
             textAlign: "center",
             justifyContent: "center",
+            backgroundColor: new THREE.Color(0xffffff)
         });
         
         caption.add(
             new ThreeMeshUI.Text({
-                content: "Mind your fingers",
+                content: "Some analytics",
                 fontSize: 0.04,
             })
         );
@@ -66,21 +69,30 @@ const CropPanel = (text) => {
         leftSubBlock.add(caption);
 
         const rightSubBlock = new ThreeMeshUI.Block({
-            margin: 0.025,
-        });
-        
-        const subSubBlock1 = new ThreeMeshUI.Block({
-            height: 0.35,
+            height: 0.4,
             width: 0.5,
-            margin: 0.025,
-            padding: 0.02,
-            fontSize: 0.04,
-            justifyContent: "center",
-            backgroundOpacity: 0,
+            margin: 0.01,
+            padding: 0.025,
+            textAlign: "center",
+            justifyContent: "start",
+            backgroundColor: new THREE.Color(0xffffff)
         }).add(
             new ThreeMeshUI.Text({
                 content: "Crop Data Cube",
-            }),
+            }));
+        
+        // const subSubBlock1 = new ThreeMeshUI.Block({
+        //     height: 0.4,
+        //     width: 0.5,
+        //     margin: 0.01,
+        //     padding: 0.02,
+        //     fontSize: 0.04,
+        //     justifyContent: "center",
+        //     backgroundOpacity: 0,
+        // }).add(
+        //     new ThreeMeshUI.Text({
+        //         content: "Crop Data Cube",
+        //     }),
         
             // new ThreeMeshUI.Text({
             //     content: "bristly",
@@ -90,30 +102,30 @@ const CropPanel = (text) => {
             // new ThreeMeshUI.Text({
             //     content: " appearance.",
             // })
-        );
+        // );
         
-        const subSubBlock2 = new ThreeMeshUI.Block({
-            height: 0.53,
-            width: 0.5,
-            margin: 0.01,
-            padding: 0.02,
-            fontSize: 0.025,
-            alignItems: "start",
-            textAlign: 'justify',
-            backgroundOpacity: 0,
-        }).add(
-            new ThreeMeshUI.Text({
-                content: "Crop instructions go here maybe",
-            })
-        );
+        // const subSubBlock2 = new ThreeMeshUI.Block({
+        //     height: 0.1,
+        //     width: 0.5,
+        //     margin: 0.01,
+        //     padding: 0.02,
+        //     fontSize: 0.025,
+        //     alignItems: "start",
+        //     textAlign: 'justify',
+        //     backgroundOpacity: 0,
+        // }).add(
+        //     new ThreeMeshUI.Text({
+        //         content: "Crop instructions go here maybe",
+        //     })
+        // );
         
-        rightSubBlock.add(subSubBlock1, subSubBlock2);
+        // rightSubBlock.add(subSubBlock1, subSubBlock2);
 
         const contentContainer = new ThreeMeshUI.Block({
             contentDirection: "row",
             padding: 0.02,
-            margin: 0.025,
-            backgroundOpacity: 0,
+            margin: 0.01,
+            backgroundOpacity: 0
         });
     
         contentContainer.add(leftSubBlock, rightSubBlock);

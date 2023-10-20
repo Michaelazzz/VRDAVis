@@ -420,7 +420,7 @@ export class SignallingStore {
 
         switch (msg.type) {
             case 'transfer':
-                this.rootStore.resumeSession(msg.data);
+                this.rootStore.resumeState(msg.data);
                 break;
             default:
                 console.log(`[error] unknown message type "${msg.type}"`);

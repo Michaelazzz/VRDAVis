@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useMemo } from 'react';
+import React, { useContext, useEffect, useRef, useMemo, useState } from 'react';
 
 import * as THREE from 'three';
 
@@ -70,9 +70,9 @@ const DataCubeView: React.FC = () => {
             uniforms: {                                            
                 u_textureData: { value: texture },
                 u_threshold: { value: 0.25 },
-                u_range: { value: 0.1 },
-                u_opacity: { value: 1.0 },
-                // u_steps: { value: 100 },
+                u_range: { value: 0.5 },
+                u_opacity: { value: 3.0 },
+                u_steps: { value: rootStore.cubeStore.steps },
                 u_colourMap: { value: colormap },
                 // map: { value: texture },
                 // cameraPos: { value: new THREE.Vector3() }
@@ -82,7 +82,8 @@ const DataCubeView: React.FC = () => {
             side: THREE.BackSide,
             transparent: true
         })
-    }, [colormap, texture]);
+    }, [colormap, texture, rootStore.cubeStore.steps]);
+    material.needsUpdate = true;
 
     let dataCube: THREE.Mesh = useMemo(() => 
         new THREE.Mesh(geometry, material), 
@@ -94,8 +95,10 @@ const DataCubeView: React.FC = () => {
     useEffect(() => {
         if(!ref.current)
             return;
+
         ref.current.add(dataCube);
         ref.current.add(bounds);
+        
     }, [dataCube, bounds]);
 
     return (

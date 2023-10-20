@@ -32,6 +32,8 @@ export class CubeStore {
     currentXYMip: number = 1;
     currentZMip: number = 1;
 
+    steps: number = 100;
+
     constructor (rootStore: RootStore) {
         makeAutoObservable(this, { rootStore: false });
         this.cropMode = false;
@@ -43,7 +45,9 @@ export class CubeStore {
     }
 
     get maxXYMip(): number {
-        return Math.pow(2, Math.ceil(Math.log2(this.cropCube.x)))/CUBELET_SIZE_XY;
+        const mipX = Math.pow(2, Math.ceil(Math.log2(this.cropCube.x * this.currentXYMip)))/CUBELET_SIZE_XY;
+        const mipY = Math.pow(2, Math.ceil(Math.log2(this.cropCube.y * this.currentXYMip)))/CUBELET_SIZE_XY;
+        return (mipX > mipY) ? mipX : mipY
     }
 
     get maxZMip(): number {
@@ -68,7 +72,7 @@ export class CubeStore {
             y: this.cropCenter.y * this.currentXYMip,
             z: this.cropCenter.z * this.currentZMip
         }
-        console.log(adjustedCenter)
+        // console.log(adjustedCenter)
         // get the position of the corners of the crop cube in worldspace context
         const corners = [
             { x: adjustedCenter.x - adjustedDims.x / 2.0, y: adjustedCenter.y - adjustedDims.y / 2.0, z: adjustedCenter.z - adjustedDims.z / 2.0 },
@@ -80,8 +84,11 @@ export class CubeStore {
             { x: adjustedCenter.x + adjustedDims.x / 2.0, y: adjustedCenter.y + adjustedDims.y / 2.0, z: adjustedCenter.z - adjustedDims.z / 2.0 },
             { x: adjustedCenter.x + adjustedDims.x / 2.0, y: adjustedCenter.y + adjustedDims.y / 2.0, z: adjustedCenter.z + adjustedDims.z / 2.0 }
         ];
-
-        console.log(corners)
+        // console.log(this.cropCenter)
+        // console.log(adjustedCenter)
+        // console.log(this.cropCube)
+        // console.log(adjustedDims)
+        // console.log(corners)
 
         // const mipAdjustment = PreferenceStore.Instance.lowBandwidthMode ? 2.0 : 1.0; // bias
         const {minPoint, maxPoint} = minMax3D(corners);
@@ -98,12 +105,13 @@ export class CubeStore {
         this.currentZMip = mipZRoundedPow2;
 
         return {
-            xMin: minPoint.x,
-            xMax: maxPoint.x,
-            yMin: minPoint.y,
-            yMax: maxPoint.y,
-            zMin: minPoint.z,
-            zMax: maxPoint.z,
+            // clam the values to within the file space
+            xMin: (minPoint.x <= 0) ? 0 : minPoint.x,
+            xMax: (maxPoint.x >= this.rootStore.fileStore.fileWidth) ? this.rootStore.fileStore.fileWidth : maxPoint.x,
+            yMin: (minPoint.y <= 0) ? 0 : minPoint.y,
+            yMax: (maxPoint.y >= this.rootStore.fileStore.fileHeight) ? this.rootStore.fileStore.fileHeight : maxPoint.y,
+            zMin: (minPoint.z <= 0) ? 0 : minPoint.z,
+            zMax: (maxPoint.z >= this.rootStore.fileStore.fileLength) ? this.rootStore.fileStore.fileLength : maxPoint.z,
             mipXY: mipXYRoundedPow2,
             mipZ: mipZRoundedPow2,
         };
@@ -150,11 +158,23 @@ export class CubeStore {
         this.cropCenter.z = center.z
     }
 
-    setCropMode = (mode: boolean) => {
-        this.cropMode = mode;
+    toggleCropMode = () => {
+        this.cropMode = (this.cropMode) ? false : true;
     }
 
     getCropMode = () => {
         return this.cropMode;
+    }
+
+    setSteps = (num: number) => {
+        this.steps = num;
+    }
+
+    decreaseSteps = () => {
+        this.steps = 50;
+    }
+
+    increaseSteps = () => {
+        this.steps = 100;
     }
 }

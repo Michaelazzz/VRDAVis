@@ -73,11 +73,13 @@ export function GetRequiredCubelets(cubeState: CubeView, fullCubeState: Point3D,
         mipZ: cubeState.mipZ
     };
 
-    const adjustedCubeSize: Point3D = {
-        x: cubeState.mipXY * cubeSize.x,
-        y: cubeState.mipXY * cubeSize.y,
-        z: cubeState.mipZ * cubeSize.z
-    };
+    // console.log(boundedCubeView)
+
+    // const adjustedCubeSize: Point3D = {
+    //     x: cubeState.mipXY * cubeSize.x,
+    //     y: cubeState.mipXY * cubeSize.y,
+    //     z: cubeState.mipZ * cubeSize.z
+    // };
 
     // rounded method
     // const xStart = Math.ceil(boundedCubeView.xMin / cubeSize.x);
@@ -87,12 +89,19 @@ export function GetRequiredCubelets(cubeState: CubeView, fullCubeState: Point3D,
     // const zStart = Math.ceil(boundedCubeView.zMin / cubeSize.z);
     // const zEnd = Math.floor(boundedCubeView.zMax / cubeSize.z);
 
-    const xStart = Math.ceil(boundedCubeView.xMin / adjustedCubeSize.x);
-    const xEnd = Math.floor(boundedCubeView.xMax / adjustedCubeSize.x);
-    const yStart = Math.ceil(boundedCubeView.yMin / adjustedCubeSize.y);
-    const yEnd = Math.floor(boundedCubeView.yMax / adjustedCubeSize.y);
-    const zStart = Math.ceil(boundedCubeView.zMin / adjustedCubeSize.z);
-    const zEnd = Math.floor(boundedCubeView.zMax / adjustedCubeSize.z);
+    // const xStart = Math.ceil(boundedCubeView.xMin / adjustedCubeSize.x);
+    // const xEnd = Math.floor(boundedCubeView.xMax / adjustedCubeSize.x);
+    // const yStart = Math.ceil(boundedCubeView.yMin / adjustedCubeSize.y);
+    // const yEnd = Math.floor(boundedCubeView.yMax / adjustedCubeSize.y);
+    // const zStart = Math.ceil(boundedCubeView.zMin / adjustedCubeSize.z);
+    // const zEnd = Math.floor(boundedCubeView.zMax / adjustedCubeSize.z);
+
+    const xStart = Math.ceil(cubeState.xMin / cubeState.mipXY);
+    const xEnd = Math.floor(cubeState.xMax / cubeState.mipXY);
+    const yStart = Math.ceil(cubeState.yMin / cubeState.mipXY);
+    const yEnd = Math.floor(cubeState.yMax / cubeState.mipXY);
+    const zStart = Math.ceil(cubeState.zMin / cubeState.mipZ);
+    const zEnd = Math.floor(cubeState.zMax / cubeState.mipZ);
 
     // console.log(xStart + ' ' + xEnd);
     // console.log(yStart + ' ' + yEnd);
@@ -112,8 +121,8 @@ export function GetRequiredCubelets(cubeState: CubeView, fullCubeState: Point3D,
     for (let x = xStart; x < xEnd; x=x+cubeSize.x) {
         for (let y = yStart; y < yEnd; y=y+cubeSize.y) {
             for (let z = zStart; z < zEnd; z=z+cubeSize.z) {
-                console.log(x + ' ' + y + ' ' + z)
-                cubeletSet.push(new CubeletCoordinate(x, y, z, cubeState.mipXY, cubeState.mipZ));
+                console.log(Math.floor(x/cubeSize.x) + ' ' + Math.floor(y/cubeSize.y) + ' ' + Math.floor(z/cubeSize.z))
+                cubeletSet.push(new CubeletCoordinate(Math.floor(x/cubeSize.x), Math.floor(y/cubeSize.y), Math.floor(z/cubeSize.z), cubeState.mipXY, cubeState.mipZ));
             }
         }
     }

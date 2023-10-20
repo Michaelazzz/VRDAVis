@@ -8,7 +8,7 @@ import FontImage from '../../assets/Roboto-msdf.png';
 
 extend(ThreeMeshUI)
 
-const Button = ({position=[0,0], text='Click', onSelect = () => console.log({text})}) => {
+const Button = ({position=[0,0], backgroundColor = 0xffffff, width = 0.4, height = 0.1, text='Click', onSelect = () => console.log({text})}) => {
 
     const buttonRef = useRef();
     const [hover, setHover] = useState(false);
@@ -17,33 +17,33 @@ const Button = ({position=[0,0], text='Click', onSelect = () => console.log({tex
     const selectedAttributes = useMemo(() => {
         return {
             // offset: 0.02,
-            backgroundColor: new THREE.Color( 0x777777 ),
-            fontColor: new THREE.Color( 0x222222 )
+            backgroundColor: new THREE.Color( backgroundColor ),
+            fontColor: new THREE.Color( 0x333333 )
         }
-    }, []);
+    }, [backgroundColor]);
 
     const buttonOptions = useMemo(() => {
         return {
-            width: 0.4,
-            height: 0.15,
+            width: width,
+            height: height,
             justifyContent: 'center',
             offset: 0.05,
-            margin: 0.02,
+            margin: 0.025,
             fontFamily: FontJSON,
             fontTexture: FontImage,
-            fontSize: 0.07,
+            fontSize: 0.04,
             // borderRadius: 0.075
         }
-    }, []);
+    }, [height, width]);
 
     const hoveredStateAttributes = useMemo(() => {
         return {
             state: 'hovered',
             attributes: {
                 // offset: 0.035,
-                backgroundColor: new THREE.Color( 0x999999 ),
+                backgroundColor: new THREE.Color( 0xffffff ),
                 backgroundOpacity: 1,
-                fontColor: new THREE.Color( 0xffffff )
+                fontColor: new THREE.Color( 0x333333 )
             }
         }
     }, []);
@@ -53,12 +53,12 @@ const Button = ({position=[0,0], text='Click', onSelect = () => console.log({tex
             state: 'idle',
             attributes: {
                 // offset: 0.035,
-                backgroundColor: new THREE.Color( 0x666666 ),
+                backgroundColor: new THREE.Color( backgroundColor ),
                 backgroundOpacity: 0.3,
-                fontColor: new THREE.Color( 0xffffff )
+                fontColor: new THREE.Color( 0x333333 )
             }
         }
-    }, []);
+    }, [backgroundColor]);
 
     useEffect(() => {
         // const container = new ThreeMeshUI.Block( {

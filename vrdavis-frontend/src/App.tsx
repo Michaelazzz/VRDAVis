@@ -1,11 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
-import { XR, Controllers, Interactive, RayGrab, XRButton, VRButton} from "@react-three/xr";
+import React, { useContext, useEffect } from "react";
+import { XR, Controllers, VRButton} from "@react-three/xr";
 import { Canvas } from '@react-three/fiber'
-import { CameraControls } from '@react-three/drei'
-import * as THREE from "three";
+import { PerformanceMonitor } from '@react-three/drei'
 import CssBaseline from '@mui/material/CssBaseline';
-import { ConnectionStatus } from "./stores/backend.store";
-import HandMenu from "./components/vr UI/HandMenu";
 import WorldspaceMenu from "./components/vr UI/WorldspaceMenu";
 import { PairingMenu } from "./components/browser UI/PairingMenu";
 import BrowserMenu from "./components/browser UI/BrowserMenu";
@@ -16,23 +13,22 @@ import { DeviceCredentials } from "./components/browser UI/DeviceCredentials";
 import { WebRTCMenu } from "./components/browser UI/WebRTCMenu";
 import { FileCredentials } from "./components/browser UI/FileCredentials";
 import { DataCube } from "./components/DataCube";
-import { CropControls } from "./components/CropControls";
-import ExamplePanel from "./components/vr UI/ExamplePanel";
-import Panel from "./components/vr UI/Panel";
 import HandMenuControls from "./components/vr UI/HandMenuControls";
 import Button from "./components/vr UI/Button";
 import CropPanel from "./components/vr UI/CropPanel";
 import { CubeControls } from "./components/CubeControls";
-import { BoundsCube } from "./components/BoundsCube";
 
 const AppView: React.FC = () => {
 
     // const { signallingStore, backendStore } = useContext(RootContext);
     const { rootStore } = useContext(RootContext);
 
+    // const [minimize, setMinimize] = useState(false);
+    // const toggleHandMenu = () => { (minimize) ? setMinimize(false) : setMinimize(true) }
+
     useEffect(() => {
-        // rootStore.connectToServer('ws://localhost:3002'); // local testing
-        rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
+        rootStore.connectToServer('ws://localhost:3002'); // local testing
+        // rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
         rootStore.connectToSignallingServer();
     }, [rootStore]);
 
@@ -50,12 +46,13 @@ const AppView: React.FC = () => {
             
             <VRButton />
             <Canvas>
+                <PerformanceMonitor onIncline={rootStore.cubeStore.increaseSteps} onDecline={rootStore.cubeStore.decreaseSteps}/>
                 <XR>
                     {/* <CameraControls/> */}
                     <color 
                         attach="background" 
-                        args={["#DBE9EE"]} 
-                        // args={["#363537"]}
+                        // args={["#DBE9EE"]} 
+                        args={["#777777"]}
                     />
 
                     <ambientLight intensity={0.5} />
@@ -77,17 +74,23 @@ const AppView: React.FC = () => {
                         <>
                             <Button 
                                 text="crop mode" 
-                                position={[0.55, -0.25]}
-                                onSelect={() => rootStore.cubeStore.setCropMode(true)}
+                                position={[0.27, -0.03]}
+                                onSelect={() => rootStore.cubeStore.toggleCropMode()}
                             />
                             <Button 
                                 text="crop" 
-                                position={[0.55, -0.45]}
+                                position={[0.27, -0.17]}
                                 onSelect={rootStore.cropCube}
                             />
                             <CropPanel/>
                         </>
-                        
+                        {/* <Button 
+                            text="x" 
+                            width={0.1}
+                            position={[0.2, -0.43]}
+                            backgroundColor={0xED1C24}
+                            onSelect={toggleHandMenu}
+                        /> */}
                     </HandMenuControls>
                     {/* <HandMenu /> */}
                     {/* <WorldspaceMenu position={[1,1.5,-1.5]} /> */}

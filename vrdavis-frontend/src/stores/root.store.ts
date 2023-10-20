@@ -106,13 +106,13 @@ export class RootStore {
         this.signallingStore.sendDataToPeer(JSON.stringify(message));
     }
 
-    resumeSession = (data: any) => {
+    resumeState = (data: any) => {
         // set cube state
         this.cubeStore.setCubeState(
-            data.prevCenter, 
-            data.prevCube, 
-            data.cropCenter, 
-            data.cropCube
+            data.cubeState.prevCenter, 
+            data.cubeState.prevCube, 
+            data.cubeState.cropCenter, 
+            data.cubeState.cropCube
         );
         // load file
         this.backendStore.getFileInfo(data.filename);

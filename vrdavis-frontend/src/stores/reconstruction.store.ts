@@ -105,16 +105,24 @@ export class ReconstructionStore {
     }
 
     getTextureDimensions = () => {
+        let xMin = -1;
+        let xMax = -1;
+        let yMin = -1;
+        let yMax = -1;
+        let zMin = -1;
+        let zMax = -1;
         this.cubelets.forEach((cubelet, key, map) => {
             const coord = CubeletCoordinate.Decode(key);
-            if(coord.x === 0 && cubelet.width === 0) this.width = cubelet.width;
-            else if(((coord.x)*CUBELET_SIZE_XY) >= this.width) this.width += cubelet.width;
-            if(coord.y === 0 && cubelet.height === 0) this.height = cubelet.height;
-            else if(((coord.y)*CUBELET_SIZE_XY) >= this.height) this.height += cubelet.height;
-            if(coord.z === 0 && cubelet.length === 0) this.length = cubelet.length;
-            else if(((coord.z)*CUBELET_SIZE_Z) >= this.length) this.length += cubelet.length;
+            if(xMin === -1 || xMax === -1) { xMin = coord.x; xMax = coord.x; this.width = cubelet.width }
+            else if(coord.x < xMin) { xMin = coord.x; this.width += cubelet.width; }
+            else if(coord.x > xMax) { xMax = coord.x; this.width += cubelet.width; }
+            if(yMin === -1 || yMax === -1) { yMin = coord.y; yMax = coord.y; this.height = cubelet.height }
+            else if(coord.y < yMin) { yMin = coord.y; this.height += cubelet.height; }
+            else if(coord.y > yMax) { yMax = coord.y; this.height += cubelet.height }
+            if(zMin === -1 || zMax === -1) { zMin = coord.z; zMax = coord.z; this.length = cubelet.length }
+            else if(coord.z < zMin) { zMin = coord.z; this.length += cubelet.length; }
+            else if(coord.z > zMax) { zMax = coord.z; this.length += cubelet.length; }
         });
-        
     }
 
     hasData = (cubelet: Cubelet) => {
@@ -166,7 +174,7 @@ export class ReconstructionStore {
     }
 
     resetCube = () => {
-        this.cubelets = new Map<string, Cubelet>();
+        this.cubelets.clear();
 
         this.data = new Float32Array();
         this.width = 0;
