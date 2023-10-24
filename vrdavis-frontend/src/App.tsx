@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { XR, Controllers, VRButton} from "@react-three/xr";
 import { Canvas } from '@react-three/fiber'
-import { PerformanceMonitor } from '@react-three/drei'
+import { Bvh, PerformanceMonitor } from '@react-three/drei'
 import CssBaseline from '@mui/material/CssBaseline';
 import WorldspaceMenu from "./components/vr UI/WorldspaceMenu";
 import { PairingMenu } from "./components/browser UI/PairingMenu";
@@ -98,7 +98,9 @@ const AppView: React.FC = () => {
                     {/* { mode==='crop' && <CropControls/>} */}
                      
                     <CubeControls>
-                        <DataCube />
+                        <Bvh>
+                            <DataCube />
+                        </Bvh>
                     </CubeControls>
                     
                 </XR>
