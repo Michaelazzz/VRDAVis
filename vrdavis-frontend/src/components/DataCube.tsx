@@ -40,15 +40,12 @@ const DataCubeView: React.FC = () => {
 
     let geometry = useMemo(() => {
         console.log('geometry updated')
-        // return new THREE.BoxGeometry(width, height, length)
         return new THREE.BoxGeometry(1, 1, 1)
     }, []);
 
     // @ts-ignore
     let texture: THREE.Data3DTexture = useMemo(() => {
         console.log('texture updated')
-        // console.log(`${data.length} with ${data.byteLength} byte length`)
-        // console.log(`${width} ${height} ${length}`)
         return new THREE.Data3DTexture(data, width, height, length)
     }, [data, width, height, length]);
     texture.format = THREE.RedFormat;
@@ -73,9 +70,7 @@ const DataCubeView: React.FC = () => {
                 u_range: { value: 0.5 },
                 u_opacity: { value: 3.0 },
                 u_steps: { value: rootStore.cubeStore.steps },
-                u_colourMap: { value: colormap },
-                // map: { value: texture },
-                // cameraPos: { value: new THREE.Vector3() }
+                u_colourMap: { value: colormap }
             },
             vertexShader: VolumeShader.vertexShader,
             fragmentShader: VolumeShader.fradgmentShader,

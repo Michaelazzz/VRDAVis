@@ -1,5 +1,6 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useContext} from "react";
 import {extend, useFrame} from "@react-three/fiber";
+import { RootContext } from "../../store.context";
 import * as THREE from "three";
 import ThreeMeshUI from "three-mesh-ui";
 import FontJSON from '../../assets/Roboto-msdf.json'
@@ -9,6 +10,7 @@ extend(ThreeMeshUI);
 
 const CropPanel = (text) => {
     const mountRef = useRef(null);
+    const { rootStore } = useContext(RootContext);
 
     useEffect(() => {
         const container = new ThreeMeshUI.Block({
@@ -35,7 +37,7 @@ const CropPanel = (text) => {
     
         title.add(
             new ThreeMeshUI.Text({
-                content: "Crop Controls",
+                content: "Controls",
             })
         );
     
@@ -50,7 +52,23 @@ const CropPanel = (text) => {
             justifyContent: "end",
             backgroundColor: new THREE.Color(0xffffff)
         });
+
+        const steps = new ThreeMeshUI.Block({
+            height: 0.07,
+            width: 0.37,
+            margin: 0.01,
+            textAlign: "center",
+            justifyContent: "center",
+            backgroundColor: new THREE.Color(0xffffff)
+        });
         
+        steps.add(
+            new ThreeMeshUI.Text({
+                content: `Steps: ${String(rootStore.cubeStore.getSteps())}`,
+                fontSize: 0.04,
+            })
+        );
+
         const caption = new ThreeMeshUI.Block({
             height: 0.07,
             width: 0.37,
@@ -58,7 +76,7 @@ const CropPanel = (text) => {
             justifyContent: "center",
             backgroundColor: new THREE.Color(0xffffff)
         });
-        
+
         caption.add(
             new ThreeMeshUI.Text({
                 content: "Some analytics",
@@ -66,7 +84,7 @@ const CropPanel = (text) => {
             })
         );
         
-        leftSubBlock.add(caption);
+        leftSubBlock.add(steps, caption);
 
         const rightSubBlock = new ThreeMeshUI.Block({
             height: 0.4,
@@ -154,8 +172,10 @@ const CropPanel = (text) => {
             }
     
             container.add( plane );
+
+            return container.onAfterUpdate = function () {}
         }
-    }, [text])
+    }, [text, rootStore.cubeStore, rootStore.cubeStore.steps])
 
     useFrame(() => {
         // requestAnimationFrame( animate );

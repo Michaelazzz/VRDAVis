@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { XR, Controllers, VRButton} from "@react-three/xr";
 import { Canvas } from '@react-three/fiber'
 import { Bvh, PerformanceMonitor } from '@react-three/drei'
@@ -22,6 +22,9 @@ const AppView: React.FC = () => {
 
     // const { signallingStore, backendStore } = useContext(RootContext);
     const { rootStore } = useContext(RootContext);
+
+    // const [dpr, setDpr] = useState(1)
+
 
     // const [minimize, setMinimize] = useState(false);
     // const toggleHandMenu = () => { (minimize) ? setMinimize(false) : setMinimize(true) }
@@ -47,9 +50,10 @@ const AppView: React.FC = () => {
             <VRButton />
             <Canvas>
                 <PerformanceMonitor 
-                    onIncline={rootStore.cubeStore.increaseSteps} 
-                    onDecline={rootStore.cubeStore.scaleSteps}
-                    onFallback={rootStore.cubeStore.decreaseSteps}
+                    // onIncline={rootStore.cubeStore.increaseSteps} 
+                    onChange={({factor}) => rootStore.cubeStore.scaleSteps(factor)}
+                    // onFallback={rootStore.cubeStore.decreaseSteps}
+                    // onChange={({ factor }) => setDpr(0.5 + 1.5 * factor)}
                 />
                 <XR>
                     {/* <CameraControls/> */}

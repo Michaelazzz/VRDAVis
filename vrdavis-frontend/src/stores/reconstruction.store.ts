@@ -73,6 +73,8 @@ export class ReconstructionStore {
     reconstructCube = async () => {
         console.log('reconstruction in progress');
         this.getTextureDimensions();
+        let min = 1;
+        let max = 0;
         console.log(`cube dims ${this.width} ${this.height} ${this.length}`);
         const data = new Float32Array(this.width*this.height*this.length);
         this.cubelets.forEach((cubelet, key, map) => {
@@ -86,12 +88,20 @@ export class ReconstructionStore {
                 for(let k = cubelet.height*coord.y; k < cubelet.height*coord.y+cubelet.height; k++) {
                     for(let j = cubelet.width*coord.x; j < cubelet.width*coord.x+cubelet.width; j++) {
                         data[this.convertCoordToIndex(j, k, l)] = cubelet.data[n];
+                        if(cubelet.data[n] < min) min = cubelet.data[n];
+                        if(cubelet.data[n] > max) max = cubelet.data[n];
                         n++;
                     }
                 }
             }
             // this.data = Float32Array.from(cubelet.data);
         });
+        // fit data within range 0 - 1
+        // const normalised = new Float32Array(this.width*this.height*this.length);
+        // for (let index = 0; index < data.length; index++) {
+        //     normalised[index] = (data[index] - min) / (max - min);
+        // }
+        // this.data = Float32Array.from(normalised);
         this.data = Float32Array.from(data);
     }
 
