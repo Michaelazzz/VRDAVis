@@ -173,7 +173,11 @@ const CropPanel = (text) => {
     
             container.add( plane );
 
-            return container.onAfterUpdate = function () {}
+            return container.onAfterUpdate = function () {
+                steps.set({
+                    content: `Steps: ${String(rootStore.cubeStore.getSteps())}`
+                })
+            }
         }
     }, [text, rootStore.cubeStore, rootStore.cubeStore.steps])
 

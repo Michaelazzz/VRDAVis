@@ -23,8 +23,6 @@ const AppView: React.FC = () => {
     // const { signallingStore, backendStore } = useContext(RootContext);
     const { rootStore } = useContext(RootContext);
 
-    // const [dpr, setDpr] = useState(1)
-
 
     // const [minimize, setMinimize] = useState(false);
     // const toggleHandMenu = () => { (minimize) ? setMinimize(false) : setMinimize(true) }
@@ -51,7 +49,7 @@ const AppView: React.FC = () => {
             <Canvas>
                 <PerformanceMonitor 
                     // onIncline={rootStore.cubeStore.increaseSteps} 
-                    onChange={({factor}) => rootStore.cubeStore.scaleSteps(factor)}
+                    onChange={({fps}) => rootStore.cubeStore.scaleSteps(fps)}
                     // onFallback={rootStore.cubeStore.decreaseSteps}
                     // onChange={({ factor }) => setDpr(0.5 + 1.5 * factor)}
                 />
@@ -59,7 +57,6 @@ const AppView: React.FC = () => {
                     {/* <CameraControls/> */}
                     <color 
                         attach="background" 
-                        // args={["#DBE9EE"]} 
                         args={["#777777"]}
                     />
 
