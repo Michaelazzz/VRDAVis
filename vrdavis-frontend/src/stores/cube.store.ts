@@ -4,6 +4,7 @@ import { VRDAVis } from "vrdavis-protobuf";
 import { CubeView, Point3D } from "../models";
 import { minMax3D, subtract3D } from "../utilities";
 import { CUBELET_SIZE_XY, CUBELET_SIZE_Z } from "./cubelet.store";
+import { clamp } from "three/src/math/MathUtils";
 
 export interface CubeInfo {
     fileId: number;
@@ -32,7 +33,10 @@ export class CubeStore {
     currentXYMip: number = 1;
     currentZMip: number = 1;
 
-    steps: number = 100;
+    steps: number = 128;
+    currentSteps: number = 0;
+    prevSteps: number = 0;
+    rateOfChange: number = 0.05;
 
     constructor (rootStore: RootStore) {
         makeAutoObservable(this, { rootStore: false });
@@ -171,10 +175,20 @@ export class CubeStore {
     }
 
     decreaseSteps = () => {
-        this.steps = 50;
+        this.steps = 32;
     }
 
     increaseSteps = () => {
-        this.steps = 100;
+        this.steps = 128;
+    }
+
+    scaleSteps = () => {
+        this.prevSteps = this.currentSteps;
+        let deltaStepCount = this.rateOfChange * this.steps;
+
+        if(deltaStepCount < 0)
+            deltaStepCount *= 2;
+        this.currentSteps += deltaStepCount;
+        this.currentSteps = clamp(this.currentSteps, 32, 512)
     }
 }

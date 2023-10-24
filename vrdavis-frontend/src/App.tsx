@@ -46,7 +46,11 @@ const AppView: React.FC = () => {
             
             <VRButton />
             <Canvas>
-                <PerformanceMonitor onIncline={rootStore.cubeStore.increaseSteps} onDecline={rootStore.cubeStore.decreaseSteps}/>
+                <PerformanceMonitor 
+                    onIncline={rootStore.cubeStore.increaseSteps} 
+                    onDecline={rootStore.cubeStore.scaleSteps}
+                    onFallback={rootStore.cubeStore.decreaseSteps}
+                />
                 <XR>
                     {/* <CameraControls/> */}
                     <color 
