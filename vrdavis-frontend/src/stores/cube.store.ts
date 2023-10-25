@@ -38,8 +38,8 @@ export class CubeStore {
     defaultSteps: number = 128;
     currentSteps: number = 0;
     prevSteps: number = 0;
-    rateOfChange: number = 0.05;
-    targetFPS: number = 30;
+    rateOfChange: number = 0.1;
+    targetFPS: number = 60;
 
     constructor (rootStore: RootStore) {
         makeAutoObservable(this, { rootStore: false });
@@ -191,7 +191,7 @@ export class CubeStore {
 
     
     scaleSteps = (fps: number) => {
-        if(fps < 30) {
+        if(fps < 50) {
             this.currentSteps = this.steps;
             let deltaStep = this.rateOfChange * this.currentSteps * (fps-this.targetFPS) / this.targetFPS;
             if (deltaStep < 0){ deltaStep *= 2;}

@@ -59,10 +59,7 @@ const CropPanelView = (text) => {
         textAlign: "center",
         justifyContent: "center",
         backgroundColor: new THREE.Color(0xffffff)
-    }).add(new ThreeMeshUI.Text({
-        content: `Steps: ${String(rootStore.cubeStore.steps)}`,
-        fontSize: 0.04,
-    })), [rootStore.cubeStore.steps]);
+    }), []);
 
     const caption = new ThreeMeshUI.Block({
         height: 0.07,
@@ -106,9 +103,15 @@ const CropPanelView = (text) => {
 
     
     useEffect(() => {
+        // steps.set( { content: String( String(rootStore.cubeStore.steps) ) } );
+        steps.add(new ThreeMeshUI.Text({
+            content: `${String(rootStore.cubeStore.steps)} `,
+            fontSize: 0.04,
+        }))
         
-        steps.clear();
         mountRef.current.add( container );
+
+        ThreeMeshUI.update();
 
         // container.onAfterUpdate = function () {
         //     if( !container.lines ) return;
@@ -136,9 +139,9 @@ const CropPanelView = (text) => {
         // }
     }, [container, steps, rootStore.cubeStore, rootStore.cubeStore.steps])
 
-    useFrame(() => {
-        ThreeMeshUI.update();
-    });
+    // useFrame(() => {
+    //     ThreeMeshUI.update();
+    // });
 
     return (
         <block ref={mountRef}>
