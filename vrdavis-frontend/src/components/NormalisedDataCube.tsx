@@ -7,7 +7,7 @@ import createColormap from 'colormap';
 import { RootContext } from '../store.context';
 import { observer } from 'mobx-react';
 
-const DataCubeView: React.FC = () => {
+const NormailsedDataCubeView: React.FC = () => {
     const { rootStore } = useContext(RootContext);
     const reconstructionStore = rootStore.reconstructionStore;
     const data = reconstructionStore.data;
@@ -106,5 +106,5 @@ const DataCubeView: React.FC = () => {
     )
 };
 
-const DataCube = observer(DataCubeView);
-export { DataCube };
+const NormailsedDataCube = observer(NormailsedDataCubeView);
+export { NormailsedDataCube };

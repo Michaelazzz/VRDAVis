@@ -191,4 +191,20 @@ export class ReconstructionStore {
         this.height = 0;
         this.length = 0;
     }
+
+    downsizeData = () => {
+        console.log('downsizing in progress');
+        this.width = Math.floor(this.width/2);
+        this.length = Math.floor(this.length/2);
+        this.height = Math.floor(this.height/2);
+
+        const data = new Float32Array(this.width*this.height*this.length);
+        let count = 0;
+        for(let i = 0; i < this.data.length; i++) {
+            if(i % 2 === 0) {
+                data[count] = this.data[i];
+                count++;
+            }
+        }
+    }
 }

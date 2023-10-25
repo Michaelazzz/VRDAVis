@@ -189,9 +189,9 @@ export class CubeStore {
         this.steps = 128;
     }
 
-    
     scaleSteps = (fps: number) => {
         if(fps < 50) {
+            if(this.steps < 40) this.rootStore.reconstructionStore.downsizeData();
             this.currentSteps = this.steps;
             let deltaStep = this.rateOfChange * this.currentSteps * (fps-this.targetFPS) / this.targetFPS;
             if (deltaStep < 0){ deltaStep *= 2;}
