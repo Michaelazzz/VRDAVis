@@ -25,24 +25,22 @@ const CropPanelView = (text) => {
     
     // container.position.set(0, 1, -1.8);
 
-    
+    // const title = new ThreeMeshUI.Block({
+    //     height: 0.1,
+    //     width: 1,
+    //     margin: 0.01,
+    //     justifyContent: "center",
+    //     fontSize: 0.05,
+    //     backgroundColor: new THREE.Color(0xffffff),
+    // });
 
-    const title = new ThreeMeshUI.Block({
-        height: 0.1,
-        width: 1,
-        margin: 0.01,
-        justifyContent: "center",
-        fontSize: 0.05,
-        backgroundColor: new THREE.Color(0xffffff),
-    });
+    // title.add(
+    //     new ThreeMeshUI.Text({
+    //         content: "Controls",
+    //     })
+    // );
 
-    title.add(
-        new ThreeMeshUI.Text({
-            content: "Controls",
-        })
-    );
-
-    container.add(title);
+    // container.add(title);
 
     const leftSubBlock = new ThreeMeshUI.Block({
         height: 0.4,
@@ -61,12 +59,10 @@ const CropPanelView = (text) => {
         textAlign: "center",
         justifyContent: "center",
         backgroundColor: new THREE.Color(0xffffff)
-    }), []);
-
-    steps.add(new ThreeMeshUI.Text({
+    }).add(new ThreeMeshUI.Text({
         content: `Steps: ${String(rootStore.cubeStore.steps)}`,
         fontSize: 0.04,
-    }))
+    })), [rootStore.cubeStore.steps]);
 
     const caption = new ThreeMeshUI.Block({
         height: 0.07,
@@ -108,42 +104,39 @@ const CropPanelView = (text) => {
     contentContainer.add(leftSubBlock, rightSubBlock);
     container.add(contentContainer);
 
+    
     useEffect(() => {
-        steps.set( { content: `Steps: ${String(rootStore.cubeStore.getSteps())}` } );
-
+        
+        steps.clear();
         mountRef.current.add( container );
-    
-        return container.onAfterUpdate = function () {
-            if( !container.lines ) return;
-    
-            var plane = new THREE.Mesh(
-                new THREE.PlaneGeometry(container.lines.width, container.lines.height ),
-                new THREE.MeshBasicMaterial({color:0xff9900})
-            );
-    
-            plane.position.x = container.lines.x;
-            plane.position.y = container.lines.height/2 - container.getInterLine()/2;
-    
-            const INNER_HEIGHT = container.getHeight() - ( container.padding * 2 || 0 );
-    
-            if( container.getJustifyContent() === 'start' ){
-                plane.position.y = (INNER_HEIGHT/2) - container.lines.height/2;
-            }else if( container.getJustifyContent() === 'center'){
-                plane.position.y = 0;
-            }else{
-                plane.position.y = -(INNER_HEIGHT/2) + container.lines.height/2
-            }
 
-            
-            this.frame.layers.set( steps );
+        // container.onAfterUpdate = function () {
+        //     if( !container.lines ) return;
     
-            container.add( plane );
-            
-        }
-    }, [container, steps, text, rootStore.cubeStore, rootStore.cubeStore.steps])
+        //     var plane = new THREE.Mesh(
+        //         new THREE.PlaneGeometry(container.lines.width, container.lines.height ),
+        //         new THREE.MeshBasicMaterial({color:0xffffff})
+        //     );
+    
+        //     plane.position.x = container.lines.x;
+        //     plane.position.y = container.lines.height/2 - container.getInterLine()/2;
+    
+        //     const INNER_HEIGHT = container.getHeight() - ( container.padding * 2 || 0 );
+    
+        //     if( container.getJustifyContent() === 'start' ){
+        //         plane.position.y = (INNER_HEIGHT/2) - container.lines.height/2;
+        //     }else if( container.getJustifyContent() === 'center'){
+        //         plane.position.y = 0;
+        //     }else{
+        //         plane.position.y = -(INNER_HEIGHT/2) + container.lines.height/2
+        //     }
+    
+        //     // this.frame.layers.set( steps );
+        //     container.add( plane );
+        // }
+    }, [container, steps, rootStore.cubeStore, rootStore.cubeStore.steps])
 
     useFrame(() => {
-        // requestAnimationFrame( animate );
         ThreeMeshUI.update();
     });
 

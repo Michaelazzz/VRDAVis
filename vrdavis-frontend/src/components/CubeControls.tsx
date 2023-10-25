@@ -172,7 +172,7 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
         rightSelect = false; 
         // console.log(`${Math.abs(crop.current!.scale.x)} ${Math.abs(crop.current!.scale.y)} ${Math.abs(crop.current!.scale.z)}`)
         // console.log((subtract3D(crop.current!.position, {x: 0, y: 1.5, z:-1.5}).x*100) + rootStore.reconstructionStore.width/2)
-        const localCenter = subtract3D(crop.current!.position, {x: 0, y: 1.5, z:-1.5})
+        const localCenter = subtract3D(crop.current!.position, {x: 0, y: 1.5, z:-1})
         // console.log(localCenter)
         rootStore.cubeStore.setCubeDims(
             {
@@ -201,7 +201,7 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
             <group 
                 // @ts-ignore
                 ref={ref}
-                position={[0,1.5,-1.5]}
+                position={[0,1.5,-1]}
                 // position={[0,0,0]}
             >
                 {children}

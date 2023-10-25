@@ -47,15 +47,15 @@ const AppView: React.FC = () => {
             
             <VRButton />
             <Canvas>
-                <PerformanceMonitor 
-                    // onIncline={rootStore.cubeStore.increaseSteps} 
-                    onChange={({fps, factor}) => { 
-                        rootStore.cubeStore.scaleSteps(fps)
-                    }}
-                    // onFallback={rootStore.cubeStore.decreaseSteps}
-                    // onChange={({ factor }) => setDpr(0.5 + 1.5 * factor)}
-                />
                 <XR>
+                    <PerformanceMonitor 
+                        // onIncline={rootStore.cubeStore.increaseSteps} 
+                        onChange={({fps, factor}) => { 
+                            rootStore.cubeStore.scaleSteps(fps)
+                        }}
+                        // onFallback={rootStore.cubeStore.decreaseSteps}
+                        // onChange={({ factor }) => setDpr(0.5 + 1.5 * factor)}
+                    />
                     {/* <CameraControls/> */}
                     <color 
                         attach="background" 
@@ -81,12 +81,12 @@ const AppView: React.FC = () => {
                         <>
                             <Button 
                                 text="crop mode" 
-                                position={[0.27, -0.03]}
+                                position={[0.27, 0]}
                                 onSelect={() => rootStore.cubeStore.toggleCropMode()}
                             />
                             <Button 
                                 text="crop" 
-                                position={[0.27, -0.17]}
+                                position={[0.27, -0.12]}
                                 onSelect={rootStore.cropCube}
                             />
                             <CropPanel/>
