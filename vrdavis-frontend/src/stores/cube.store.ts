@@ -191,20 +191,16 @@ export class CubeStore {
 
     
     scaleSteps = (fps: number) => {
-        if(fps < 20) {
+        if(fps < 30) {
             this.currentSteps = this.steps;
             let deltaStep = this.rateOfChange * this.currentSteps * (fps-this.targetFPS) / this.targetFPS;
-            if (deltaStep < 0)
-            {
-                deltaStep *= 2;
-            }
-            
+            if (deltaStep < 0){ deltaStep *= 2;}
             this.steps += deltaStep;
-            this.steps = clamp(this.steps, 32, 512);
-            console.log(this.steps)
+            this.steps = clamp(Math.floor(this.steps), 32, 512);
         } else {
             this.steps = this.defaultSteps;
         }
+        console.log(fps)
         console.log(this.steps)
     }
 

@@ -15,14 +15,13 @@ import { FileCredentials } from "./components/browser UI/FileCredentials";
 import { DataCube } from "./components/DataCube";
 import HandMenuControls from "./components/vr UI/HandMenuControls";
 import Button from "./components/vr UI/Button";
-import CropPanel from "./components/vr UI/CropPanel";
+import { CropPanel } from "./components/vr UI/CropPanel";
 import { CubeControls } from "./components/CubeControls";
 
 const AppView: React.FC = () => {
 
     // const { signallingStore, backendStore } = useContext(RootContext);
     const { rootStore } = useContext(RootContext);
-
 
     // const [minimize, setMinimize] = useState(false);
     // const toggleHandMenu = () => { (minimize) ? setMinimize(false) : setMinimize(true) }
@@ -38,6 +37,7 @@ const AppView: React.FC = () => {
             <CssBaseline />
             <BrowserMenu>
                 <h1>VRDAVis</h1>
+                <p>steps: {rootStore.cubeStore.steps}</p>
                 <DeviceCredentials/>
                 <WebRTCMenu/>
                 <PairingMenu/>
@@ -49,7 +49,9 @@ const AppView: React.FC = () => {
             <Canvas>
                 <PerformanceMonitor 
                     // onIncline={rootStore.cubeStore.increaseSteps} 
-                    onChange={({fps}) => rootStore.cubeStore.scaleSteps(fps)}
+                    onChange={({fps, factor}) => { 
+                        rootStore.cubeStore.scaleSteps(fps)
+                    }}
                     // onFallback={rootStore.cubeStore.decreaseSteps}
                     // onChange={({ factor }) => setDpr(0.5 + 1.5 * factor)}
                 />
