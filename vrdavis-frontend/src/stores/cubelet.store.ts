@@ -222,7 +222,8 @@ export class CubeletStore {
             
             this.rootStore.reconstructionStore.addCubelet(encodedCoordinate, cubelet);
             if(this.remainingCubelets === 0) {
-                await this.rootStore.reconstructionStore.reconstructCube();
+                // await this.rootStore.reconstructionStore.reconstructCube();
+                await this.rootStore.reconstructionStore.reconstructCubeWithWorker();
             }
             
         } else {

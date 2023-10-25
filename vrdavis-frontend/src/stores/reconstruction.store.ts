@@ -1,7 +1,8 @@
-import { makeAutoObservable, computed, action } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { RootStore } from "./root.store";
-import { CubeletCoordinate, Point3D } from "../models";
+import { CubeletCoordinate} from "../models";
 import { CUBELET_SIZE_XY, CUBELET_SIZE_Z, Cubelet } from "./cubelet.store";
+import { workerScript } from "../utilities/reconstructionWorker"
 
 export class ReconstructionStore {
     rootStore: RootStore;
@@ -16,6 +17,8 @@ export class ReconstructionStore {
 
     cubeUpdated: boolean;
 
+    worker: Worker;
+
     constructor (rootStore: RootStore) {
         makeAutoObservable(this);
         this.rootStore = rootStore;
@@ -28,6 +31,12 @@ export class ReconstructionStore {
         this.length = 0;
 
         this.cubeUpdated = false;
+
+        this.worker = new Worker(workerScript);
+        this.worker.onmessage = (e: any) => {
+            // console.log('Message from worker')
+            this.data = Float32Array.from(e.data);
+        }
     }
 
     // setNewCubeDimensions() {
@@ -103,6 +112,28 @@ export class ReconstructionStore {
         // }
         // this.data = Float32Array.from(normalised);
         this.data = Float32Array.from(data);
+    }
+
+    reconstructCubeWithWorker = async () => {
+        console.log('reconstruction in progress');
+        this.getTextureDimensions();
+        console.log(`cube dims ${this.width} ${this.height} ${this.length}`);
+
+        const indexArr = new Array(this.cubelets.size);
+        const dataArr = new Array(this.cubelets.size);
+        const widthArr = new Array(this.cubelets.size);
+        const heightArr = new Array(this.cubelets.size);
+        const lengthArr = new Array(this.cubelets.size);
+        let i = 0;
+        this.cubelets.forEach((cubelet, key, map) => {
+            indexArr[i] = key;
+            dataArr[i] = cubelet.data;
+            widthArr[i] = cubelet.width;
+            heightArr[i] = cubelet.height;
+            lengthArr[i] = cubelet.length;
+        })
+
+        this.worker.postMessage([this.width, this.height, this.length, indexArr, dataArr, widthArr, heightArr, lengthArr]);
     }
 
     addToTextureDimensions = (coord: CubeletCoordinate, cubelet: Cubelet) => {
@@ -206,5 +237,7 @@ export class ReconstructionStore {
                 count++;
             }
         }
+
+        this.data = Float32Array.from(data);
     }
 }
