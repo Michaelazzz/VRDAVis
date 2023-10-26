@@ -36,8 +36,8 @@ export class CubeStore {
 
     fps: number = 0;
 
-    steps: number = 90;
-    defaultSteps: number = 90;
+    steps: number = 128;
+    defaultSteps: number = 128;
     currentSteps: number = 0;
     prevSteps: number = 0;
     rateOfChange: number = 0.1;
@@ -203,8 +203,8 @@ export class CubeStore {
         } else {
             this.steps = this.defaultSteps;
         }
-        console.log(fps)
-        console.log(this.steps)
+        // console.log(fps)
+        // console.log(this.steps)
     }
 
 }
