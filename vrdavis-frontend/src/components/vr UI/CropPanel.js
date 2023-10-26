@@ -52,6 +52,15 @@ const CropPanelView = (text) => {
         backgroundColor: new THREE.Color(0xffffff)
     });
 
+    const fps = useMemo(() => new ThreeMeshUI.Block({
+        height: 0.07,
+        width: 0.37,
+        margin: 0.01,
+        textAlign: "center",
+        justifyContent: "center",
+        backgroundColor: new THREE.Color(0xffffff)
+    }), []);
+
     const steps = useMemo(() => new ThreeMeshUI.Block({
         height: 0.07,
         width: 0.37,
@@ -76,7 +85,7 @@ const CropPanelView = (text) => {
         })
     );
     
-    leftSubBlock.add(steps, caption);
+    leftSubBlock.add(fps, steps, caption);
 
     const rightSubBlock = new ThreeMeshUI.Block({
         height: 0.4,
@@ -107,8 +116,12 @@ const CropPanelView = (text) => {
         steps.add(new ThreeMeshUI.Text({
             content: `${String(rootStore.cubeStore.steps)} `,
             fontSize: 0.04,
-        }))
-        
+        }));
+        fps.add(new ThreeMeshUI.Text({
+            content: `${String(rootStore.cubeStore.fps)} `,
+            fontSize: 0.04,
+        }));
+        // steps.set({ content: `${String(rootStore.cubeStore.steps)} ` })
         mountRef.current.add( container );
 
         ThreeMeshUI.update();

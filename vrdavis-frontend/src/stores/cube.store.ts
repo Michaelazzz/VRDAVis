@@ -34,6 +34,8 @@ export class CubeStore {
     currentXYMip: number = 1;
     currentZMip: number = 1;
 
+    fps: number = 0;
+
     steps: number = 90;
     defaultSteps: number = 90;
     currentSteps: number = 0;
@@ -190,8 +192,9 @@ export class CubeStore {
     }
 
     scaleSteps = (fps: number) => {
+        this.fps = fps;
         if(fps < 50) {
-            if(this.steps < 40) this.rootStore.reconstructionStore.downsizeData();
+            // if(this.steps < 40) this.rootStore.reconstructionStore.downsizeData();
             this.currentSteps = this.steps;
             let deltaStep = this.rateOfChange * this.currentSteps * (fps-this.targetFPS) / this.targetFPS;
             if (deltaStep < 0){ deltaStep *= 2;}
