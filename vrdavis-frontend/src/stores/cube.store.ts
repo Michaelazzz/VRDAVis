@@ -36,8 +36,8 @@ export class CubeStore {
 
     fps: number = 0;
 
-    steps: number = 128;
-    defaultSteps: number = 128;
+    steps: number = 100;
+    defaultSteps: number = 100;
     currentSteps: number = 0;
     prevSteps: number = 0;
     rateOfChange: number = 0.1;
