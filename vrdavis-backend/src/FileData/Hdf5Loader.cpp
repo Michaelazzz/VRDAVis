@@ -47,7 +47,7 @@ void Hdf5Loader::OpenDataset(const std::string& dataset) {
     _NY = dims_out[1];
     _NX = dims_out[2];
 
-    spdlog::info("{} {} {}", _NX, _NY, _NZ);
+    spdlog::info("{} {} {}", _NZ, _NY, _NX);
 }
 
 void Hdf5Loader::getFullResDims() {

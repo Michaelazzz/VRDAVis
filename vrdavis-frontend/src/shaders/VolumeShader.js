@@ -73,11 +73,13 @@ const VolumeShader = {
             vec3 white = vec3(1.0, 1.0, 1.0);
 
             vec4 color = vec4(white, 0.0);
-            float accumulator = 0.0;
+            // float accumulator = 0.0;
+            float max = 0.0;
             // ray march through the volume
             for(float i = bounds.x; i < bounds.y; i+=delta){
                 float d = samplePoint(point + 0.5);
-                accumulator += d;
+                if(d > max) max = d;
+                // accumulator += d;
                 d *= u_opacity;
                 color.a += (1.0 - color.a) * d;
                 
@@ -88,7 +90,7 @@ const VolumeShader = {
                 point += rayDirection * delta;
             }
             
-            color.rgb = sampleColourMap(accumulator).rgb;
+            color.rgb = sampleColourMap(max*4.0).rgb;
             gl_FragColor = color;
 
             // discard point if it is empty

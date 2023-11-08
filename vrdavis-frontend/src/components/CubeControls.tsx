@@ -7,11 +7,19 @@ import { observer } from 'mobx-react';
 import { RootContext } from '../store.context';
 import { subtract3D } from '../utilities';
 
+const signedAngleTo = (u: THREE.Vector3, v: THREE.Vector3): number => {
+    // get the signed angle between u and v, in the range [-pi, pi]
+    const angle = v.angleTo(u);
+    const normal = v.clone().sub(u).normalize();
+    return normal.z * angle;
+}
+
 const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
     const { rootStore } = useContext(RootContext);
     
     const ref = useRef<THREE.Mesh>();
     const crop = useRef<THREE.Mesh>();
+    const controls = useRef<THREE.Mesh>();
 
     const [width, setWidth] = useState(0.01);
     const [length, setLength] = useState(0.01);
@@ -36,6 +44,11 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
 
     let prevRightPos = rightController?.controller.position;
     let prevLeftPos = leftController?.controller.position;
+
+    let midpoint = new THREE.Vector3();
+
+    let prevLeftDir = new THREE.Vector3();
+    let prevRightDir = new THREE.Vector3();
 
     // crop selection cube
     let offset = useMemo(() => [0,0,0], [])
@@ -79,62 +92,54 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
             offset[0] = crop.current!.scale.x/2;
             offset[1] = crop.current!.scale.y/2;
             offset[2] = crop.current!.scale.z/2;
-            // mesh.current!.position.set(
-            //     controller!.controller.position.x + offset[0], 
-            //     controller!.controller.position.y + offset[1], 
-            //     controller!.controller.position.z + offset[2]
-            // );
+            // align crop cube with larger cube
+            crop.current!.rotation.copy(ref.current!.rotation);
         } else {
-            // scale controls
-            if(ref.current && leftSqueeze && rightSqueeze) {
-                const distance = leftPos.distanceTo(rightPos);
-                const scale = ref.current.scale;
-                
-                if(distance > prevDistance && scale.x <= maxSize) // scale increases
-                {
-                    ref.current.scale.addScalar(scaleFactor);
-                }
-                else if(distance < prevDistance && scale.x >= minSize) // scale decreases
-                {
-                    ref.current.scale.subScalar(scaleFactor);
-                }
-
-                prevDistance = distance;
-            }
-
             if(ref.current && (prevLeftPos && prevRightPos)) {
+                midpoint = leftPos.clone().sub(rightPos).divideScalar(2);
+                var leftDir = midpoint.clone().sub(leftPos).normalize();
+                var rightDir = midpoint.clone().sub(rightPos).normalize();
+                
                 let offsetLeft = leftPos.clone().sub(prevLeftPos);
                 let offsetRight = rightPos.clone().sub(prevRightPos);
 
                 if(leftSelect && rightSelect)
                 {
                     // rotation controls
-                    ref.current.rotateOnAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
-                    ref.current.rotateOnAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
+                    let rightAngle = signedAngleTo(prevRightDir, rightDir);
+                    let leftAngle = signedAngleTo(prevLeftDir, leftDir);
+                    ref.current.rotateOnAxis(new THREE.Vector3(0,1,0), rightAngle);
+                    // ref.current.rotateOnAxis(new THREE.Vector3(1,0,0), rightAngle);
+
+                    // scale controls
+                    const distance = leftPos.distanceTo(rightPos);
+                    const scale = ref.current.scale;
+                    
+                    if(distance > prevDistance && scale.x <= maxSize) // scale increases
+                    {
+                        ref.current.scale.addScalar(scaleFactor);
+                    }
+                    else if(distance < prevDistance && scale.x >= minSize) // scale decreases
+                    {
+                        ref.current.scale.subScalar(scaleFactor);
+                    }
+                    prevDistance = distance;
                 }
-                else if(leftSqueeze && !rightSqueeze)
+                else if(leftSelect) // translation controls
                 {
-                    ref.current.rotateOnAxis(new THREE.Vector3(0,1,0), offsetLeft.x*rotationMultiplier);
-                    ref.current.rotateOnAxis(new THREE.Vector3(1,0,0), -offsetLeft.y*rotationMultiplier);
+                    ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
+                    rootStore.cubeStore.setWorldspaceCenter(ref.current.position.x, ref.current.position.y, ref.current.position.z);
                 }
-                else if(rightSqueeze && !leftSqueeze)
+                else if(rightSelect)
                 {
-                    // ref.current.rotation.y += offsetRight.x*rotationMultiplier / 100;
-                    // ref.current.rotation.x += -offsetRight.x*rotationMultiplier / 100;
-                    ref.current.rotateOnAxis(new THREE.Vector3(0,1,0), offsetRight.x*rotationMultiplier);
-                    ref.current.rotateOnAxis(new THREE.Vector3(1,0,0), -offsetRight.y*rotationMultiplier);
+                    ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
+                    rootStore.cubeStore.setWorldspaceCenter(ref.current.position.x, ref.current.position.y, ref.current.position.z)
                 }
-                // else if(leftSelect) // translation controls
-                // {
-                //     ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
-                // }
-                // else if(rightSelect)
-                // {
-                //     ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
-                // }
 
                 prevRightPos = rightPos.clone();
                 prevLeftPos = leftPos.clone();
+
+                prevRightDir = rightDir;
             }
         }
 
@@ -172,7 +177,7 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
         rightSelect = false; 
         // console.log(`${Math.abs(crop.current!.scale.x)} ${Math.abs(crop.current!.scale.y)} ${Math.abs(crop.current!.scale.z)}`)
         // console.log((subtract3D(crop.current!.position, {x: 0, y: 1.5, z:-1.5}).x*100) + rootStore.reconstructionStore.width/2)
-        const localCenter = subtract3D(crop.current!.position, {x: 0, y: 1.5, z:-1})
+        const localCenter = subtract3D(crop.current!.position, rootStore.cubeStore.worldspaceCenter /*{x: 0, y: 1.5, z:-1}*/)
         // console.log(localCenter)
         rootStore.cubeStore.setCubeDims(
             {
@@ -181,11 +186,14 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
                 z: Math.abs(crop.current!.scale.z)
             },
             {
-                x: (localCenter.x * 100) + rootStore.reconstructionStore.width / 2,
-                y: (localCenter.y * 100) + rootStore.reconstructionStore.height / 2,
-                z: (localCenter.z * 100) + rootStore.reconstructionStore.length / 2
+                x: (localCenter.x / (rootStore.cubeStore.scaleFactor * ref.current!.scale.x)) + rootStore.reconstructionStore.width / 2,
+                y: (localCenter.y / (rootStore.cubeStore.scaleFactor * ref.current!.scale.y)) + rootStore.reconstructionStore.height / 2,
+                z: (localCenter.z / (rootStore.cubeStore.scaleFactor * ref.current!.scale.z)) + rootStore.reconstructionStore.length / 2
             }
         )
+
+        // controls.current?.clear();
+        // console.log(rootStore.cubeStore.cropCube)
     }, {handedness: 'right'});
 
     useXREvent('selectend', () => {
@@ -198,11 +206,15 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
                 // @ts-ignore
                 ref={crop}
             ></group>
+            <group
+                // @ts-ignore
+                ref={controls}
+            ></group>
             <group 
                 // @ts-ignore
                 ref={ref}
-                position={[0,1.5,-1]}
-                // position={[0,0,0]}
+                // position={[rootStore.cubeStore.worldspaceCenter.x, rootStore.cubeStore.worldspaceCenter.y, rootStore.cubeStore.worldspaceCenter.z]}
+                position={[0, 1.5, -1]}
             >
                 {children}
             </group>

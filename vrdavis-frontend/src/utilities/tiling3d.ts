@@ -44,58 +44,6 @@ export function LayerToMip(layer: number, fullCubeSize: Point3D, cubeSize: Point
 }
 
 export function GetRequiredCubelets(cubeState: CubeView, fullCubeState: Point3D, cubeSize: Point3D): CubeletCoordinate[] {
-    // validate stuff
-    
-    // const layerXY = MipToLayerXY(cubeView.mipXY, fullCubeSize, cubeSize);
-    // const layerZ = MipToLayerZ(cubeView.mipZ, fullCubeSize, cubeSize);
-    // if (layerXY < 0) {
-    //     return [new CubeletCoordinate(0, 0, 0, 0, 0)];
-    // }
-
-    // const boundedCubeView: CubeView = {
-    //     xMin: Math.max(0, cubeState.xMin),
-    //     xMax: Math.min(cubeState.xMax, fullCubeState.x),
-    //     yMin: Math.max(0, cubeState.yMin),
-    //     yMax: Math.min(cubeState.yMax, fullCubeState.y),
-    //     zMin: Math.max(0, cubeState.zMin),
-    //     zMax: Math.min(cubeState.zMax, fullCubeState.z),
-    //     mipXY: cubeState.mipXY,
-    //     mipZ: cubeState.mipZ
-    // };
-    const boundedCubeView: CubeView = {
-        xMin: cubeState.xMin + cubeState.xMax,
-        xMax: cubeState.xMax + cubeState.xMax,
-        yMin: cubeState.yMin + cubeState.yMax,
-        yMax: cubeState.yMax + cubeState.yMax,
-        zMin: cubeState.zMin + cubeState.zMax,
-        zMax: cubeState.zMax + cubeState.zMax,
-        mipXY: cubeState.mipXY,
-        mipZ: cubeState.mipZ
-    };
-
-    // console.log(boundedCubeView)
-
-    // const adjustedCubeSize: Point3D = {
-    //     x: cubeState.mipXY * cubeSize.x,
-    //     y: cubeState.mipXY * cubeSize.y,
-    //     z: cubeState.mipZ * cubeSize.z
-    // };
-
-    // rounded method
-    // const xStart = Math.ceil(boundedCubeView.xMin / cubeSize.x);
-    // const xEnd = Math.floor(boundedCubeView.xMax / cubeSize.x);
-    // const yStart = Math.ceil(boundedCubeView.yMin / cubeSize.y);
-    // const yEnd = Math.floor(boundedCubeView.yMax / cubeSize.y);
-    // const zStart = Math.ceil(boundedCubeView.zMin / cubeSize.z);
-    // const zEnd = Math.floor(boundedCubeView.zMax / cubeSize.z);
-
-    // const xStart = Math.ceil(boundedCubeView.xMin / adjustedCubeSize.x);
-    // const xEnd = Math.floor(boundedCubeView.xMax / adjustedCubeSize.x);
-    // const yStart = Math.ceil(boundedCubeView.yMin / adjustedCubeSize.y);
-    // const yEnd = Math.floor(boundedCubeView.yMax / adjustedCubeSize.y);
-    // const zStart = Math.ceil(boundedCubeView.zMin / adjustedCubeSize.z);
-    // const zEnd = Math.floor(boundedCubeView.zMax / adjustedCubeSize.z);
-
     const xStart = Math.ceil(cubeState.xMin / cubeState.mipXY);
     const xEnd = Math.floor(cubeState.xMax / cubeState.mipXY);
     const yStart = Math.ceil(cubeState.yMin / cubeState.mipXY);
@@ -103,28 +51,15 @@ export function GetRequiredCubelets(cubeState: CubeView, fullCubeState: Point3D,
     const zStart = Math.ceil(cubeState.zMin / cubeState.mipZ);
     const zEnd = Math.floor(cubeState.zMax / cubeState.mipZ);
 
-    // console.log(xStart + ' ' + xEnd);
-    // console.log(yStart + ' ' + yEnd);
-    // console.log(zStart + ' ' + zEnd);
-
-    // const numCubesX = xEnd - xStart;
-    // const numCubesY = yEnd - yStart;
-    // const numCubesZ = zEnd - zStart;
-
-    // console.log(numCubesX)
-    // console.log(numCubesY)
-    // console.log(numCubesZ)
-
-    // console.log(adjustedCubeSize)
-    
     const cubeletSet: CubeletCoordinate[] = new Array<CubeletCoordinate>();
-    for (let x = xStart; x < xEnd; x=x+cubeSize.x) {
-        for (let y = yStart; y < yEnd; y=y+cubeSize.y) {
-            for (let z = zStart; z < zEnd; z=z+cubeSize.z) {
-                console.log(Math.floor(x/cubeSize.x) + ' ' + Math.floor(y/cubeSize.y) + ' ' + Math.floor(z/cubeSize.z))
+    for (let x = xStart; x <= xEnd; x=x+cubeSize.x) {
+        for (let y = yStart; y <= yEnd; y=y+cubeSize.y) {
+            for (let z = zStart; z <= zEnd; z=z+cubeSize.z) {
+                // console.log(Math.floor(x/cubeSize.x) + ' ' + Math.floor(y/cubeSize.y) + ' ' + Math.floor(z/cubeSize.z))
                 cubeletSet.push(new CubeletCoordinate(Math.floor(x/cubeSize.x), Math.floor(y/cubeSize.y), Math.floor(z/cubeSize.z), cubeState.mipXY, cubeState.mipZ));
             }
         }
     }
+
     return cubeletSet;
 }

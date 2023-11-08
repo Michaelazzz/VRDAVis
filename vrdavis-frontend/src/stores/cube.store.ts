@@ -21,9 +21,11 @@ export interface CubeInfo {
 export class CubeStore {
     rootStore: RootStore;
     cropMode: boolean;
-    worldspaceCenter: Point3D = { x: 0, y: 0, z: 0 };
+    worldspaceCenter: Point3D = { x: 0, y: 1.5, z: -1 };
     // public readonly cubeInfo: CubeInfo;
     // private readonly cubeVoxelRatio: number;
+
+    scaleFactor: number = 100;
 
     prevCube: Point3D = { x: 1, y: 1, z: 1 };
     prevCenter: Point3D = {x: 0, y: 0, z: 0};
@@ -79,7 +81,7 @@ export class CubeStore {
         const adjustedCenter = {
             x: this.cropCenter.x * this.currentXYMip,
             y: this.cropCenter.y * this.currentXYMip,
-            z: this.cropCenter.z * this.currentZMip
+            z: this.cropCenter.z* this.currentZMip
         }
         // console.log(adjustedCenter)
         // get the position of the corners of the crop cube in worldspace context
@@ -193,7 +195,7 @@ export class CubeStore {
 
     scaleSteps = (fps: number) => {
         this.fps = fps;
-        if(fps < 30) {
+        if(fps < 40) {
             // if(this.steps < 40) this.rootStore.reconstructionStore.downsizeData();
             this.currentSteps = this.steps;
             let deltaStep = this.rateOfChange * this.currentSteps * (fps-this.targetFPS) / this.targetFPS;
@@ -205,6 +207,10 @@ export class CubeStore {
         }
         // console.log(fps)
         // console.log(this.steps)
+    }
+
+    setWorldspaceCenter = (x: number, y: number, z: number) => {
+        this.worldspaceCenter = {x, y, z};
     }
 
 }

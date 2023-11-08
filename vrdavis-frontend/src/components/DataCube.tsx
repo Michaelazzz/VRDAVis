@@ -15,7 +15,7 @@ const DataCubeView: React.FC = () => {
     const height = reconstructionStore.height;
     const length = reconstructionStore.length;
 
-    const scaleFactor = 100;
+    const scaleFactor = rootStore.cubeStore.scaleFactor;
 
     const ref = useRef<THREE.Mesh>();
 
@@ -101,7 +101,6 @@ const DataCubeView: React.FC = () => {
             // @ts-ignore
             ref={ref}
             scale={[width/scaleFactor, height/scaleFactor, length/scaleFactor]}
-            // position={[0,1.5,-1.5]}
         ></group>
     )
 };

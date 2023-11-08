@@ -11,12 +11,9 @@ const reconstructionWorker = () => {
         const lengthArr = e.data[7];
       
         const data = new Float32Array(width*height*length);
-      
         console.log('Worker: reconstructing cube');
-      
         for (let index = 0; index < indexArr.length; index++) {
             const coord = indexArr[index].split('_');
-            console.log('cubelet');
             // add cubelet
             let n = 0;
             for(let l = lengthArr[index]*Number(coord[2]); l < lengthArr[index]*Number(coord[2])+lengthArr[index]; l++) {

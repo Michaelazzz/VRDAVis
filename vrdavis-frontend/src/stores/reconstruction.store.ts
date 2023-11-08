@@ -125,12 +125,14 @@ export class ReconstructionStore {
         const heightArr = new Array(this.cubelets.size);
         const lengthArr = new Array(this.cubelets.size);
         let i = 0;
+        
         this.cubelets.forEach((cubelet, key, map) => {
             indexArr[i] = key;
             dataArr[i] = cubelet.data;
             widthArr[i] = cubelet.width;
             heightArr[i] = cubelet.height;
             lengthArr[i] = cubelet.length;
+            i++;
         })
 
         this.worker.postMessage([this.width, this.height, this.length, indexArr, dataArr, widthArr, heightArr, lengthArr]);
@@ -216,7 +218,6 @@ export class ReconstructionStore {
 
     resetCube = () => {
         this.cubelets.clear();
-
         this.data = new Float32Array();
         this.width = 0;
         this.height = 0;

@@ -50,8 +50,8 @@ const AppView: React.FC = () => {
                 <XR>
                     <PerformanceMonitor 
                         // onIncline={rootStore.cubeStore.increaseSteps} 
-                        onChange={({fps, factor}) => { 
-                            rootStore.cubeStore.scaleSteps(fps)
+                        onChange={({fps, factor, refreshrate}) => { 
+                            rootStore.cubeStore.scaleSteps(refreshrate)
                         }}
                         // onFallback={rootStore.cubeStore.decreaseSteps}
                         // onChange={({ factor }) => setDpr(0.5 + 1.5 * factor)}
