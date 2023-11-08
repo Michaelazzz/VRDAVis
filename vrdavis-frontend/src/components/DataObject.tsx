@@ -17,7 +17,6 @@ const DataObjectView: React.FC = () => {
     const width = reconstructionStore.width;
     const height = reconstructionStore.height;
     const length = reconstructionStore.length;
-    const cubeUpdated = reconstructionStore.cubeUpdated;
 
     const ref = useRef<THREE.Mesh>();
 
@@ -107,8 +106,8 @@ const DataObjectView: React.FC = () => {
         if(!ref.current)
             return;
         ref.current.add(dataCube);
-        console.log('use effect')
-    }, []);
+        
+    }, [dataCube]);
     
 
     useFrame(() => {

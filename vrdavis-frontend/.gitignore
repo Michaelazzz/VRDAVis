@@ -5,8 +5,7 @@
 
 # dependencies
 /node_modules
-protobuf/build
-protobuf/build/index.js
+/protobuf/build
 /.pnp
 .pnp.js
 

@@ -22,9 +22,10 @@ endif ()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 FIND_PACKAGE(GSL REQUIRED)
-FIND_PACKAGE(ZFP CONFIG REQUIRED)
+# FIND_PACKAGE(ZFP CONFIG REQUIRED)
 FIND_PACKAGE(PkgConfig REQUIRED)
 
+FIND_PACKAGE(HDF5 REQUIRED COMPONENTS CXX)
 FIND_PACKAGE(Protobuf REQUIRED)
 INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
 # FIND_PACKAGE(Threads)
@@ -47,7 +48,7 @@ set(LINK_LIBS
     ${PROTOBUF_LIBRARY}
     uSockets
     z
-    zfp
+    # zfp
     ${OpenMP_CXX_LIBRARIES}
     ${HDF5_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
@@ -63,7 +64,7 @@ endif ()
 
 set(SOURCE_FILES
     ${SOURCE_FILES}
-    src/DataStream/Compression.cpp
+    # src/DataStream/Compression.cpp
     src/DataStream/Cubelet.cpp
     src/FileList/FileListHandler.cpp
     src/HttpServer/HttpServer.cpp

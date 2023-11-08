@@ -11,7 +11,7 @@ const CropCubeView: React.FC<{dims: number[]}> = ({dims}) => {
     const geometryCube = useMemo(() => new THREE.BoxGeometry( dims[0], dims[1], dims[2] ), [dims]);
     const edgesGeometry = useMemo(() => new THREE.EdgesGeometry( geometryCube ), [geometryCube]);
     const materialCube = useMemo(() => new THREE.LineBasicMaterial({
-        color: 0x000000,
+        color: 0x00FF00,
         fog: false,
         linewidth: 1, // 1 regardless of set value
         linecap: 'round',

@@ -21,8 +21,7 @@ void Hdf5Loader::OpenFile(const std::string& filename, const std::string& direct
     try {
         // open file
         _file = H5Fopen(path.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
-
-        //open dataset
+        // open full resolution dataset to get worldspace dimensions
         OpenDataset("0/DATA");
     } catch (H5::FileIException &file_exists_err) {
         spdlog::error(file_exists_err.getDetailMsg());
@@ -186,7 +185,7 @@ bool Hdf5Loader::GetChunk(float* volume_data_out, int chunk_width, int chunk_hei
 bool Hdf5Loader::readHdf5Data(float* volume_data_out, const std::vector<hsize_t>& dims, const std::vector<hsize_t>& count, const std::vector<hsize_t>& start) {
     try {
         spdlog::info("dims {} {} {}", dims.at(0), dims.at(1), dims.at(2));
-        // spdlog::info("count {} {} {}", count.at(0), count.at(1), count.at(2));
+        spdlog::info("count {} {} {}", count.at(0), count.at(1), count.at(2));
         spdlog::info("start {} {} {}", start.at(0), start.at(1), start.at(2));
         
         H5::DataSpace memspace(dims.size(), dims.data());

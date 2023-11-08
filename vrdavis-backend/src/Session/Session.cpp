@@ -241,8 +241,7 @@ bool Session::OnOpenFile(const VRDAVis::OpenFile& message, uint32_t request_id, 
     bool info_loaded = FillExtendedFileInfo(file_info, directory, filename, 0, 0, 0, 0, file_message);
 
     if (info_loaded) {
-        try
-        {                                                                                                                                                                                                                                                                                                                                                             
+        try {                                                                                                                                                                                                                                                                                                                                                             
             _loader = new Hdf5Loader();
             _loader->OpenFile(filename, directory);
         }
@@ -251,9 +250,10 @@ bool Session::OnOpenFile(const VRDAVis::OpenFile& message, uint32_t request_id, 
             return false;
         }
 
-        VRDAVis::FileInfoExtended response_file_info = VRDAVis::FileInfoExtended();
+        VRDAVis::FileInfoExtended response_file_info;
         response_file_info.set_dimensions(3);
         response_file_info.set_width(_loader->getXDimensions());
+        spdlog::info("{}", _loader->_NX);
         response_file_info.set_height(_loader->getYDimensions());
         response_file_info.set_length(_loader->getZDimensions());
         *ack.mutable_file_info() = response_file_info;
@@ -294,7 +294,25 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
     float compression_quality = message.compression_quality();
 
     ThreadManager::ApplyThreadLimit();
-    // _loader->OpenDataset("0/DATA");
+
+    // open dataset
+    std::string dataset = "";
+    const std::string encoded_coordinate = message.cubelets(0);
+    VRDAVis::CubeletData cubelet_data_message;
+    cubelet_data_message.set_file_id(file_id);
+
+    auto cubelet = Cubelet::Decode(encoded_coordinate);
+    if(cubelet.mipXY > 1 && cubelet.mipZ > 1) {
+        dataset = "/0/MipMaps/DATA/DATA_XYZ_" + std::to_string(cubelet.mipXY) + "_" + std::to_string(cubelet.mipXY) + "_" + std::to_string(cubelet.mipZ);
+    } else if(cubelet.mipXY > 1 && cubelet.mipZ == 1) {
+        dataset = "/0/MipMaps/DATA/DATA_XY_" + std::to_string(cubelet.mipXY);
+    } else if(cubelet.mipZ > 1 && cubelet.mipXY == 1) {
+        dataset = "/0/MipMaps/DATA/DATA_Z_" + std::to_string(cubelet.mipZ);
+    } else {
+        dataset = "/0/DATA";
+    }
+    spdlog::info("{}", dataset);
+    _loader->OpenDataset(dataset);
 
     for (int i = 0; i < num_cubes; i++) {
         const std::string encoded_coordinate = message.cubelets(i);
@@ -317,10 +335,11 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
         cubelet_ptr->set_y(cubelet.y); // y position/offset
         cubelet_ptr->set_z(cubelet.z); // z position/offset
 
-        int xDims = (cubelet.x+256 > _loader->getXDimensions()) ? 256 - ((cubelet.x+256) - _loader->getXDimensions()) : 256;
-        int yDims = (cubelet.y+256 > _loader->getYDimensions()) ? 256 - ((cubelet.y+256) - _loader->getYDimensions()) : 256;
-        int zDims = (cubelet.z+256 > _loader->getZDimensions()) ? 256 - ((cubelet.z+256) - _loader->getZDimensions()) : 256;
-
+        int CUBELET_SIZE_XY = 128;
+        int CUBELET_SIZE_Z = 128;
+        int xDims = (cubelet.x+CUBELET_SIZE_XY > _loader->getXDimensions()) ? CUBELET_SIZE_XY - ((cubelet.x+CUBELET_SIZE_XY) - _loader->getXDimensions()) : CUBELET_SIZE_XY;
+        int yDims = (cubelet.y+CUBELET_SIZE_XY > _loader->getYDimensions()) ? CUBELET_SIZE_XY - ((cubelet.y+CUBELET_SIZE_XY) - _loader->getYDimensions()) : CUBELET_SIZE_XY;
+        int zDims = (cubelet.z+CUBELET_SIZE_Z > _loader->getZDimensions()) ? CUBELET_SIZE_Z - ((cubelet.z+CUBELET_SIZE_Z) - _loader->getZDimensions()) : CUBELET_SIZE_Z;
         
         // spdlog::info("{} {} {}", cubelet.x, cubelet.y, cubelet.z);
         // spdlog::info("Cubelet Dimensions {} {} {}", xDims, yDims, zDims);
@@ -333,10 +352,10 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
         volume_data_out, 
         { hsize_t(zDims), hsize_t(yDims), hsize_t(xDims) }, 
         { hsize_t(zDims), hsize_t(yDims), hsize_t(xDims) }, 
-        { hsize_t(cubelet.z), hsize_t(cubelet.y), hsize_t(cubelet.x) })) {
+        { hsize_t(cubelet.z*CUBELET_SIZE_Z), hsize_t(cubelet.y*CUBELET_SIZE_XY), hsize_t(cubelet.x*CUBELET_SIZE_XY) })) {
             // size_t cube_data_size = sizeof(float) * volume_data_out->size(); // cube data size in bytes
-            cubelet_ptr->set_height(xDims);
-            cubelet_ptr->set_width(yDims);
+            cubelet_ptr->set_height(yDims);
+            cubelet_ptr->set_width(xDims);
             cubelet_ptr->set_length(zDims);
             // cubelet_ptr->set_volume_data(volume_data_length, *volume_data_out);
             // SendFileEvent(file_id, VRDAVis::EventType::VOLUME_CUBE_DATA, 0, volume_data, compression_type == VRDAVis::CompressionType::NONE);
@@ -345,6 +364,7 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
                 // uncompressed data
                 for (size_t i = 0; i < volume_data_length; i++)
                 {
+
                     cubelet_ptr->add_volume_data(volume_data_out[i]);
                 }
             } else if (compression_type == VRDAVis::CompressionType::ZFP) {

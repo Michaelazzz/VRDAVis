@@ -63,7 +63,6 @@ export class SignallingStore {
     }
 
     // pairing
-
     async start() {
         if (this.socket) {
             this.socket.onclose = null;
@@ -92,7 +91,7 @@ export class SignallingStore {
         }
 
         this.socket.onmessage = async (event) => {
-            // console.log(`[received] ${event.data}`);
+            console.log(`[received] ${event.data}`);
             const msg = JSON.parse(event.data);
 
             switch (msg.type) {
@@ -142,7 +141,6 @@ export class SignallingStore {
                     break;
             }
         }
-
     }
 
     sendMessage(message: any) {
@@ -258,7 +256,6 @@ export class SignallingStore {
     }
 
     // web RTC
-
     startWebRTC = async () => {
         await this.createPeerConnection();
 
@@ -397,6 +394,7 @@ export class SignallingStore {
     onSendChannelMessageCallback = (event: any) => {
         console.log('received message');
         this.dataChannelReceive = event.data;
+
     }
 
     onReceiveChannelStateChange = () => {
@@ -415,16 +413,27 @@ export class SignallingStore {
       }
 
     onReceiveChannelMessageCallback = (event: any) => {
-        console.log('received message');
         this.dataChannelReceive = event.data;
+
+        console.log(`[received] ${event.data}`);
+        const msg = JSON.parse(event.data);
+
+        switch (msg.type) {
+            case 'transfer':
+                this.rootStore.resumeState(msg.data);
+                break;
+            default:
+                console.log(`[error] unknown message type "${msg.type}"`);
+                break;
+        }
     }
 
-    sendData = (data: any) => {
+    sendDataToPeer = (data: any) => {
         if (this.sendChannel) {
             this.sendChannel.send(data);
         } else {
             this.receiveChannel.send(data);
         }
-        console.log('sent data: ' + data);
+        console.log('[sent] ' + data);
     }
 }

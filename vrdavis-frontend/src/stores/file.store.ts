@@ -19,6 +19,8 @@ export class FileStore {
     fileWidth = 0;
     fileHeight = 0;
     fileLength = 0;
+
+    fileOpen: boolean = false;
     
     constructor (rootStore: RootStore) {
         makeAutoObservable(this, {rootStore: false});
@@ -46,5 +48,13 @@ export class FileStore {
         this.fileWidth = fileWidth;
         this.fileHeight = fileHeight;
         this.fileLength = fileLength;
+    }
+
+    getFilename = () => {
+        return this.fileName;
+    }
+
+    setFileOpen = (state: boolean) => {
+        this.fileOpen = state;
     }
 }

@@ -16,8 +16,8 @@ const CropControlsView: React.FC<PropsWithChildren> = ({children}) => {
     const [selected, setSelected] = useState(false);
 
     const [distance, setDistance] = useState(new THREE.Vector3());
-    let scaleFactor = 250;
-    let positionOffset = -1.1;
+    let scaleFactor = 220;
+    let offset = useMemo(() => [0,0,0], [])
 
     const controller = useController("right");
 
@@ -38,34 +38,47 @@ const CropControlsView: React.FC<PropsWithChildren> = ({children}) => {
     const edges = useMemo(() => new THREE.LineSegments( edgesGeometry, materialCube ), [edgesGeometry, materialCube]);
 
     useEffect(() => {
+        if(!controller) return;
         mesh.current!.add(edges);
-    }, [edges]);
+        mesh.current!.position.set(
+            controller!.controller.position.x + offset[0], 
+            controller!.controller.position.y - offset[1], 
+            controller!.controller.position.z + offset[2]
+        );
+    }, [edges, controller, offset]);
 
     useFrame(() => {
         if(selected) {
             // track the contollers position and the distance it is from the spawn point
             setDistance(controller!.controller.position.sub(mesh.current!.position));
             mesh.current!.scale.set(distance.x * scaleFactor, distance.y * scaleFactor, distance.z * scaleFactor);
-            // mesh.current!.position.set(controller!.controller.position.x + positionOffset, controller!.controller.position.y + positionOffset, controller!.controller.position.z +positionOffset);
+            offset[0] = mesh.current!.scale.x/2;
+            offset[1] = mesh.current!.scale.y/2;
+            offset[2] = mesh.current!.scale.z/2;
+            // mesh.current!.position.set(
+            //     controller!.controller.position.x + offset[0], 
+            //     controller!.controller.position.y + offset[1], 
+            //     controller!.controller.position.z + offset[2]
+            // );
         }
     });
 
-    useXREvent('selectstart', () => {
+    useXREvent('squeezestart', () => {
         setSelected(true);
         mesh.current!.position.set(controller!.controller.position.x, controller!.controller.position.y, controller!.controller.position.z);
     }, {handedness: 'right'});
 
-    useXREvent('selectend', () => {
+    useXREvent('squeezeend', () => {
         setSelected(false);
     }, {handedness: 'right'});
 
     return (
-        <mesh 
+        <group 
             // @ts-ignore
             ref={mesh}
         >
             {children}
-        </mesh>
+        </group>
     )
 }
 

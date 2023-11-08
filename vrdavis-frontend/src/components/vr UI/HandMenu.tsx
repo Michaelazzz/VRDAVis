@@ -1,14 +1,16 @@
-import {forwardRef, useRef, useState} from "react";
+import {forwardRef, useEffect, useRef, useState} from "react";
 import {Interactive, useController, useInteraction, useXREvent} from "@react-three/xr";
 import {extend, useFrame} from "@react-three/fiber";
 import * as THREE from "three";
 import ThreeMeshUI from "three-mesh-ui";
 
-import Panel from "./Panel";
+import FontJSON from '../../assets/Roboto-msdf.json';
+import FontImage from '../../assets/Roboto-msdf.png';
+
+// import Panel from "./Panel";
 import Button from "./Button";
 import ChartPanel from "./ChartPanel";
 
-extend(ThreeMeshUI);
 
 const Title = forwardRef(({accentColor, text}: any, ref) => {
     return (
@@ -31,7 +33,7 @@ const Title = forwardRef(({accentColor, text}: any, ref) => {
 });
 
 function HandMenu({children, ...rest}: any) {
-    const [data, setData] = useState([65, 59, 80, 81, 56, 55, 60]);
+    // const [data, setData] = useState([65, 59, 80, 81, 56, 55, 60]);
 
     // setInterval(() => {
     //     setData(Array.from({length: 7}, () => Math.floor(Math.random() * 10)));
@@ -41,43 +43,62 @@ function HandMenu({children, ...rest}: any) {
     // const ref = useRef();
     const leftController = useController("left");
 
-    const raycaster = new THREE.Raycaster();
+    // const raycaster = new THREE.Raycaster();
 
-    const buttonRef = useRef();
+    // const buttonRef = useRef();
     const [accentColor] = useState(() => new THREE.Color("red"));
 
     const titleRef = useRef();
+
+    useEffect(() => {
+        if(!ref.current)
+            return;
+
+
+
+        ref.current.add( new ThreeMeshUI.Block( {
+            width: 1.3,
+            height: 0.5,
+            padding: 0.05,
+            justifyContent: 'center',
+            textAlign: 'left',
+            // @ts-ignore
+            fontFamily: FontJSON,
+            fontTexture: FontImage,
+            // interLine: 0,
+        } ))
+        ref.current.add( new ThreeMeshUI.Text( {
+			content: 'Hello from the UI',
+			fontSize: 0.055
+		}));
+        ThreeMeshUI.update();
+    }, [])
 
     useFrame(state => {
         if (!leftController) {
             return;
         }
-
         const controller = leftController.controller;
         const x = 0;
         const y = 0.6;
         const z = -0.5;
         const offset = new THREE.Vector3(-controller.position.x + x, -controller.position.y + y, -controller.position.z + z);
-        
         if (ref.current) {
-            // const position =  new THREE.Vector3().copy(controller.position);
+            // const position = new THREE.Vector3().copy(controller.position);
             ref.current.position.copy(controller.position).add(offset);
             // ref.current.quaternion.copy(controller.quaternion);
             leftController.controller.add(ref.current);
         }
-
         ThreeMeshUI.update();
     });
 
-    const onButtonSelect = () => {
-        accentColor.offsetHSL(1 / 3, 0, 0);
-        if(titleRef.current) {
-            // @ts-ignore
-            titleRef.current.set({ content: 'Michaela!'});
-        }
-            
-        
-    }
+    // const onButtonSelect = () => {
+    //     accentColor.offsetHSL(1 / 3, 0, 0);
+    //     if(titleRef.current) {
+    //         // @ts-ignore
+    //         titleRef.current.set({ content: 'Michaela!'});
+    //     }
+    // }
 
     useXREvent("squeeze", () => accentColor.offsetHSL(1 / 3, 0, 0));
     useXREvent("select", () => accentColor.offsetHSL(1 / 3, 0, 0));
@@ -85,14 +106,12 @@ function HandMenu({children, ...rest}: any) {
 
     return (
         <group ref={ref} {...rest}>
-            <Panel height={1}>
-                <Title ref={titleRef} accentColor={accentColor} text={'World'} />
+            {/* <Panel height={1}> */}
+                {/* <Title ref={titleRef} accentColor={accentColor} text={'World'} /> */}
                 {/* @ts-ignore  */}
-                <Button onSelect={onButtonSelect}/>
-                <ChartPanel
-                    data={data}
-                />
-            </Panel>
+                {/* <Button onSelect={onButtonSelect}/> */}
+                {/* <ChartPanel data={data}/> */}
+            {/* </Panel> */}
         </group>
     );
 }

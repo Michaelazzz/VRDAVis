@@ -69,7 +69,8 @@ export class BackendStore {
 
     private readonly decoderMap: Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>;
 
-    directory: string = '../../test-data'; //'/data/cubes1'
+    // directory: string = '../../test-data'; // test directory route
+    directory: string = '/data/cubes1/hdf5';
 
     // remove
     // volumeData: Float32Array;
@@ -85,7 +86,7 @@ export class BackendStore {
 
         this.loggingEnabled = true;
         this.connectionDropped = false;
-        this.serverUrl = 'ws://localhost:3002';
+        this.serverUrl = 'wss://vrdavis01.idia.ac.za/server';
 
         this.connection = new WebSocket(this.serverUrl);
         this.endToEndPing = NaN;
@@ -346,17 +347,32 @@ export class BackendStore {
     }
 
     private onOpenFileAck = (eventId: number, ack: VRDAVis.OpenFileAck) => {
-        if(ack.fileInfo)
+        if(!ack.fileInfo) return;
+        if(!ack.fileInfo.width || !ack.fileInfo.height || !ack.fileInfo.length) return;
         this.rootStore.fileStore.setDimensions(
             ack.fileInfo.dimensions || 0, 
             ack.fileInfo.width || 0, 
             ack.fileInfo.height || 0, 
             ack.fileInfo.length || 0)
         this.onDeferredResponse(eventId, ack);
-
+        
+        // const dims = { x: ack.fileInfo.width, y: ack.fileInfo.height, z: ack.fileInfo.length }
+        // const center = { x: ack.fileInfo.width / 2, y: ack.fileInfo.height / 2, z: ack.fileInfo.length / 2 }
+        this.rootStore.cubeStore.worldspaceCenter = {
+            x: ( ack.fileInfo.width / 2.0 ), 
+            y: ( ack.fileInfo.height / 2.0),
+            z: ( ack.fileInfo.length / 2.0)
+        };
+        this.rootStore.cubeStore.setCubeDims(
+            { x: ack.fileInfo.width, y: ack.fileInfo.height, z: ack.fileInfo.length },
+            { x: ack.fileInfo.width / 2, y: ack.fileInfo.height / 2, z: ack.fileInfo.length / 2 }
+        );
+        this.rootStore.cubeStore.setPrevious();
+        this.rootStore.fileStore.setFileOpen(true);
         // get initial cubes
-        this.rootStore.initialCube();
-        // this.rootStore.cropCube();
+        // this.rootStore.initialCube();
+        // change to crop cube later
+        this.rootStore.cropCube();
     }
 
     private onFileInfoResponse = (eventId: number, res: VRDAVis.FileInfoResponse) => {

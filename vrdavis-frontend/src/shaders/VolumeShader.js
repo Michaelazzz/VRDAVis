@@ -12,16 +12,20 @@ const VolumeShader = {
         }
     `,
     fradgmentShader: /* glsl */`
-        #define STEPS 100.0
+        // #define STEPS 100.0
         #define MAX_DIST 100.
-        #define THRESHOLD .25
-        #define RANGE .1
-        #define OPACITY .1
+        // #define THRESHOLD .25
+        // #define RANGE .1
+        // #define OPACITY .1
 
         precision highp float;
         precision mediump sampler3D;
 
         uniform sampler3D u_textureData;
+        uniform float u_threshold;
+        uniform float u_range;
+        uniform float u_opacity;
+        uniform float u_steps;
         uniform sampler2D u_colourMap;
 
         varying vec3 v_origin;
@@ -49,8 +53,8 @@ const VolumeShader = {
             return texture(u_textureData, point).r;
         }
 
-        vec3 sampleColourMap(float value) {
-            return texture(u_colourMap, vec2(value, 0.5)).rgb;
+        vec4 sampleColourMap(float value) {
+            return texture(u_colourMap, vec2(value, 0.5));
         }
 
         void main() {
@@ -64,19 +68,17 @@ const VolumeShader = {
             vec3 point = v_origin + bounds.x * rayDirection;
             vec3 inc = 1.0 / abs(rayDirection);
             float delta = min(inc.x, min(inc.y, inc.z));
-            delta /= STEPS;
+            delta /= u_steps;
 
             vec3 white = vec3(1.0, 1.0, 1.0);
 
             vec4 color = vec4(white, 0.0);
-
+            float accumulator = 0.0;
             // ray march through the volume
             for(float i = bounds.x; i < bounds.y; i+=delta){
                 float d = samplePoint(point + 0.5);
-                color.rgb = sampleColourMap(d);
-                //d = smoothstep(THRESHOLD - RANGE, THRESHOLD + RANGE, d) * OPACITY;
-                d *= OPACITY;
-                //color.rgb += (1.0 - color.a) * d * color.rgb;
+                accumulator += d;
+                d *= u_opacity;
                 color.a += (1.0 - color.a) * d;
                 
                 // stop ray if it has accumulated enough opacity
@@ -86,6 +88,7 @@ const VolumeShader = {
                 point += rayDirection * delta;
             }
             
+            color.rgb = sampleColourMap(accumulator).rgb;
             gl_FragColor = color;
 
             // discard point if it is empty
