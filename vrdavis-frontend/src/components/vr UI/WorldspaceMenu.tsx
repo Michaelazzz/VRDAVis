@@ -43,11 +43,11 @@ const WorldspaceMenu = ({position = [0,0,0], children}: any) => {
             let offsetRight = rightPos.clone().sub(prevRightPos);
             
             // translation controls
-            if(leftSelect){
+            if(leftSqueeze){
                 if((ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1]) && (ref.current.position.y >= yRange[0] || ref.current.position.y <= yRange[1]))
                     ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
             }
-            else if(rightSelect){
+            else if(rightSqueeze){
                 if(ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1])
                     ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
             }

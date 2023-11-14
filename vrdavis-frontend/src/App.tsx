@@ -17,6 +17,7 @@ import HandMenuControls from "./components/vr UI/HandMenuControls";
 import Button from "./components/vr UI/Button";
 import { CropPanel } from "./components/vr UI/CropPanel";
 import { CubeControls } from "./components/CubeControls";
+import Panel from "./components/vr UI/Panel";
 
 const AppView: React.FC = () => {
 
@@ -37,7 +38,6 @@ const AppView: React.FC = () => {
             <CssBaseline />
             <BrowserMenu>
                 <h1>VRDAVis</h1>
-                <p>steps: {rootStore.cubeStore.steps}</p>
                 <DeviceCredentials/>
                 <WebRTCMenu/>
                 <PairingMenu/>
@@ -77,12 +77,13 @@ const AppView: React.FC = () => {
                     {/* <group position={[0,1,-1.5]}></group> */}
                     <HandMenuControls>
                         {/* <ExamplePanel/> */}
-                        {/* <Panel text='hello from the UI'/> */}
+                        
                         <>
                             <Button 
                                 text="crop mode" 
                                 position={[0.27, 0]}
-                                onSelect={() => rootStore.cubeStore.toggleCropMode()}
+                                onSelect={rootStore.cubeStore.toggleCropMode}
+                                toggleOn={true}
                             />
                             <Button 
                                 text="crop" 
@@ -99,10 +100,10 @@ const AppView: React.FC = () => {
                             onSelect={toggleHandMenu}
                         /> */}
                     </HandMenuControls>
-                    {/* <HandMenu /> */}
-                    {/* <WorldspaceMenu position={[1,1.5,-1.5]} /> */}
+                    <WorldspaceMenu position={[1,1.5,-1.5]}>
+                        <Panel text='hello from the UI'/>
+                    </WorldspaceMenu>
                     
-                    {/* { mode==='crop' && <CropControls/>} */}
                      
                     <CubeControls>
                         <Bvh>

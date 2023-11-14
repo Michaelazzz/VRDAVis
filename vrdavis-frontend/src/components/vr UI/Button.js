@@ -8,15 +8,24 @@ import FontImage from '../../assets/Roboto-msdf.png';
 
 extend(ThreeMeshUI)
 
-const Button = ({position=[0,0], backgroundColor = 0xffffff, width = 0.4, height = 0.1, text='Click', onSelect = () => console.log({text})}) => {
+const Button = ({
+    position=[0,0], 
+    backgroundColor = 0xffffff, 
+    width = 0.4, 
+    height = 0.1, 
+    text='Click', 
+    onSelect = () => console.log({text}),
+    toggleOn = false
+}) => {
 
     const buttonRef = useRef();
     const [hover, setHover] = useState(false);
     const [selected, setSelected] = useState(false);
+    const [toggle, setToggle] = useState(false);
 
     const selectedAttributes = useMemo(() => {
         return {
-            // offset: 0.02,
+            offset: 0.035,
             backgroundColor: new THREE.Color( backgroundColor ),
             fontColor: new THREE.Color( 0x333333 )
         }
@@ -40,7 +49,7 @@ const Button = ({position=[0,0], backgroundColor = 0xffffff, width = 0.4, height
         return {
             state: 'hovered',
             attributes: {
-                // offset: 0.035,
+                offset: 0.035,
                 backgroundColor: new THREE.Color( 0xffffff ),
                 backgroundOpacity: 1,
                 fontColor: new THREE.Color( 0x333333 )
@@ -52,13 +61,25 @@ const Button = ({position=[0,0], backgroundColor = 0xffffff, width = 0.4, height
         return {
             state: 'idle',
             attributes: {
-                // offset: 0.035,
+                offset: 0.035,
                 backgroundColor: new THREE.Color( backgroundColor ),
                 backgroundOpacity: 0.3,
                 fontColor: new THREE.Color( 0x333333 )
             }
         }
     }, [backgroundColor]);
+
+    const toggleStateAttributes = useMemo(() => {
+        return {
+            state: 'toggle',
+            attributes: {
+                // offset: 0.035,
+                backgroundColor: new THREE.Color( 0xEE2E31 ),
+                backgroundOpacity: 0.8,
+                fontColor: new THREE.Color( 0x333333 )
+            }
+        }
+    }, []);
 
     useEffect(() => {
         // const container = new ThreeMeshUI.Block( {
@@ -96,13 +117,18 @@ const Button = ({position=[0,0], backgroundColor = 0xffffff, width = 0.4, height
         } );
         button.setupState( hoveredStateAttributes );
         button.setupState( idleStateAttributes );
+        button.setupState( toggleStateAttributes );
 
         return button.onAfterUpdate = function () {
-            
             if ( selected ) {
                 button.setState('selected')
-            } 
-            else {
+            } else {
+                button.setState('hovered');
+            }
+
+            if ( toggleOn && toggle ) {
+                button.setState('toggle');
+            } else {
                 button.setState('hovered');
             }
 
@@ -111,7 +137,19 @@ const Button = ({position=[0,0], backgroundColor = 0xffffff, width = 0.4, height
             }
         }
     
-    }, [text, position, hover, selected, buttonOptions, hoveredStateAttributes, idleStateAttributes, selectedAttributes]);
+    }, [
+        text, 
+        position, 
+        hover, 
+        selected, 
+        toggle,
+        toggleOn,
+        buttonOptions, 
+        hoveredStateAttributes, 
+        idleStateAttributes, 
+        selectedAttributes,
+        toggleStateAttributes
+    ]);
 
     useFrame(() => {
         ThreeMeshUI.update();
@@ -119,6 +157,7 @@ const Button = ({position=[0,0], backgroundColor = 0xffffff, width = 0.4, height
 
     useInteraction(buttonRef, 'onSelectStart', () => {
         setSelected(true);
+        setToggle(!toggle);
         buttonRef.current.position.z -= 0.035;
         onSelect();
     });
