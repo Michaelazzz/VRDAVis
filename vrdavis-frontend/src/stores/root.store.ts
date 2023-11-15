@@ -53,23 +53,14 @@ export class RootStore {
         this.reconstructionStore.resetCube();
         console.log('crop cube');
         // get the coordinates of the crop cube coords within the world cube dimensions
-        const cubeCoords: CubeView = this.cubeStore.localCubeToWorldCubeCoords;
-        // const cubeRatio = this.cubeStore.localCubeToWorldCubeRatio;
-        // the world cube dimensions
-        const worldCubeState: Point3D = { 
-            x: this.fileStore.fileWidth, 
-            y: this.fileStore.fileHeight, 
-            z: this.fileStore.fileLength
-        };
-        const cubelets = GetRequiredCubelets(cubeCoords, worldCubeState, {x: CUBELET_SIZE_XY, y: CUBELET_SIZE_XY, z: CUBELET_SIZE_Z});
-        // this.reconstructionStore.setCubelets(cubelets);
-        // remember previous cube
-        this.cubeStore.setPrevious()
-
+        const cubeCoords: CubeView = this.cubeStore.cropCubeToLocalCubeCoords;
         console.log(cubeCoords)
-
+        const cubelets = GetRequiredCubelets(cubeCoords);
         console.log(cubelets)
         
+        // remember previous cube
+        // this.cubeStore.setLocalCube()
+
         // the centre of the crop cube
         const midPointCubeCoords = {
             x: (cubeCoords.xMin + cubeCoords.xMax) / 2.0, 

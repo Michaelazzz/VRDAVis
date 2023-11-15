@@ -21,10 +21,6 @@ const CropControlsView: React.FC<PropsWithChildren> = ({children}) => {
 
     const controller = useController("right");
 
-    const sphereGeometry = useMemo(() => new THREE.SphereGeometry( 0.05, 32, 16 ), []); 
-    const sphereMaterial = useMemo(() => new THREE.MeshBasicMaterial( { color: 0xffff00 } ), []); 
-    const sphere = useMemo(() => new THREE.Mesh( sphereGeometry, sphereMaterial), [sphereGeometry, sphereMaterial]);
-
     const geometryCube = useMemo(() => new THREE.BoxGeometry( width, length, height ), [width, height, length]);
     const edgesGeometry = useMemo(() => new THREE.EdgesGeometry( geometryCube ), [geometryCube]);
     const materialCube = useMemo(() => new THREE.LineBasicMaterial({

@@ -367,7 +367,7 @@ export class BackendStore {
             { x: ack.fileInfo.width, y: ack.fileInfo.height, z: ack.fileInfo.length },
             { x: ack.fileInfo.width / 2, y: ack.fileInfo.height / 2, z: ack.fileInfo.length / 2 }
         );
-        this.rootStore.cubeStore.setPrevious();
+        this.rootStore.cubeStore.setLocalCube();
         this.rootStore.fileStore.setFileOpen(true);
         // get initial cubes
         // this.rootStore.initialCube();

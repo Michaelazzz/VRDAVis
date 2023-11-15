@@ -27,8 +27,8 @@ export class CubeStore {
 
     scaleFactor: number = 100;
 
-    prevCube: Point3D = { x: 1, y: 1, z: 1 };
-    prevCenter: Point3D = {x: 0, y: 0, z: 0};
+    localCube: Point3D = { x: 1, y: 1, z: 1 };
+    localCenter: Point3D = {x: 0, y: 0, z: 0};
 
     cropCube: Point3D = { x: 1, y: 1, z: 1 };
     cropCenter: Point3D = {x: 0, y: 0, z: 0};
@@ -65,12 +65,7 @@ export class CubeStore {
         return Math.pow(2, Math.ceil(Math.log2(this.cropCube.z)))/CUBELET_SIZE_Z;
     }
 
-    get localCubeToWorldCubeCoords(): CubeView {
-        // worldspace cube dimensions
-        // const worldWidth = this.rootStore.fileStore.fileWidth;
-        // const worldHeight = this.rootStore.fileStore.fileHeight;
-        // const worldLength = this.rootStore.fileStore.fileLength;
-
+    get cropCubeToLocalCubeCoords(): CubeView {
         // crop cube dimensions in world space
         const adjustedDims: Point3D = { 
             x: this.cropCube.x * this.currentXYMip,
@@ -79,9 +74,9 @@ export class CubeStore {
         };
         // adjust crop center to position in worldspace
         const adjustedCenter = {
-            x: this.cropCenter.x * this.currentXYMip,
-            y: this.cropCenter.y * this.currentXYMip,
-            z: this.cropCenter.z* this.currentZMip
+            x: (this.cropCenter.x * this.currentXYMip),
+            y: (this.cropCenter.y * this.currentXYMip),
+            z: (this.cropCenter.z * this.currentZMip)
         }
         // console.log(adjustedCenter)
         // get the position of the corners of the crop cube in worldspace context
@@ -116,7 +111,7 @@ export class CubeStore {
         this.currentZMip = mipZRoundedPow2;
 
         return {
-            // clam the values to within the file space
+            // clamp the values to within the full resolution cube
             xMin: (minPoint.x <= 0) ? 0 : minPoint.x,
             xMax: (maxPoint.x >= this.rootStore.fileStore.fileWidth) ? this.rootStore.fileStore.fileWidth : maxPoint.x,
             yMin: (minPoint.y <= 0) ? 0 : minPoint.y,
@@ -128,34 +123,23 @@ export class CubeStore {
         };
     }
 
-    get localCubeToWorldCubeRatio(): Point3D {
-        // crop cube ratio
-        const cropRatio: Point3D = { 
-            x: this.cropCube.x * this.prevCube.x * 1,
-            y: this.cropCube.y * this.prevCube.y * 1,
-            z: this.cropCube.z * this.prevCube.z * 1
-        };
-
-        return cropRatio;
-    }
-
-    setPrevious = () => {
-        this.prevCenter = { x: this.cropCenter.x, y: this.cropCenter.y, z: this.cropCenter.z };
-        this.prevCube = { x: this.cropCube.x, y: this.cropCube.y, z: this.cropCube.z };
+    setLocalCube = () => {
+        this.localCenter = { x: this.cropCenter.x, y: this.cropCenter.y, z: this.cropCenter.z };
+        this.localCube = { x: this.cropCube.x, y: this.cropCube.y, z: this.cropCube.z };
     }
 
     getCubeState = () => {
         return {
-            prevCenter: this.prevCenter,
-            prevCube: this.prevCube,
+            localCenter: this.localCenter,
+            localCube: this.localCube,
             cropCenter: this.cropCenter,
             cropCube: this.cropCube
         }
     }
 
-    setCubeState = (prevCenter: Point3D, prevCube: Point3D, cropCenter: Point3D, cropCube: Point3D) => {
-        this.prevCenter = prevCenter;
-        this.prevCube = prevCube;
+    setCubeState = (localCenter: Point3D, localCube: Point3D, cropCenter: Point3D, cropCube: Point3D) => {
+        this.localCenter = localCenter;
+        this.localCube = localCube;
         this.cropCenter = cropCenter;
         this.cropCube = cropCube;
     }

@@ -1,4 +1,5 @@
 import { CubeletCoordinate, CubeView, Point3D  } from "../models";
+import { CUBELET_SIZE_XY, CUBELET_SIZE_Z } from "../stores/cubelet.store";
 
 export function CubeSort(a: CubeletCoordinate, b: CubeletCoordinate) {
     // if (a.layer !== b.layer) {
@@ -43,20 +44,25 @@ export function LayerToMip(layer: number, fullCubeSize: Point3D, cubeSize: Point
     return Math.pow(2.0, totalLayers - layer);
 }
 
-export function GetRequiredCubelets(cubeState: CubeView, fullCubeState: Point3D, cubeSize: Point3D): CubeletCoordinate[] {
-    const xStart = Math.ceil(cubeState.xMin / cubeState.mipXY);
-    const xEnd = Math.floor(cubeState.xMax / cubeState.mipXY);
-    const yStart = Math.ceil(cubeState.yMin / cubeState.mipXY);
-    const yEnd = Math.floor(cubeState.yMax / cubeState.mipXY);
-    const zStart = Math.ceil(cubeState.zMin / cubeState.mipZ);
-    const zEnd = Math.floor(cubeState.zMax / cubeState.mipZ);
+export function GetRequiredCubelets(cubeState: CubeView): CubeletCoordinate[] {
+    // round to nearest cubelet boundary
+    const xStart = Math.floor((cubeState.xMin / cubeState.mipXY) / CUBELET_SIZE_XY) * CUBELET_SIZE_XY;
+    const xEnd = Math.ceil((cubeState.xMax / cubeState.mipXY) / CUBELET_SIZE_XY) * CUBELET_SIZE_XY;
+    const yStart = Math.floor((cubeState.yMin / cubeState.mipXY) / CUBELET_SIZE_XY) * CUBELET_SIZE_XY;
+    const yEnd = Math.ceil((cubeState.yMax / cubeState.mipXY) / CUBELET_SIZE_XY) * CUBELET_SIZE_XY;
+    const zStart = Math.floor((cubeState.zMin / cubeState.mipZ) / CUBELET_SIZE_Z) * CUBELET_SIZE_Z;
+    const zEnd = Math.ceil((cubeState.zMax / cubeState.mipZ) / CUBELET_SIZE_Z) * CUBELET_SIZE_Z;
+
+    // console.log(`${xStart} ${xEnd}`)
+    // console.log(`${yStart} ${yEnd}`)
+    // console.log(`${zStart} ${zEnd}`)
 
     const cubeletSet: CubeletCoordinate[] = new Array<CubeletCoordinate>();
-    for (let x = xStart; x <= xEnd; x=x+cubeSize.x) {
-        for (let y = yStart; y <= yEnd; y=y+cubeSize.y) {
-            for (let z = zStart; z <= zEnd; z=z+cubeSize.z) {
-                // console.log(Math.floor(x/cubeSize.x) + ' ' + Math.floor(y/cubeSize.y) + ' ' + Math.floor(z/cubeSize.z))
-                cubeletSet.push(new CubeletCoordinate(Math.floor(x/cubeSize.x), Math.floor(y/cubeSize.y), Math.floor(z/cubeSize.z), cubeState.mipXY, cubeState.mipZ));
+    for (let x = xStart; x < xEnd; x=x+CUBELET_SIZE_XY) {
+        for (let y = yStart; y < yEnd; y=y+CUBELET_SIZE_XY) {
+            for (let z = zStart; z < zEnd; z=z+CUBELET_SIZE_Z) {
+                // console.log(Math.floor(x) + ' ' + Math.floor(y) + ' ' + Math.floor(z))
+                cubeletSet.push(new CubeletCoordinate(Math.floor(x/CUBELET_SIZE_XY), Math.floor(y/CUBELET_SIZE_XY), Math.floor(z/CUBELET_SIZE_Z), cubeState.mipXY, cubeState.mipZ));
             }
         }
     }
