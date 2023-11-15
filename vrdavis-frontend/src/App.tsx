@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { XR, Controllers, VRButton} from "@react-three/xr";
 import { Canvas } from '@react-three/fiber'
 import { Bvh, PerformanceMonitor } from '@react-three/drei'
@@ -50,7 +50,7 @@ const AppView: React.FC = () => {
                 <XR>
                     <PerformanceMonitor 
                         // onIncline={rootStore.cubeStore.increaseSteps} 
-                        onChange={({fps, factor, refreshrate}) => { 
+                        onChange={({refreshrate}) => { 
                             rootStore.cubeStore.scaleSteps(refreshrate)
                         }}
                         // onFallback={rootStore.cubeStore.decreaseSteps}
