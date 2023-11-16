@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { XR, Controllers, VRButton} from "@react-three/xr";
-import { Canvas } from '@react-three/fiber'
+import { Canvas } from '@react-three/fiber';
 import { Bvh, PerformanceMonitor } from '@react-three/drei'
 import CssBaseline from '@mui/material/CssBaseline';
 import WorldspaceMenu from "./components/vr UI/WorldspaceMenu";
@@ -14,10 +14,8 @@ import { WebRTCMenu } from "./components/browser UI/WebRTCMenu";
 import { FileCredentials } from "./components/browser UI/FileCredentials";
 import { DataCube } from "./components/DataCube";
 import HandMenuControls from "./components/vr UI/HandMenuControls";
-import Button from "./components/vr UI/Button";
-import { CropPanel } from "./components/vr UI/CropPanel";
 import { CubeControls } from "./components/CubeControls";
-import Panel from "./components/vr UI/Panel";
+import { TextPanel } from "./components/vr UI/TextPanel";
 
 const AppView: React.FC = () => {
 
@@ -75,10 +73,8 @@ const AppView: React.FC = () => {
 
                     <Controllers/>
                     {/* <group position={[0,1,-1.5]}></group> */}
-                    <HandMenuControls>
-                        {/* <ExamplePanel/> */}
-                        
-                        <>
+                    {/* <HandMenuControls> */}
+                        {/* <>
                             <Button 
                                 text="crop mode" 
                                 position={[0.27, 0]}
@@ -91,7 +87,7 @@ const AppView: React.FC = () => {
                                 onSelect={rootStore.cropCube}
                             />
                             <CropPanel/>
-                        </>
+                        </> */}
                         {/* <Button 
                             text="x" 
                             width={0.1}
@@ -99,9 +95,9 @@ const AppView: React.FC = () => {
                             backgroundColor={0xED1C24}
                             onSelect={toggleHandMenu}
                         /> */}
-                    </HandMenuControls>
+                    {/* </HandMenuControls> */}
                     <WorldspaceMenu position={[1,1.5,-1.5]}>
-                        <Panel text='hello from the UI'/>
+                        <TextPanel/>
                     </WorldspaceMenu>
                     
                      

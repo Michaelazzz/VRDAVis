@@ -53,11 +53,15 @@ const reconstructionWorker = () => {
             // console.log(`z ${translatedZ} -> from ${translatedZ*CUBELET_SIZE_Z} to ${(translatedZ*CUBELET_SIZE_Z)+lengthArr[index]}`)
             for(let l = translatedZ*CUBELET_SIZE_Z; l < (translatedZ*CUBELET_SIZE_Z)+lengthArr[index]; l++) {
                 for(let k = translatedY*CUBELET_SIZE_XY; k < (translatedY*CUBELET_SIZE_XY)+heightArr[index]; k++) {
-                    for(let j = translatedX*CUBELET_SIZE_XY; j < (translatedX*CUBELET_SIZE_XY)+widthArr[index]; j++) {
-                        const current = dataArr[index];
-                        data[j + (k*width) + (l * width * height)] = current[n];
-                        n++;
-                    }
+                    const current = dataArr[index];
+                    // console.log(`${(k*width) + (l * width * height)} ${n} ${n + widthArr[index]}`);
+                    data.set(current.subarray(n, n + widthArr[index]), (k*width) + (l * width * height));
+                    // for(let j = translatedX*CUBELET_SIZE_XY; j < (translatedX*CUBELET_SIZE_XY)+widthArr[index]; j++) {
+                    //     const current = dataArr[index];
+                    //     data[j + (k*width) + (l * width * height)] = current[n];
+                    //     n++;
+                    // }
+                    n += widthArr[index];
                 }
             }
         }

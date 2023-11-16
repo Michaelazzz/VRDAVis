@@ -1,9 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { useController, useXREvent, useXR } from '@react-three/xr';
 import * as THREE from "three";
-import Panel from './ExamplePanel'
-import PanelText from './PanelText';
-import { Vector3 } from 'three';
 import { useFrame } from '@react-three/fiber';
 
 const WorldspaceMenu = ({position = [0,0,0], children}: any) => {
