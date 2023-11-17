@@ -49,8 +49,8 @@ const AppView: React.FC = () => {
                 <XR>
                     <PerformanceMonitor 
                         // onIncline={rootStore.cubeStore.increaseSteps} 
-                        onChange={({refreshrate}) => { 
-                            rootStore.cubeStore.scaleSteps(refreshrate)
+                        onChange={({refreshrate, fps}) => { 
+                            rootStore.cubeStore.scaleSteps(refreshrate, fps)
                         }}
                         // onFallback={rootStore.cubeStore.decreaseSteps}
                         // onChange={({ factor }) => setDpr(0.5 + 1.5 * factor)}
@@ -99,7 +99,7 @@ const AppView: React.FC = () => {
                     {/* </HandMenuControls> */}
                     <WorldspaceMenu position={[1,1.5,-1.5]}>
                         <TextPanel position={[0, 0.4, 0.03]} text={'worldspace menu'} />
-                        <TextPanel position={[0, 0.1, 0.03]} text={`framerate ${rootStore.cubeStore.fps}`} />
+                        <TextPanel position={[0, 0.1, 0.03]} text={`fps ${rootStore.cubeStore.fps}`} />
                         <ButtonPanel position={[-0.3, -0.2, 0.03]} text={'crop mode'} onSelect={rootStore.cubeStore.toggleCropMode} toggleOn={true} />
                         <ButtonPanel position={[0.3, -0.2, 0.03]} text={'crop cube'} onSelect={rootStore.cropCube} />
                     </WorldspaceMenu>

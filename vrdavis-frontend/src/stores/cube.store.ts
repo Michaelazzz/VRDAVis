@@ -37,13 +37,16 @@ export class CubeStore {
     currentZMip: number = 1;
 
     fps: number = 0;
+    refreshrate: number = 0;
 
     steps: number = 100;
     defaultSteps: number = 100;
     currentSteps: number = 0;
     prevSteps: number = 0;
     rateOfChange: number = 0.1;
-    targetRefresh: number = 60;
+
+    targetFps: number = 60;
+    targetRefresh: number = 120;
 
     constructor (rootStore: RootStore) {
         makeAutoObservable(this, { rootStore: false });
@@ -177,12 +180,13 @@ export class CubeStore {
         this.steps = 128;
     }
 
-    scaleSteps = (refreshrate: number) => {
-        this.fps = refreshrate;
+    scaleSteps = (refreshrate: number, fps: number) => {
+        this.fps = fps;
+        this.refreshrate = refreshrate;
         // if(fps < 40) {
             // if(this.steps < 40) this.rootStore.reconstructionStore.downsizeData();
             this.currentSteps = this.steps;
-            let deltaStep = this.rateOfChange * this.currentSteps * (refreshrate-this.targetRefresh) / this.targetRefresh;
+            let deltaStep = this.rateOfChange * this.currentSteps * (fps-this.targetFps) / this.targetFps;
             if (deltaStep < 0){ deltaStep *= 2;}
             this.steps += deltaStep;
             this.steps = clamp(Math.floor(this.steps), 32, 128);
