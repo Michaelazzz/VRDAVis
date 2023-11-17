@@ -1,27 +1,25 @@
-import React, { useRef, useEffect, useMemo, useContext } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { observer } from "mobx-react";
 
 import * as THREE from "three";
-import { RootContext } from '../../store.context';
 
-const TextPanelView: React.FC = () => {
-    const { rootStore } = useContext(RootContext);
+const TextPanelView: React.FC<{position?: number[], text?: string}> = ({position=[0,0,0], text='text'}) => {
     const ref = useRef<THREE.Mesh>();
 
     var canvas = document.createElement("canvas");
-    canvas.width = 128;
-    canvas.height = 128;
+    canvas.width = 500;
+    canvas.height = 100;
     const context = canvas.getContext('2d');
 
-    context!.font = '15px sans-serif';
+    context!.font = '40px sans-serif';
     context!.fillStyle = '#FFFFFF';
-    context!.fillText(`framerate ${rootStore.cubeStore.fps}`, 10, 20);
+    context!.fillText(`${text}`, 40, 60);
     // context!.fillRect( 0, 0, 100, 100 );
 
     const texture = useMemo(() => new THREE.CanvasTexture(canvas), [canvas]);
     texture.needsUpdate = true;
 
-    const geometry = useMemo(() => new THREE.PlaneGeometry(1, 1), []);
+    const geometry = useMemo(() => new THREE.PlaneGeometry(1, 0.2), []);
     const material = useMemo(() => new THREE.MeshBasicMaterial({
         map: texture
     }), [texture]);
@@ -39,6 +37,7 @@ const TextPanelView: React.FC = () => {
         <group 
             // @ts-ignore
             ref={ref}
+            position={[position[0], position[1], position[2]]}
         ></group>
     )
 }

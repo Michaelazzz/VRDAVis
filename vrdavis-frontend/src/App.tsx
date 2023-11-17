@@ -16,6 +16,7 @@ import { DataCube } from "./components/DataCube";
 import HandMenuControls from "./components/vr UI/HandMenuControls";
 import { CubeControls } from "./components/CubeControls";
 import { TextPanel } from "./components/vr UI/TextPanel";
+import { ButtonPanel } from "./components/vr UI/ButtonPanel";
 
 const AppView: React.FC = () => {
 
@@ -97,7 +98,10 @@ const AppView: React.FC = () => {
                         /> */}
                     {/* </HandMenuControls> */}
                     <WorldspaceMenu position={[1,1.5,-1.5]}>
-                        <TextPanel/>
+                        <TextPanel position={[0, 0.4, 0.03]} text={'worldspace menu'} />
+                        <TextPanel position={[0, 0.1, 0.03]} text={`framerate ${rootStore.cubeStore.fps}`} />
+                        <ButtonPanel position={[-0.3, -0.2, 0.03]} text={'crop mode'} onSelect={rootStore.cubeStore.toggleCropMode} toggleOn={true} />
+                        <ButtonPanel position={[0.3, -0.2, 0.03]} text={'crop cube'} onSelect={rootStore.cropCube} />
                     </WorldspaceMenu>
                     
                      

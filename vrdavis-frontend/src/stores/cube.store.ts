@@ -43,7 +43,7 @@ export class CubeStore {
     currentSteps: number = 0;
     prevSteps: number = 0;
     rateOfChange: number = 0.1;
-    targetRefresh: number = 40;
+    targetRefresh: number = 60;
 
     constructor (rootStore: RootStore) {
         makeAutoObservable(this, { rootStore: false });
@@ -191,6 +191,7 @@ export class CubeStore {
         // }
         // console.log(fps)
         // console.log(this.steps)
+        // this.signallingStore.sendDataToPeer(JSON.stringify(message));
     }
 
     setWorldspaceCenter = (x: number, y: number, z: number) => {
