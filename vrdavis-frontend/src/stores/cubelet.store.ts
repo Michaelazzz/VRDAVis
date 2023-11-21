@@ -224,10 +224,14 @@ export class CubeletStore {
             if(this.remainingCubelets === 0) {
                 // await this.rootStore.reconstructionStore.reconstructCube();
                 await this.rootStore.reconstructionStore.reconstructCubeWithWorker();
+            } else {
+                // setTimeout(() => {
+                //     console.log("waiting for 10 seconds for next cube");
+                // }, 10000);
             }
             
         } else {
-            // construct texture when all the cubes have arrived
+            
             // this.cachedCubelets.forEach((value, key, map) => {
             //     console.log(key);
                 // this.rootStore.reconstructionStore.addCubeToTexture(CubeletCoordinate.Decode(encodedCoordinate), value);

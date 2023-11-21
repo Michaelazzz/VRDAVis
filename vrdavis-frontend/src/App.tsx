@@ -17,6 +17,7 @@ import HandMenuControls from "./components/vr UI/HandMenuControls";
 import { CubeControls } from "./components/CubeControls";
 import { TextPanel } from "./components/vr UI/TextPanel";
 import { ButtonPanel } from "./components/vr UI/ButtonPanel";
+import { AnalyticsPanel } from "./components/vr UI/AnalyticsPanel";
 
 const AppView: React.FC = () => {
 
@@ -73,35 +74,17 @@ const AppView: React.FC = () => {
                     </mesh> */}
 
                     <Controllers/>
-                    {/* <group position={[0,1,-1.5]}></group> */}
-                    {/* <HandMenuControls> */}
-                        {/* <>
-                            <Button 
-                                text="crop mode" 
-                                position={[0.27, 0]}
-                                onSelect={rootStore.cubeStore.toggleCropMode}
-                                toggleOn={true}
-                            />
-                            <Button 
-                                text="crop" 
-                                position={[0.27, -0.12]}
-                                onSelect={rootStore.cropCube}
-                            />
-                            <CropPanel/>
-                        </> */}
-                        {/* <Button 
-                            text="x" 
-                            width={0.1}
-                            position={[0.2, -0.43]}
-                            backgroundColor={0xED1C24}
-                            onSelect={toggleHandMenu}
-                        /> */}
-                    {/* </HandMenuControls> */}
-                    <WorldspaceMenu position={[1,1.5,-1.5]}>
+
+                    <WorldspaceMenu position={[1.5,1.5,-2]}>
                         <TextPanel position={[0, 0.4, 0.03]} text={'worldspace menu'} />
                         <TextPanel position={[0, 0.1, 0.03]} text={`fps ${rootStore.cubeStore.fps}`} />
                         <ButtonPanel position={[-0.3, -0.2, 0.03]} text={'crop mode'} onSelect={rootStore.cubeStore.toggleCropMode} toggleOn={true} />
                         <ButtonPanel position={[0.3, -0.2, 0.03]} text={'crop cube'} onSelect={rootStore.cropCube} />
+                    </WorldspaceMenu>
+
+                    <WorldspaceMenu position={[0.2,1.5,-2]}>
+                        <TextPanel position={[0, 0.4, 0.03]} text={'analytics'} />
+                        <AnalyticsPanel/>
                     </WorldspaceMenu>
                     
                      

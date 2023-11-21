@@ -14,7 +14,12 @@ const ButtonPanelView: React.FC<{position?: number[], text?: string, onSelect?: 
 
     const handleToggle = (toggle: boolean) => {
         setToggle(toggle);
-        setColour((toggle) ? '#FF0000' : '#FFFFFF');
+        setColour((toggle) ? '#FF0000' : '#000000');
+    }
+
+    const handleHover = (toggle: boolean) => {
+        setHover(toggle);
+        setColour((toggle) ? '#5A5A5A' : '#000000');
     }
 
     const [colour, setColour] = useState('#000000');
@@ -92,39 +97,16 @@ const ButtonPanelView: React.FC<{position?: number[], text?: string, onSelect?: 
         }
         
         // buttonRef.current.position.z -= 0.035;
-        // onSelect();
+        onSelect();
     });
-
     // @ts-ignore
-    // useInteraction(ref, 'hover', () => {
-    //     setSelected(true);
-    //     if(toggleOn) {
-    //         handleToggle(!toggle)
-    //     }
-        
-    //     // buttonRef.current.position.z -= 0.035;
-    //     onSelect();
-    // });
-    // // @ts-ignore
-    // useInteraction(backgroundRef, 'hover', () => {
-    //     setSelected(true);
-    //     if(toggleOn) {
-    //         handleToggle(!toggle)
-    //     }
-        
-    //     // buttonRef.current.position.z -= 0.035;
-    //     onSelect();
-    // });
-    // useInteraction(buttonRef, 'onSelectEnd', () => {
-    //     setSelected(false);
-    //     buttonRef.current.position.z += 0.035;
-    // });
-    // useInteraction(buttonRef, "onHover", () => {
-    //     setHover(true);
-    // });
-    // useInteraction(buttonRef, "onBlur", () => {
-    //     setHover(false);
-    // });
+    useInteraction(backgroundRef, 'onHover', () => {
+        handleHover(!hover);
+    });
+    // @ts-ignore
+    useInteraction(backgroundRef, 'onBlur', () => {
+        handleHover(!hover);
+    });
 
     return(
         <>

@@ -14,7 +14,6 @@ const TextPanelView: React.FC<{position?: number[], text?: string}> = ({position
     context!.font = '40px sans-serif';
     context!.fillStyle = '#FFFFFF';
     context!.fillText(`${text}`, 40, 60);
-    // context!.fillRect( 0, 0, 100, 100 );
 
     const texture = useMemo(() => new THREE.CanvasTexture(canvas), [canvas]);
     texture.needsUpdate = true;

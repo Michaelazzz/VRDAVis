@@ -43,7 +43,7 @@ export class CubeStore {
     defaultSteps: number = 100;
     currentSteps: number = 0;
     prevSteps: number = 0;
-    rateOfChange: number = 0.1;
+    rateOfChange: number = 0.2;
 
     targetFps: number = 60;
     targetRefresh: number = 120;

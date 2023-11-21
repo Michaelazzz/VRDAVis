@@ -1,13 +1,15 @@
 import React, { useRef, useState } from 'react'
-import { useController, useXREvent, useXR } from '@react-three/xr';
+import { useController, useXREvent, useXR, useInteraction } from '@react-three/xr';
 import * as THREE from "three";
 import { useFrame } from '@react-three/fiber';
 
 const WorldspaceMenu = ({position = [0,0,0], children}: any) => {
 
-    const ref = useRef<THREE.Mesh>();
+    const ref = useRef<THREE.Object3D>();
 
     const { player } = useXR();
+
+    const [selected, setSelected] = useState(false);
 
     const [xRange] = useState([-2, 2]);
     const [yRange] = useState([0, 2]);
@@ -31,62 +33,72 @@ const WorldspaceMenu = ({position = [0,0,0], children}: any) => {
             return;
         }
         
-        const leftPos = leftController.controller.position;
-        const rightPos = rightController.controller.position;
+        // const leftPos = leftController.controller.position;
+        // const rightPos = rightController.controller.position;
 
-        if(prevLeftPos && prevRightPos) {
+        // if(prevLeftPos && prevRightPos) {
            
-            let offsetLeft = leftPos.clone().sub(prevLeftPos);
-            let offsetRight = rightPos.clone().sub(prevRightPos);
+        //     let offsetLeft = leftPos.clone().sub(prevLeftPos);
+        //     let offsetRight = rightPos.clone().sub(prevRightPos);
             
-            // translation controls
-            if(leftSqueeze){
-                if((ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1]) && (ref.current.position.y >= yRange[0] || ref.current.position.y <= yRange[1]))
-                    ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
-            }
-            else if(rightSqueeze){
-                if(ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1])
-                    ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
-            }
+        //     // translation controls
+        //     if(leftSqueeze){
+        //         if((ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1]) && (ref.current.position.y >= yRange[0] || ref.current.position.y <= yRange[1]))
+        //             ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
+        //     }
+        //     else if(rightSqueeze){
+        //         if(ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1])
+        //             ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
+        //     }
 
-            prevRightPos = rightPos.clone();
-            prevLeftPos = leftPos.clone();
-        }
+        //     prevRightPos = rightPos.clone();
+        //     prevLeftPos = leftPos.clone();
+        // }
 
         ref.current.lookAt(player.position.y, ref.current.position.y, player.position.z);
     });
 
-    useXREvent('squeezestart', () => {
-        rightSqueeze = true;
-    }, {handedness: 'right'});
+    // useXREvent('squeezestart', () => {
+    //     rightSqueeze = true;
+    // }, {handedness: 'right'});
 
-    useXREvent('squeezestart', () => {
-        leftSqueeze = true;
-    }, {handedness: 'left'});
+    // // @ts-ignore
+    // useInteraction(ref, 'onSqueezeStart', (event: XRInteractionEvent) => {
+    //     setSelected(true);
+    // });
 
-    useXREvent('squeezeend', () => {
-        rightSqueeze = false;
-    }, {handedness: 'right'});
+    // // @ts-ignore
+    // useInteraction(ref, 'onSqueezeEnd', () => {
+    //     setSelected(false);
+    // });
 
-    useXREvent('squeezeend', () => {
-        leftSqueeze = false;
-    }, {handedness: 'left'});
+    // useXREvent('squeezestart', () => {
+    //     leftSqueeze = true;
+    // }, {handedness: 'left'});
 
-    useXREvent('selectstart', () => { 
-        rightSelect = true; 
-    }, {handedness: 'right'});
+    // useXREvent('squeezeend', () => {
+    //     rightSqueeze = false;
+    // }, {handedness: 'right'});
 
-    useXREvent('selectstart', () => {
-        leftSelect = true;
-    }, {handedness: 'left'});
+    // useXREvent('squeezeend', () => {
+    //     leftSqueeze = false;
+    // }, {handedness: 'left'});
 
-    useXREvent('selectend', () => { 
-        rightSelect = false; 
-    }, {handedness: 'right'});
+    // useXREvent('selectstart', () => { 
+    //     rightSelect = true; 
+    // }, {handedness: 'right'});
 
-    useXREvent('selectend', () => {
-        leftSelect = false;
-    }, {handedness: 'left'});
+    // useXREvent('selectstart', () => {
+    //     leftSelect = true;
+    // }, {handedness: 'left'});
+
+    // useXREvent('selectend', () => { 
+    //     rightSelect = false; 
+    // }, {handedness: 'right'});
+
+    // useXREvent('selectend', () => {
+    //     leftSelect = false;
+    // }, {handedness: 'left'});
 
 
     return (

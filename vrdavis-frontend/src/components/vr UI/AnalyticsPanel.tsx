@@ -1,23 +1,27 @@
-import React, {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import * as THREE from "three";
 
 import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, Tooltip, Legend, BasePlatform } from "chart.js";
-import { useController, useInteraction, useXR } from "@react-three/xr";
+import { useController, useInteraction } from "@react-three/xr";
 import { useThree, useFrame } from "@react-three/fiber";
 import { Object3D, Raycaster, Vector2, Vector3 } from "three";
+import { observer } from "mobx-react";
 
 Chart.register(BarController, BarElement, LinearScale, CategoryScale,Tooltip, Legend, Title);
 
-const ChartPanel = ({data}: any) => {
+const AnalyticsPanelView = ({data}: any) => {
     const ref = useRef<Object3D>();
-    const { gl, scene } = useThree();
+    const { scene } = useThree();
     const rightController = useController("right");
     const raycaster = new Raycaster();
     let localPos = new Vector3(0,0,0);
-    const geometry = new THREE.SphereGeometry( 0.01, 32, 16 );
-    const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-    const sphere = new THREE.Mesh( geometry, material );
-    let hover = false;
+
+    const geometrySphere = new THREE.SphereGeometry( 0.01, 32, 16 );
+    const materialSphere = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+    const sphere = new THREE.Mesh( geometrySphere, materialSphere );
+
+    const [hover, setHover] = useState(false);
+    const [selected, setSelected] = useState(false);
 
     var canvas = document.createElement("canvas");
     canvas.width = 500;
@@ -25,17 +29,14 @@ const ChartPanel = ({data}: any) => {
     
     const localCoord = new Vector2(0,0);
 
-    const [textureData, setTextureData] = useState("");
-    const loader = new THREE.TextureLoader();
-
     // @ts-ignore
-    const [chart, setChart] = useState(new Chart(canvas.getContext('2d'), {
+    const chart = new Chart(canvas.getContext('2d'), {
         type: "bar",
         data: {
-            labels: ["Red", "Orage", "Yellow", "Green", "Blue", "Purple", "Grey"],
+            labels: ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Grey"],
             datasets: [{
                 label: 'My First Dataset',
-                data: data,
+                data: [1, 2, 3, 4, 5, 6, 7],
                 backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(255, 159, 64, 0.2)',
@@ -77,38 +78,33 @@ const ChartPanel = ({data}: any) => {
                         color: 'rgb(255, 99, 132)'
                     }
                 }
-            },
-            // onClick: (e) => {
-                
-            // },
-            // onHover: (e) => {
-                // setTextureData(chart.toBase64Image());
-            // },
-            // events: ['mousemove', 'click']
+            }
         }
-    }));
+    });
+
+    const texture = useMemo(() => new THREE.CanvasTexture(canvas), [canvas]);
+    texture.needsUpdate = true;
+
+    const geometry = useMemo(() => new THREE.PlaneGeometry(1, 0.5), []);
+    const material = useMemo(() => new THREE.MeshBasicMaterial({
+        map: texture
+    }), [texture]);
+
+    const mesh = useMemo(() => new THREE.Mesh(geometry, material), [geometry, material]);
 
     scene.add( sphere );
     
-    useEffect(() => {
-
-        // chart.update();
-        // chart.options.onClick = () => {
-            // console.log('click received');
-            // sphere.material.copy(new THREE.MeshBasicMaterial( { color: 0xff0000 } ));
-        // }
-
-        loader.load(textureData, texture => {
-            // @ts-ignore
-            ref.current.set({backgroundTexture: texture});
-        });
-    });
+    // useEffect(() => {
+    //     if(!ref.current) return;
+    //     ref.current?.clear()
+    //     ref.current.add(mesh);
+    //     if(material.map) material.map.needsUpdate = true;
+    // }, [mesh, material, localCoord.x, localCoord.y]);
 
 
-    useFrame((time, xFrame) => {
+    useFrame(() => {
 
-        if (!ref.current) 
-            return;
+        if (!ref.current) return;
         
         if(rightController && hover) 
         {
@@ -126,68 +122,70 @@ const ChartPanel = ({data}: any) => {
                 return;
             }
             
-            const event = new MouseEvent('mousemove', {
-                clientX: localCoord.x,
-                clientY: localCoord.y
-            });
-
-            chart.canvas.dispatchEvent(event);
-            // worker.postMessage({action: "mousemove", localCoords: localCoord});
-
-
             sphere.position.copy(intersection[0].point);
             localPos.copy(ref.current.worldToLocal(intersection[0].point)); // converts point in world space to local space
             localCoord.setX(500*(localPos.x+0.5));
             localCoord.setY(canvas.height*Math.abs(localPos.y-0.25));
+
+            // worker.postMessage({action: "mousemove", localCoords: localCoord});
         }
         else 
         {
             sphere.position.copy(new Vector3(0,0,0));
         }
 
-        setTextureData(chart.toBase64Image());
+        if(!ref.current) return;
+        ref.current?.clear()
+        ref.current.add(mesh);
+        if(material.map) material.map.needsUpdate = true;
         
     });
 
     // @ts-ignore
-    useInteraction(ref, 'onSelect', () => {
+    useInteraction(ref, 'onSelectStart', () => {
         const event = new MouseEvent('click', {
             clientX: localCoord.x,
             clientY: localCoord.y
         });
 
         chart.canvas.dispatchEvent(event);
-        // console.log('click sent')
+        console.log('click sent')
+        if(!ref.current) return;
+        ref.current?.clear()
+        ref.current.add(mesh);
+        if(material.map) material.map.needsUpdate = true;
     });
 
-    // @ts-ignore
-    useInteraction(ref, 'onHover', () => {
-        hover = true;
-    });
+    // useInteraction(ref, 'onSelectEnd')
 
     // @ts-ignore
-    useInteraction(ref, 'onBlur', () => {
-        hover = false;
-    });
+    // useInteraction(ref, 'onHover', () => {
+    //     setHover(true);
+    //     const event = new MouseEvent('mousemove', {
+    //         clientX: localCoord.x,
+    //         clientY: localCoord.y
+    //     });
+
+    //     chart.canvas.dispatchEvent(event);
+    //     console.log('hover sent');
+    //     if(!ref.current) return;
+    //     ref.current?.clear()
+    //     ref.current.add(mesh);
+    //     if(material.map) material.map.needsUpdate = true;
+    // });
+
+    // @ts-ignore
+    // useInteraction(ref, 'onBlur', () => {
+    //     setHover(false);
+    // });
 
     return (
-        <></>
-        // <block
-        //     ref={ref}
-        //     args={[
-        //         {
-        //             width: 1,
-        //             height: 0.5,
-        //             fontSize: 0.1,
-        //             backgroundOpacity: 1,
-        //             fontFamily: "./Roboto-msdf.json",
-        //             fontTexture: "./Roboto-msdf.png"
-        //         }
-        //     ]}
-        // ></block>
+        <group
+            // @ts-ignore
+            ref={ref}
+        ></group>
     )
-};
+}
 
-ChartPanel.displayName = "Chart Panel";
-
-export default ChartPanel;
+const AnalyticsPanel = observer(AnalyticsPanelView);
+export { AnalyticsPanel };
