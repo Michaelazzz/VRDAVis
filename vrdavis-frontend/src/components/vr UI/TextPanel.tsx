@@ -3,11 +3,11 @@ import { observer } from "mobx-react";
 
 import * as THREE from "three";
 
-const TextPanelView: React.FC<{position?: number[], text?: string}> = ({position=[0,0,0], text='text'}) => {
+const TextPanelView: React.FC<{position?: number[], text?: string, width?: number}> = ({position=[0,0,0], text='text', width=1}) => {
     const ref = useRef<THREE.Mesh>();
 
     var canvas = document.createElement("canvas");
-    canvas.width = 500;
+    canvas.width = 500*width;
     canvas.height = 100;
     const context = canvas.getContext('2d');
 
@@ -18,7 +18,7 @@ const TextPanelView: React.FC<{position?: number[], text?: string}> = ({position
     const texture = useMemo(() => new THREE.CanvasTexture(canvas), [canvas]);
     texture.needsUpdate = true;
 
-    const geometry = useMemo(() => new THREE.PlaneGeometry(1, 0.2), []);
+    const geometry = useMemo(() => new THREE.PlaneGeometry(width, 0.2), [width]);
     const material = useMemo(() => new THREE.MeshBasicMaterial({
         map: texture
     }), [texture]);

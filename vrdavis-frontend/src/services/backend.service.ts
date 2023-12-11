@@ -1,7 +1,7 @@
 // TODO: remove everything once the store is working properly
 
 import {action, makeObservable, observable, runInAction, makeAutoObservable, toJS} from "mobx";
-import {VRDAVis} from "vrdavis-protobuf";
+import { VRDAVis } from "vrdavis-protobuf";
 import {Subject, throwError} from "rxjs";
 
 // adapted from CARTA

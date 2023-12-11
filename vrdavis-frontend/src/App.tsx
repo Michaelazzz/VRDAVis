@@ -28,8 +28,8 @@ const AppView: React.FC = () => {
     // const toggleHandMenu = () => { (minimize) ? setMinimize(false) : setMinimize(true) }
 
     useEffect(() => {
-        // rootStore.connectToServer('ws://localhost:3002'); // local testing
-        rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
+        rootStore.connectToServer('ws://localhost:3002'); // local testing
+        // rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
         rootStore.connectToSignallingServer();
     }, [rootStore]);
 
@@ -75,17 +75,24 @@ const AppView: React.FC = () => {
 
                     <Controllers/>
 
-                    <WorldspaceMenu position={[1.5,1.5,-2]}>
-                        <TextPanel position={[0, 0.4, 0.03]} text={'worldspace menu'} />
-                        <TextPanel position={[0, 0.1, 0.03]} text={`fps ${rootStore.cubeStore.fps}`} />
-                        <ButtonPanel position={[-0.3, -0.2, 0.03]} text={'crop mode'} onSelect={rootStore.cubeStore.toggleCropMode} toggleOn={true} />
-                        <ButtonPanel position={[0.3, -0.2, 0.03]} text={'crop cube'} onSelect={rootStore.cropCube} />
+                    <WorldspaceMenu position={[0,1.5,-2]}>
+                        <TextPanel position={[0.75, 0.4, 0]} text={'worldspace menu'} />
+                        <TextPanel position={[0.75, 0.1, 0]} text={`fps ${rootStore.cubeStore.fps}`} />
+                        <group position={[0.75, -0.2, 0]}>
+                            <ButtonPanel position={[-0.3, 0, 0.03]} text={'crop mode'} onSelect={rootStore.cubeStore.toggleCropMode} toggleOn={true} />
+                            <ButtonPanel position={[0.3, 0, 0.03]} text={'crop cube'} onSelect={rootStore.cropCube} />
+                        </group>
+                        
+                        <TextPanel position={[-0.75, 0.4, 0.03]} text={'analytics'} />
+                        <TextPanel position={[-0.75, 0.1, 0.03]} width={1.5} text={`Mean: ${rootStore.statsStore.mean}`} />
+                        <TextPanel position={[-0.75, -0.1, 0.03]} width={1.5} text={`Min: ${rootStore.statsStore.min}`} />
+                        <TextPanel position={[-0.75, -0.3, 0.03]} width={1.5} text={`Max: ${rootStore.statsStore.max}`} />
+                        {/* <AnalyticsPanel/> */}
                     </WorldspaceMenu>
 
-                    <WorldspaceMenu position={[0.2,1.5,-2]}>
-                        <TextPanel position={[0, 0.4, 0.03]} text={'analytics'} />
-                        <AnalyticsPanel/>
-                    </WorldspaceMenu>
+                    {/* <WorldspaceMenu position={[0.1,1.5,-2]}>
+                        
+                    </WorldspaceMenu> */}
                     
                      
                     <CubeControls>

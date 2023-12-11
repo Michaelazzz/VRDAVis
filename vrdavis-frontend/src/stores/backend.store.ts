@@ -66,6 +66,7 @@ export class BackendStore {
     private eventCounter: number;
 
     readonly cubeletStream: Subject<VRDAVis.CubeletData>;
+    readonly statsStream: Subject<VRDAVis.RegionStatsData>;
 
     private readonly decoderMap: Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>;
 
@@ -100,6 +101,7 @@ export class BackendStore {
         this.endToEndPing = NaN;
         this.connectionStatus = ConnectionStatus.CLOSED;
         this.cubeletStream = new Subject<VRDAVis.CubeletData>();
+        this.statsStream = new Subject<VRDAVis.RegionStatsData>();
 
         // Construct handler and decoder maps
         this.decoderMap = new Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>([
@@ -107,7 +109,9 @@ export class BackendStore {
             [VRDAVis.EventType.FILE_LIST_RESPONSE, {decoder: VRDAVis.FileListResponse.decode, handler: this.onFileListResponse}],
             [VRDAVis.EventType.FILE_INFO_RESPONSE, {decoder: VRDAVis.FileInfoResponse.decode, handler: this.onFileInfoResponse}],
             [VRDAVis.EventType.OPEN_FILE_ACK, {decoder: VRDAVis.OpenFileAck.decode, handler: this.onOpenFileAck}],
-            [VRDAVis.EventType.CUBELET_DATA, {decoder: VRDAVis.CubeletData.decode, handler: this.onStreamedCubeletData}]
+            [VRDAVis.EventType.CUBELET_DATA, {decoder: VRDAVis.CubeletData.decode, handler: this.onStreamedCubeletData}],
+            [VRDAVis.EventType.REGION_STATS_DATA, {decoder: VRDAVis.RegionStatsData.decode, handler: this.onStreamedRegionStatsData}],
+            [VRDAVis.EventType.SET_REGION_RESPONSE, {decoder: VRDAVis.SetRegionResponse.decode, handler: this.onSetRegionResponse}]
         ]);
 
         // check ping every 5 seconds
@@ -279,6 +283,32 @@ export class BackendStore {
         }
     }
 
+    setRegion = (corners: number[]) => {
+        if (this.connectionStatus !== ConnectionStatus.ACTIVE) {
+            throw new Error("Not connected");
+        }
+        else {
+            const message = VRDAVis.SetRegionRequest.create({corners});
+            this.logEvent(VRDAVis.EventType.SET_REGION_REQUEST, this.eventCounter, message, false)
+            if (!this.sendEvent(VRDAVis.EventType.SET_REGION_REQUEST, VRDAVis.SetRegionRequest.encode(message).finish())) {
+                throw new Error("Could not send REGION_STATS_REQUEST event");
+            }
+        }
+    }
+
+    getRegionStatsData = (statistics: VRDAVis.StatsType[]) => {
+        if (this.connectionStatus !== ConnectionStatus.ACTIVE) {
+            throw new Error("Not connected");
+        }
+        else {
+            const message = VRDAVis.RegionStatsRequest.create({statistics});
+            this.logEvent(VRDAVis.EventType.REGION_STATS_REQUEST, this.eventCounter, message, false)
+            if (!this.sendEvent(VRDAVis.EventType.REGION_STATS_REQUEST, VRDAVis.RegionStatsRequest.encode(message).finish())) {
+                throw new Error("Could not send REGION_STATS_REQUEST event");
+            }
+        }
+    }
+
     private messageHandler = (event: MessageEvent) => {
         if (event.data === "PONG") {
             this.lastPongTime = performance.now();
@@ -391,6 +421,10 @@ export class BackendStore {
         this.cubeletStream.next(cubeletData)
     }
 
+    private onSetRegionResponse = (_eventId: number, setRegionResponse: VRDAVis.SetRegionResponse) => {
+        this.rootStore.statsStore.setRegionStatus(setRegionResponse);
+    }
+
     private sendEvent = (eventType: VRDAVis.EventType, payload: Uint8Array): boolean => {
         if (this.connection.readyState === WebSocket.OPEN) {
             const eventData = new Uint8Array(8 + payload.byteLength);
@@ -425,5 +459,9 @@ export class BackendStore {
             }
             console.log(message);
         }
+    }
+
+    private onStreamedRegionStatsData(_eventId: number, regionStatsData: VRDAVis.RegionStatsData) {
+        this.statsStream.next(regionStatsData);
     }
 }

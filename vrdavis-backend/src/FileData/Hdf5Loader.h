@@ -32,6 +32,9 @@ public:
 
     bool readHdf5Data(float* volume_data_out, const std::vector<hsize_t>& dims, const std::vector<hsize_t>& count, const std::vector<hsize_t>& start);
 
+    void addToRegion(int x, int y, int z, int width, int height, int length);
+    bool setRegion(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd);
+
     // virtual bool GetChunk(std::vector<float>& data, int& data_width, int& data_height, int min_x, int min_y, int z, std::mutex& image_mutex);
     // bool GetChunk(float* volume_data_out, int* chunk_dims, int* offset);
     bool GetChunk(float* volume_data_out, int chunk_width, int chunk_height, int chunk_depth, int xOffset, int yOffset, int zOffset);
@@ -43,6 +46,9 @@ public:
     void Closefile();
 
     int _NX, _NZ, _NY;
+    int _xRegionStart, _xRegionEnd;
+    int _yRegionStart, _yRegionEnd;
+    int _zRegionStart, _zRegionEnd;
 
 protected:
     std::string _filename, _directory, _dataset;

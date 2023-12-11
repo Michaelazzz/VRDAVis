@@ -1,0 +1,28 @@
+syntax = "proto3";
+package VRDAVis;
+
+import "enums.proto";
+import "defs.proto";
+
+// REGION_STATS_DATA:
+
+// set the region dimensions
+message SetRegionRequest {
+    repeated sfixed32 corners = 1;
+}
+
+message SetRegionResponse {
+    bool success = 1;
+}
+
+//Stats data for a specific region
+message RegionStatsRequest {
+    repeated StatsType statistics = 1;
+}
+
+// REGION_STATS_DATA:
+//Stats data for a specific region
+message RegionStatsData {
+    // Array of statistics values, each corresponding to a particular measurement, such as max, min, mean, etc
+    repeated StatisticsValue statistics = 1;
+}

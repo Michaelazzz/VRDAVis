@@ -33,72 +33,62 @@ const WorldspaceMenu = ({position = [0,0,0], children}: any) => {
             return;
         }
         
-        // const leftPos = leftController.controller.position;
-        // const rightPos = rightController.controller.position;
+        const leftPos = leftController.controller.position;
+        const rightPos = rightController.controller.position;
 
-        // if(prevLeftPos && prevRightPos) {
+        if(prevLeftPos && prevRightPos) {
            
-        //     let offsetLeft = leftPos.clone().sub(prevLeftPos);
-        //     let offsetRight = rightPos.clone().sub(prevRightPos);
+            let offsetLeft = leftPos.clone().sub(prevLeftPos);
+            let offsetRight = rightPos.clone().sub(prevRightPos);
             
-        //     // translation controls
-        //     if(leftSqueeze){
-        //         if((ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1]) && (ref.current.position.y >= yRange[0] || ref.current.position.y <= yRange[1]))
-        //             ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
-        //     }
-        //     else if(rightSqueeze){
-        //         if(ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1])
-        //             ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
-        //     }
+            // translation controls
+            if(leftSqueeze){
+                if((ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1]) && (ref.current.position.y >= yRange[0] || ref.current.position.y <= yRange[1]))
+                    ref.current.position.add(offsetLeft.multiplyScalar(movementMultiplier));
+            }
+            else if(rightSqueeze){
+                if(ref.current.position.x >= xRange[0] || ref.current.position.x <= xRange[1])
+                    ref.current.position.add(offsetRight.multiplyScalar(movementMultiplier));
+            }
 
-        //     prevRightPos = rightPos.clone();
-        //     prevLeftPos = leftPos.clone();
-        // }
+            prevRightPos = rightPos.clone();
+            prevLeftPos = leftPos.clone();
+        }
 
         ref.current.lookAt(player.position.y, ref.current.position.y, player.position.z);
     });
 
-    // useXREvent('squeezestart', () => {
-    //     rightSqueeze = true;
-    // }, {handedness: 'right'});
+    useXREvent('squeezestart', () => {
+        rightSqueeze = true;
+    }, {handedness: 'right'});
 
-    // // @ts-ignore
-    // useInteraction(ref, 'onSqueezeStart', (event: XRInteractionEvent) => {
-    //     setSelected(true);
-    // });
+    useXREvent('squeezestart', () => {
+        leftSqueeze = true;
+    }, {handedness: 'left'});
 
-    // // @ts-ignore
-    // useInteraction(ref, 'onSqueezeEnd', () => {
-    //     setSelected(false);
-    // });
+    useXREvent('squeezeend', () => {
+        rightSqueeze = false;
+    }, {handedness: 'right'});
 
-    // useXREvent('squeezestart', () => {
-    //     leftSqueeze = true;
-    // }, {handedness: 'left'});
+    useXREvent('squeezeend', () => {
+        leftSqueeze = false;
+    }, {handedness: 'left'});
 
-    // useXREvent('squeezeend', () => {
-    //     rightSqueeze = false;
-    // }, {handedness: 'right'});
+    useXREvent('selectstart', () => { 
+        rightSelect = true; 
+    }, {handedness: 'right'});
 
-    // useXREvent('squeezeend', () => {
-    //     leftSqueeze = false;
-    // }, {handedness: 'left'});
+    useXREvent('selectstart', () => {
+        leftSelect = true;
+    }, {handedness: 'left'});
 
-    // useXREvent('selectstart', () => { 
-    //     rightSelect = true; 
-    // }, {handedness: 'right'});
+    useXREvent('selectend', () => { 
+        rightSelect = false; 
+    }, {handedness: 'right'});
 
-    // useXREvent('selectstart', () => {
-    //     leftSelect = true;
-    // }, {handedness: 'left'});
-
-    // useXREvent('selectend', () => { 
-    //     rightSelect = false; 
-    // }, {handedness: 'right'});
-
-    // useXREvent('selectend', () => {
-    //     leftSelect = false;
-    // }, {handedness: 'left'});
+    useXREvent('selectend', () => {
+        leftSelect = false;
+    }, {handedness: 'left'});
 
 
     return (

@@ -10,6 +10,8 @@ class GeneralMessageTask : public OnMessageTask {
             _session->OnAddRequiredCubes(_message, _request_id);
         } else if constexpr (std::is_same_v<T, VRDAVis::FileListRequest>) {
             _session->OnFileListRequest(_message, _request_id);
+        } else if constexpr (std::is_same_v<T, VRDAVis::RegionStatsRequest>) {
+            _session->OnRegionStatsRequest(_message, _request_id);
         } else {
             spdlog::warn("Bad event type for GeneralMessageTask!");
         }

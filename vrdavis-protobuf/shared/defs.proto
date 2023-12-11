@@ -95,3 +95,8 @@ message CubeletParams {
     // Mip coordinate. Ignored if ``layer`` >= 0
     // sfixed32 mip = 10;
 }
+
+message StatisticsValue {
+    StatsType stats_type = 1;
+    double value = 2;
+}

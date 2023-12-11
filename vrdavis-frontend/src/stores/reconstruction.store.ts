@@ -4,6 +4,8 @@ import { CubeletCoordinate} from "../models";
 import { CUBELET_SIZE_XY, CUBELET_SIZE_Z, Cubelet } from "./cubelet.store";
 import { workerScript } from "../utilities/reconstructionWorker"
 
+import { VRDAVis } from "vrdavis-protobuf";
+
 export class ReconstructionStore {
     rootStore: RootStore;
 
@@ -186,6 +188,7 @@ export class ReconstructionStore {
             [this.rangeY[0], this.rangeY[1]],
             [this.rangeZ[0], this.rangeZ[1]]
         ]);
+        this.rootStore.backendStore.getRegionStatsData([VRDAVis.StatsType.Mean, VRDAVis.StatsType.Min, VRDAVis.StatsType.Max])
     }
 
     addToTextureDimensions = (coord: CubeletCoordinate, cubelet: Cubelet) => {

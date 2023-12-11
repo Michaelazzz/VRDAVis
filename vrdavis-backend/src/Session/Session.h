@@ -22,6 +22,7 @@
 #include <vrdavis-protobuf/resume_session.pb.h>
 #include <vrdavis-protobuf/open_file.pb.h>
 #include <vrdavis-protobuf/cubes.pb.h>
+#include <vrdavis-protobuf/region_stats.pb.h>
 
 #include "FileData/Hdf5Loader.h"
 #include "FileList/FileListHandler.h"
@@ -49,6 +50,8 @@ public:
     void OnCloseFile(const VRDAVis::CloseFile& message);
     void OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, VRDAVis::CompressionType compression_type, bool skip_data = false);
     void OnResumeSession(const VRDAVis::ResumeSession& message, uint32_t request_id);
+    void OnRegionStatsRequest(const VRDAVis::RegionStatsRequest& message, uint32_t request_id);
+    void OnSetRegionRequest(const VRDAVis::SetRegionRequest& message, uint32_t request_id);
 
     int IncreaseRefCount() {
         return ++_ref_count;
@@ -95,6 +98,8 @@ protected:
     // void SendFileEvent(int file_id, VRDAVis::EventType event_type, u_int32_t event_id, google::protobuf::MessageLite& message, bool compress = true);
     void SendFileEvent(int file_id, VRDAVis::EventType event_type, u_int32_t event_id, google::protobuf::MessageLite& message);
     void SendLogEvent(const std::string& message, std::vector<std::string> tags, VRDAVis::ErrorSeverity severity);
+    // bool SendRegionStatsData(int file_id, int region_id);
+    void SendSetRegionResponse(bool success);
 
     // uWebSockets
     uWS::WebSocket<false, true, PerSocketData>* _socket;

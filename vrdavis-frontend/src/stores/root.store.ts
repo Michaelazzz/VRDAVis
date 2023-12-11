@@ -6,6 +6,7 @@ import { SignallingStore } from "./signalling.store";
 import { CubeView, CubeletCoordinate, Point3D } from "../models";
 import { GetRequiredCubelets } from "../utilities";
 import { ReconstructionStore } from "./reconstruction.store";
+import { StatsStore } from "./stats.store";
 
 export class RootStore {
 
@@ -15,6 +16,7 @@ export class RootStore {
     fileStore: FileStore;
     cubeStore: CubeStore;
     reconstructionStore: ReconstructionStore;
+    statsStore: StatsStore;
 
     constructor() {
         this.backendStore = new BackendStore(this);
@@ -23,6 +25,7 @@ export class RootStore {
         this.fileStore = new FileStore(this);
         this.cubeStore = new CubeStore(this);
         this.reconstructionStore = new ReconstructionStore(this);
+        this.statsStore = new StatsStore(this);
     }
 
     connectToServer = async (url: string) => {
@@ -55,6 +58,7 @@ export class RootStore {
         // get the coordinates of the crop cube coords within the world cube dimensions
         const cubeCoords: CubeView = this.cubeStore.cropCubeToLocalCubeCoords;
         console.log(cubeCoords)
+        this.backendStore.setRegion([cubeCoords.xMin, cubeCoords.xMax, cubeCoords.yMin, cubeCoords.yMax, cubeCoords.zMin, cubeCoords.zMax]);
         const cubelets = GetRequiredCubelets(cubeCoords);
         console.log(cubelets)
         

@@ -202,6 +202,22 @@ void SessionManager::OnMessage(WSType* ws, std::string_view sv_message, uWS::OpC
                     }
                     break;
                 }
+                case VRDAVis::EventType::REGION_STATS_REQUEST: {
+                    VRDAVis::RegionStatsRequest message;
+                    if (message.ParseFromArray(event_buf, event_length)) {
+                        tsk = new GeneralMessageTask<VRDAVis::RegionStatsRequest>(session, message, head.request_id);
+                        message_parsed = true;
+                    }
+                    break;
+                }
+                case VRDAVis::EventType::SET_REGION_REQUEST: {
+                    VRDAVis::SetRegionRequest message;
+                    if (message.ParseFromArray(event_buf, event_length)) {
+                        session->OnSetRegionRequest(message, head.request_id);
+                        message_parsed = true;
+                    }
+                    break;
+                }
                 default: {
                     spdlog::warn("Bad event type {}!", event_type);
                     break;

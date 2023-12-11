@@ -78,6 +78,29 @@ bool Hdf5Loader::ReadAllData(float* volume_data_out) {
     return true;
 }
 
+void Hdf5Loader::addToRegion(int x, int y, int z, int width, int height, int length) {
+    if(_xRegionStart == -1 || _xRegionEnd == -1) { _xRegionStart = x; _xRegionEnd = x + width; }
+    else if(x < _xRegionStart) { _xRegionStart = x; }
+    else if(x > _xRegionEnd) { _xRegionEnd = x + width; }
+    if(_yRegionStart == -1 || _yRegionEnd == -1) { _yRegionStart = y; _yRegionEnd = y + height; }
+    else if(y < _yRegionStart) { _yRegionStart = y; }
+    else if(y > _yRegionEnd) { _yRegionEnd = y + height; }
+    if(_zRegionStart == -1 || _zRegionEnd == -1) { _zRegionStart = z; _zRegionEnd = z + length; }
+    else if(z < _zRegionStart) { _zRegionStart = z; }
+    else if(z > _zRegionEnd) { _zRegionEnd = z + length; }
+}
+
+bool Hdf5Loader::setRegion(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd) {
+    _xRegionStart = xStart;
+    _xRegionEnd = xEnd;
+    _yRegionStart = yStart;
+    _yRegionEnd = yEnd;
+    _zRegionStart = zStart;
+    _zRegionEnd = zEnd;
+
+    return true;
+}
+
 int Hdf5Loader::getXDimensions() {
     return _NX;
 }

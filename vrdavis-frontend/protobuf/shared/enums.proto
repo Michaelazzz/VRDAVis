@@ -19,6 +19,10 @@ enum EventType {
     RESUME_SESSION = 14;
     RESUME_SESSION_ACK = 15;
     ERROR_DATA = 16;
+    REGION_STATS_DATA = 17;
+    REGION_STATS_REQUEST = 18;
+    SET_REGION_REQUEST = 19;
+    SET_REGION_RESPONSE = 20;
 }
 
 enum SessionType {
@@ -64,4 +68,26 @@ enum FileListFilterMode {
     Content = 0;
     Extension = 1;
     AllFiles = 2;
+}
+
+enum StatsType {
+    NumPixels = 0;
+    NanCount = 1;
+    Sum = 2;
+    FluxDensity = 3;
+    Mean = 4;
+    RMS = 5;
+    Sigma = 6;
+    SumSq = 7;
+    Min = 8;
+    Max = 9;
+    Extrema = 10;
+    Blc = 11;
+    Trc = 12;
+    MinPos = 13;
+    MaxPos = 14;
+    Blcf = 15;
+    Trcf = 16;
+    MinPosf = 17;
+    MaxPosf = 18;
 }

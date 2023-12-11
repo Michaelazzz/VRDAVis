@@ -15,6 +15,7 @@
 #include <vrdavis-protobuf/error.pb.h>
 #include <vrdavis-protobuf/cubes.pb.h>
 #include <vrdavis-protobuf/cubelet.pb.h>
+#include <vrdavis-protobuf/region_stats.pb.h>
 
 #include "OnMessageTask.h"
 #include "Message.h"
@@ -310,6 +311,14 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
     spdlog::info("{}", dataset);
     _loader->OpenDataset(dataset);
 
+    // reset region
+    // _loader->_xRegionStart = -1;
+    // _loader->_xRegionEnd = -1;
+    // _loader->_yRegionStart = -1;
+    // _loader->_yRegionEnd = -1;
+    // _loader->_zRegionStart = -1;
+    // _loader->_zRegionEnd = -1;
+
     for (int i = 0; i < num_cubes; i++) {
         const std::string encoded_coordinate = message.cubelets(i);
         // spdlog::info("Encoded Coordinates {}", encoded_coordinate);
@@ -341,6 +350,8 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
         size_t volume_data_length = xDims * yDims * zDims;
         float* volume_data_out = new float[volume_data_length];
         // std::shared_ptr<std::vector<float>> volume_data_out;
+
+        // _loader->addToRegion(cubelet.x*CUBELET_SIZE_XY, cubelet.y*CUBELET_SIZE_XY, cubelet.z*CUBELET_SIZE_Z, xDims, yDims, zDims, mipXY, mipZ);
         
         if(_loader->readHdf5Data(
         volume_data_out, 
@@ -358,7 +369,6 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
                 // uncompressed data
                 for (size_t i = 0; i < volume_data_length; i++)
                 {
-
                     cubelet_ptr->add_volume_data(volume_data_out[i]);
                 }
             } else {
@@ -375,6 +385,104 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
         // delete pointer
         delete[] volume_data_out;
     }
+}
+
+void Session::OnSetRegionRequest(const VRDAVis::SetRegionRequest& message, uint32_t request_id) {
+    SendSetRegionResponse(_loader->setRegion(message.corners(0), message.corners(1), message.corners(2), message.corners(3), message.corners(4), message.corners(5)));
+}
+
+void Session::OnRegionStatsRequest(const VRDAVis::RegionStatsRequest& message, uint32_t request_id) {
+    VRDAVis::RegionStatsData stats_data_message;
+    // stats_data_message.set_file_id(file_id);
+    // calculate stats from current region
+    spdlog::info("x: {} - {}", _loader->_xRegionStart, _loader->_xRegionEnd);
+    spdlog::info("y: {} - {}", _loader->_yRegionStart, _loader->_yRegionEnd);
+    spdlog::info("y: {} - {}", _loader->_zRegionStart, _loader->_zRegionEnd);
+
+    // get data to be processed
+    int xDims = _loader->_xRegionEnd - _loader->_xRegionStart;
+    int yDims = _loader->_yRegionEnd - _loader->_yRegionStart;
+    int zDims = _loader->_zRegionEnd - _loader->_zRegionStart;
+
+    size_t volume_data_length = xDims * yDims * zDims;
+    float* volume_data_out = new float[volume_data_length];
+
+    _loader->OpenDataset("/0/DATA");
+
+    _loader->readHdf5Data(
+        volume_data_out,
+        { hsize_t(zDims), hsize_t(yDims), hsize_t(xDims) }, 
+        { hsize_t(zDims), hsize_t(yDims), hsize_t(xDims) }, 
+        { hsize_t(_loader->_zRegionStart), hsize_t(_loader->_yRegionStart), hsize_t(_loader->_xRegionStart) });
+
+    // calculate stats
+    float mean = volume_data_out[0];
+    float min = volume_data_out[0];
+    float max = volume_data_out[0];
+    for(int i = 1; i < volume_data_length; i++) {
+        mean += volume_data_out[i];
+        if(volume_data_out[i] < min) min = volume_data_out[i];
+        if(volume_data_out[i] > max) max = volume_data_out[i];
+    }
+    mean /= volume_data_length;
+
+    // determine which statistics are needed
+    for(int i = 0; i < message.statistics_size(); i++) {
+        if(VRDAVis::StatsType::Mean == message.statistics(i)) {
+            spdlog::info("Mean: {}", mean);
+            VRDAVis::StatisticsValue* mean_ptr = stats_data_message.add_statistics();
+            mean_ptr->set_stats_type(VRDAVis::StatsType::Mean);
+            mean_ptr->set_value(mean);
+        } 
+        if(VRDAVis::StatsType::Min == message.statistics(i)) {
+            spdlog::info("Min: {}", min);
+            VRDAVis::StatisticsValue* min_ptr = stats_data_message.add_statistics();
+            min_ptr->set_stats_type(VRDAVis::StatsType::Min);
+            min_ptr->set_value(min);
+        } 
+        if(VRDAVis::StatsType::Min == message.statistics(i)) {
+            spdlog::info("Max: {}", max);
+            VRDAVis::StatisticsValue* max_ptr = stats_data_message.add_statistics();
+            max_ptr->set_stats_type(VRDAVis::StatsType::Max);
+            max_ptr->set_value(max);
+        }
+    }
+    
+
+    if(stats_data_message.statistics_size() == 0) {
+        spdlog::error("Invalid statistic type!");
+    }
+    
+    SendEvent(VRDAVis::EventType::REGION_STATS_DATA, request_id, stats_data_message);
+}
+
+// bool Session::SendRegionStatsData(int file_id, int region_id) {
+//     // return true if data sent
+//     bool data_sent(false);
+//     if (region_id == ALL_REGIONS && !_region_handler) {
+//         return data_sent;
+//     }
+//     auto region_stats_data_callback = [&](VRDAVis::RegionStatsData region_stats_data) {
+//         if (region_stats_data.statistics_size() > 0) {
+//             SendFileEvent(region_stats_data.file_id(), VRDAVis::EventType::REGION_STATS_DATA, 0, region_stats_data);
+//         }
+//     };
+//     if ((region_id > CURSOR_REGION_ID) || (region_id == ALL_REGIONS) || (file_id == ALL_FILES)) {
+//         // Region stats
+//         data_sent = _region_handler->FillRegionStatsData(region_stats_data_callback, region_id, file_id);
+//     } else if (region_id == IMAGE_REGION_ID) {
+//         // Image stats
+//         if (_frames.count(file_id)) {
+//             data_sent = _frames.at(file_id)->FillRegionStatsData(region_stats_data_callback, region_id, file_id);
+//         }
+//     }
+//     return data_sent;
+// }
+
+void Session::SendSetRegionResponse(bool success) {
+    VRDAVis::SetRegionResponse response;
+    response.set_success(success);
+    SendEvent(VRDAVis::EventType::SET_REGION_RESPONSE, 0, response);
 }
 
 void Session::OnResumeSession(const VRDAVis::ResumeSession& message, uint32_t request_id) {
@@ -405,12 +513,10 @@ void Session::OnResumeSession(const VRDAVis::ResumeSession& message, uint32_t re
     // for (int i = 0; i < message.images_size(); ++i) {
     //     const CARTA::ImageProperties& image = message.images(i);
     //     bool file_ok(true);
-
     //     if (image.stokes_files_size() > 1) {
     //         CARTA::ConcatStokesFiles concat_stokes_files_msg;
     //         concat_stokes_files_msg.set_file_id(image.file_id());
     //         *concat_stokes_files_msg.mutable_stokes_files() = image.stokes_files();
-
     //         // Open a concatenated stokes file
     //         if (!OnConcatStokesFiles(concat_stokes_files_msg, request_id)) {
     //             success = false;
@@ -423,7 +529,6 @@ void Session::OnResumeSession(const VRDAVis::ResumeSession& message, uint32_t re
     //         open_file_msg.set_file(image.file());
     //         open_file_msg.set_hdu(image.hdu());
     //         open_file_msg.set_file_id(image.file_id());
-
     //         // Open a file
     //         if (!OnOpenFile(open_file_msg, request_id, true)) {
     //             success = false;
@@ -431,7 +536,6 @@ void Session::OnResumeSession(const VRDAVis::ResumeSession& message, uint32_t re
     //             err_file_ids.append(std::to_string(image.file_id()) + " ");
     //         }
     //     }
-
     //     if (file_ok) {
     //         // Set image channels
     //         CARTA::SetImageChannels set_image_channels_msg;
@@ -439,7 +543,6 @@ void Session::OnResumeSession(const VRDAVis::ResumeSession& message, uint32_t re
     //         set_image_channels_msg.set_channel(image.channel());
     //         set_image_channels_msg.set_stokes(image.stokes());
     //         OnSetImageChannels(set_image_channels_msg);
-
     //         // Set regions
     //         for (const auto& region_id_info : image.regions()) {
     //             // region_id_info is <region_id, CARTA::RegionInfo>
@@ -454,21 +557,18 @@ void Session::OnResumeSession(const VRDAVis::ResumeSession& message, uint32_t re
     //                 set_region_msg.set_region_id(region_id_info.first);
     //                 CARTA::RegionInfo resume_region_info = region_id_info.second;
     //                 *set_region_msg.mutable_region_info() = resume_region_info;
-
     //                 if (!OnSetRegion(set_region_msg, request_id, true)) {
     //                     success = false;
     //                     err_region_ids.append(std::to_string(region_id_info.first) + " ");
     //                 }
     //             }
     //         }
-
     //         // Set contours
     //         if (image.contour_settings().levels_size()) {
     //             OnSetContourParameters(image.contour_settings(), true);
     //         }
     //     }
     // }
-
     // Open Catalog files
     // for (int i = 0; i < message.catalog_files_size(); ++i) {
     //     const CARTA::OpenCatalogFile& open_catalog_file_msg = message.catalog_files(i);
