@@ -48,7 +48,7 @@ set(LINK_LIBS
     ${PROTOBUF_LIBRARY}
     uSockets
     z
-    # zfp
+    zfp
     ${OpenMP_CXX_LIBRARIES}
     ${HDF5_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
@@ -64,7 +64,7 @@ endif ()
 
 set(SOURCE_FILES
     ${SOURCE_FILES}
-    # src/DataStream/Compression.cpp
+    src/DataStream/Compression.cpp
     src/DataStream/Cubelet.cpp
     src/FileList/FileListHandler.cpp
     src/HttpServer/HttpServer.cpp

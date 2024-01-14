@@ -17,9 +17,10 @@
 #include <vrdavis-protobuf/cubelet.pb.h>
 #include <vrdavis-protobuf/region_stats.pb.h>
 
+#include "DataStream/Compression.h"
+#include "DataStream/Cubelet.h"
 #include "OnMessageTask.h"
 #include "Message.h"
-#include "DataStream/Cubelet.h"
 #include "ThreadingManager/ThreadingManager.h"
 
 using json = nlohmann::json;
@@ -349,6 +350,7 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
 
         size_t volume_data_length = xDims * yDims * zDims;
         float* volume_data_out = new float[volume_data_length];
+        float* no_nan_data = new float[volume_data_length];
         // std::shared_ptr<std::vector<float>> volume_data_out;
 
         // _loader->addToRegion(cubelet.x*CUBELET_SIZE_XY, cubelet.y*CUBELET_SIZE_XY, cubelet.z*CUBELET_SIZE_Z, xDims, yDims, zDims, mipXY, mipZ);
@@ -365,15 +367,44 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
             // cubelet_ptr->set_volume_data(volume_data_length, *volume_data_out);
             // SendFileEvent(file_id, VRDAVis::EventType::VOLUME_CUBE_DATA, 0, volume_data, compression_type == VRDAVis::CompressionType::NONE);
 
-            if (compression_type == VRDAVis::CompressionType::NONE) {
-                // uncompressed data
-                for (size_t i = 0; i < volume_data_length; i++)
-                {
+            // if (compression_type == VRDAVis::CompressionType::NONE) {
+            // uncompressed data
+            for (size_t i = 0; i < volume_data_length; i++)
+            {
+                if(isnanf( volume_data_out[i] )) {
+                    cubelet_ptr->add_volume_data(0);
+                    no_nan_data[i] = 0;
+                } else {
                     cubelet_ptr->add_volume_data(volume_data_out[i]);
+                    no_nan_data[i] = volume_data_out[i];
                 }
-            } else {
-                // compressed data
             }
+            // } else {
+            // compressed data
+            // compress the data with a default precision
+            std::vector<char> compression_buffer;
+            size_t compressed_size;
+            float compression_quality = 32.0;
+            int precision = lround(compression_quality);
+            Compress(no_nan_data, compression_buffer, compressed_size, xDims, yDims, zDims, precision);
+            // float compression_ratio = sizeof(float) * volume_data_length / (float)compressed_size;
+            // bool use_high_precision(false);
+
+            // set compression data with default precision
+            // cubelet_data_message.set_compression_quality(compression_quality);
+
+            // for (const auto& j: compression_buffer)
+            //     std::cout << j << ' ';
+
+            // decompress test
+            // Decompress(no_nan_data, compression_buffer, xDims, yDims, zDims, precision);
+            // for (size_t i = 0; i < volume_data_length; i++)
+            // {
+            //     std::cout << no_nan_data[i] << " ";
+            // }
+            
+            cubelet_ptr->set_compressed_volume_data(compression_buffer.data(), compressed_size);
+            // }
             SendFileEvent(file_id, VRDAVis::EventType::CUBELET_DATA, request_id, cubelet_data_message);
         } else {
             spdlog::error("Data could not be loaded");
@@ -384,6 +415,7 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
 
         // delete pointer
         delete[] volume_data_out;
+        delete[] no_nan_data;
     }
 }
 

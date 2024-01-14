@@ -90,4 +90,5 @@ enum StatsType {
     Trcf = 16;
     MinPosf = 17;
     MaxPosf = 18;
+    Distribution = 19;
 }

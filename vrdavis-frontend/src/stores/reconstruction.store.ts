@@ -44,7 +44,7 @@ export class ReconstructionStore {
 
         this.worker = new Worker(workerScript);
         this.worker.onmessage = (e: any) => {
-            // console.log('Message from worker')
+            console.log('Message from worker');
             this.data = Float32Array.from(e.data);
         }
     }

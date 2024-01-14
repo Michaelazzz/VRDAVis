@@ -25,3 +25,11 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# WebAssembly stuff
+# ZFP
+wasm_libs/zfp/*
+wasm_libs/zfp-*.tar.gz
+wasm_src/zfp_wrapper/build/*
+wasm_src/zfp_wrapper/post.js
+public/static/js/zfp_wrapper.wasm

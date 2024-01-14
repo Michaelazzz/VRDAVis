@@ -18,6 +18,7 @@ import { CubeControls } from "./components/CubeControls";
 import { TextPanel } from "./components/vr UI/TextPanel";
 import { ButtonPanel } from "./components/vr UI/ButtonPanel";
 import { AnalyticsPanel } from "./components/vr UI/AnalyticsPanel";
+import { CUBELET_SIZE_XY, CUBELET_SIZE_Z } from "./stores/cubelet.store";
 
 const AppView: React.FC = () => {
 
@@ -28,9 +29,10 @@ const AppView: React.FC = () => {
     // const toggleHandMenu = () => { (minimize) ? setMinimize(false) : setMinimize(true) }
 
     useEffect(() => {
-        rootStore.connectToServer('ws://localhost:3002'); // local testing
-        // rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
+        // rootStore.connectToServer('ws://localhost:3002'); // local testing
+        rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
         rootStore.connectToSignallingServer();
+        rootStore.cubeletStore.setCache(CUBELET_SIZE_XY * CUBELET_SIZE_XY * CUBELET_SIZE_Z * 10, CUBELET_SIZE_XY * CUBELET_SIZE_XY * CUBELET_SIZE_Z * 10);
     }, [rootStore]);
 
     return (

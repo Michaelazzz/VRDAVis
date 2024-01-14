@@ -5,9 +5,15 @@
 
 #include <zfp.h>
 
+#ifdef _ARM_ARCH_
+#include <sse2neon/sse2neon.h>
+#else
+#include <x86intrin.h>
+#endif
+
 namespace vrdavis {
 
-int Compress(float* array, std::vector<char>& compression_buffer, std::size_t& compressed_size, uint32_t nx,uint32_t ny, uint32_t nz, uint32_t precision) {
+int Compress(float* array, std::vector<char>& compression_buffer, std::size_t& compressed_size, int nx, int ny, int nz, int precision) {
     int status = 0;     /* return value: 0 = success */
     zfp_type type;      /* array scalar type */
     zfp_field* field;   /* array meta data */
@@ -16,7 +22,7 @@ int Compress(float* array, std::vector<char>& compression_buffer, std::size_t& c
     bitstream* stream;  /* bit stream to write to or read from */
 
     type = zfp_type_float;
-    field = zfp_field_3d((void*)array, type, nx, ny, nz);
+    field = zfp_field_1d((void*)array, type, nx * ny * nz);
 
     /* allocate meta data for a compressed stream */
     zfp = zfp_stream_open(nullptr);
@@ -54,7 +60,7 @@ int Decompress(float* array, std::vector<char>& compression_buffer, int nx, int 
     bitstream* stream; /* bit stream to write to or read from */
     type = zfp_type_float;
     // array.resize(size); // resize the resulting data
-    field = zfp_field_3d((void*)array, type, nx, ny, nz);
+    field = zfp_field_1d((void*)array, type, nx * ny * nz);
     zfp = zfp_stream_open(NULL);
 
     zfp_stream_set_precision(zfp, precision);

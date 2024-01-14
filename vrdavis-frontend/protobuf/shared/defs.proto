@@ -88,10 +88,10 @@ message CubeletParams {
     sfixed32 length = 8;
     // Volume data. For uncompressed data, this is converted into FP32, while for compressed data,
     // this is passed to the compression library for decompression.
-    // bytes volume_data = 8;
-    repeated float volume_data = 9 [packed=true];
+    bytes compressed_volume_data = 9;
+    repeated float volume_data = 10 [packed=true];
     // Run-length encodings of NaN values. These values are used to restore the NaN values after decompression.
-    // bytes nan_encodings = 9;
+    // bytes nan_encodings = 11;
     // Mip coordinate. Ignored if ``layer`` >= 0
     // sfixed32 mip = 10;
 }
