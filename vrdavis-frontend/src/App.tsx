@@ -89,7 +89,11 @@ const AppView: React.FC = () => {
                         <TextPanel position={[-0.75, 0.1, 0.03]} width={1.5} text={`Mean: ${rootStore.statsStore.mean}`} />
                         <TextPanel position={[-0.75, -0.1, 0.03]} width={1.5} text={`Min: ${rootStore.statsStore.min}`} />
                         <TextPanel position={[-0.75, -0.3, 0.03]} width={1.5} text={`Max: ${rootStore.statsStore.max}`} />
-                        {/* <AnalyticsPanel/> */}
+                        <AnalyticsPanel 
+                            position={[-2.3, -0.05, 0.03]} 
+                            text={'Distribution'} 
+                            labels={rootStore.statsStore.distributionLabels} 
+                            data={rootStore.statsStore.distributionValues}/>
                     </WorldspaceMenu>
 
                     {/* <WorldspaceMenu position={[0.1,1.5,-2]}>

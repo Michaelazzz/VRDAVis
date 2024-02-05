@@ -10,6 +10,8 @@ export class StatsStore {
     mean: number;
     min: number;
     max: number;
+    distributionValues: number[];
+    distributionLabels: number[];
 
     regionSet: boolean;
 
@@ -23,6 +25,8 @@ export class StatsStore {
         this.mean = 0;
         this.min = 0;
         this.max = 0;
+        this.distributionValues = [];
+        this.distributionLabels = [];
 
         this.regionSet = false;
     }
@@ -33,9 +37,13 @@ export class StatsStore {
         }
 
         for (let i = 0; i< regionStatsData.statistics.length; i++) {
-            if(regionStatsData.statistics[i].statsType === VRDAVis.StatsType.Mean) this.mean = regionStatsData.statistics[i].value!
-            if(regionStatsData.statistics[i].statsType === VRDAVis.StatsType.Min) this.min = regionStatsData.statistics[i].value!
-            if(regionStatsData.statistics[i].statsType === VRDAVis.StatsType.Max) this.max = regionStatsData.statistics[i].value!
+            if(regionStatsData.statistics[i].statsType === VRDAVis.StatsType.Mean) this.mean = regionStatsData.statistics[i].value!;
+            if(regionStatsData.statistics[i].statsType === VRDAVis.StatsType.Min) this.min = regionStatsData.statistics[i].value!;
+            if(regionStatsData.statistics[i].statsType === VRDAVis.StatsType.Max) this.max = regionStatsData.statistics[i].value!;
+            if(regionStatsData.statistics[i].statsType === VRDAVis.StatsType.Distribution) { 
+                this.distributionLabels = regionStatsData.statistics[i].ranges!;
+                this.distributionValues = regionStatsData.statistics[i].values!;
+            }
         }
     };
 

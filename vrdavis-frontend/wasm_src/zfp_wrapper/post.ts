@@ -75,10 +75,9 @@ ctx.onmessage = (event => {
             Module.id = event.data[1];
         } else if (eventName === "decompress") {
             const eventArgs = event.data[2];
-            
             const compressedView = new Uint8Array(event.data[1], 0, eventArgs.size);
-            console.log('ZFP worker - compressed data');
-            console.log(compressedView);
+            // console.log('ZFP worker - compressed data');
+            // console.log(compressedView);
             if (Module.debugOutput) {
                 performance.mark("decompressStart");
             }
@@ -101,8 +100,8 @@ ctx.onmessage = (event => {
             //     fillVal = !fillVal;
             //     decodedIndex += L;
             // }
-            console.log('ZFP worker - decompressed data');
-            console.log(outputView);
+            // console.log('ZFP worker - decompressed data');
+            // console.log(outputView);
 
             ctx.postMessage(["decompress", [event.data[1]], {
                 fileId: eventArgs.fileId,

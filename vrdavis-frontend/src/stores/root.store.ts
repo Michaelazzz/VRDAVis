@@ -36,21 +36,6 @@ export class RootStore {
         await this.signallingStore.start();
     }
 
-    // loadFileList = (directory: string) => {
-    //     this.backendStore.getFileList(directory);
-    // }
-
-    initialCube = () => {
-        const cubelets = new Array<CubeletCoordinate>();
-        cubelets.push(new CubeletCoordinate(0, 0, 0, 1, 1));
-        cubelets.push(new CubeletCoordinate(1, 0, 0, 1, 1));
-        cubelets.push(new CubeletCoordinate(0, 1, 0, 1, 1));
-        cubelets.push(new CubeletCoordinate(1, 1, 0, 1, 1));
-        // this.reconstructionStore.setCubelets(cubelets);
-        this.cubeletStore.requestCubelets(cubelets, 0, { x: 0, y: 0, z: 0 });
-    }
-
-    // cropCube = (fileId: number, focusPoint: Point3D) => {
     cropCube = () => {
         // if(!this.cubeStore.getCropMode()) return;
         this.reconstructionStore.resetCube();

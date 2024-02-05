@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 
 Chart.register(BarController, BarElement, LinearScale, CategoryScale,Tooltip, Legend, Title);
 
-const AnalyticsPanelView = ({data}: any) => {
+const AnalyticsPanelView: React.FC<{position?: number[], text?: string, width?: number, labels: number[], data: number[]}> = ({position=[0,0,0], text='text', width=1, labels, data}: any) => {
     const ref = useRef<Object3D>();
     const { scene } = useThree();
     const rightController = useController("right");
@@ -26,34 +26,25 @@ const AnalyticsPanelView = ({data}: any) => {
     var canvas = document.createElement("canvas");
     canvas.width = 500;
     canvas.height = 250;
+    const context = canvas.getContext('2d');
+
+    context!.fillStyle = '#000';
     
     const localCoord = new Vector2(0,0);
 
     // @ts-ignore
-    const chart = new Chart(canvas.getContext('2d'), {
+    const chart = useMemo(() => new Chart(canvas.getContext('2d'), {
         type: "bar",
         data: {
-            labels: ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Grey"],
+            labels: labels,
             datasets: [{
-                label: 'My First Dataset',
-                data: [1, 2, 3, 4, 5, 6, 7],
+                label: text,
+                data: data,
                 backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(255, 159, 64, 0.2)',
-                'rgba(255, 205, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(201, 203, 207, 0.2)'
+                'rgba(255, 99, 132, 0.2)'
                 ],
                 borderColor: [
-                'rgb(255, 99, 132)',
-                'rgb(255, 159, 64)',
-                'rgb(255, 205, 86)',
-                'rgb(75, 192, 192)',
-                'rgb(54, 162, 235)',
-                'rgb(153, 102, 255)',
-                'rgb(201, 203, 207)'
+                'rgb(255, 99, 132)'
                 ],
                 borderWidth: 1
             }]
@@ -80,12 +71,12 @@ const AnalyticsPanelView = ({data}: any) => {
                 }
             }
         }
-    });
+    }), [canvas, data, labels, text]);
 
     const texture = useMemo(() => new THREE.CanvasTexture(canvas), [canvas]);
     texture.needsUpdate = true;
 
-    const geometry = useMemo(() => new THREE.PlaneGeometry(1, 0.5), []);
+    const geometry = useMemo(() => new THREE.PlaneGeometry(width, 0.5), [width]);
     const material = useMemo(() => new THREE.MeshBasicMaterial({
         map: texture
     }), [texture]);
@@ -183,6 +174,7 @@ const AnalyticsPanelView = ({data}: any) => {
         <group
             // @ts-ignore
             ref={ref}
+            position={[position[0], position[1], position[2]]}
         ></group>
     )
 }

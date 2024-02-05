@@ -451,12 +451,41 @@ void Session::OnRegionStatsRequest(const VRDAVis::RegionStatsRequest& message, u
     float mean = volume_data_out[0];
     float min = volume_data_out[0];
     float max = volume_data_out[0];
-    for(int i = 1; i < volume_data_length; i++) {
+
+    std::map<float, int> distribution;
+
+    auto nanZeroEnd = std::remove_if(volume_data_out, volume_data_out + volume_data_length, [](float val) {
+        return std::isnan(val) || (val == 0 && std::signbit(val));
+    });
+
+    int newSize = nanZeroEnd - volume_data_out;
+
+    std::sort(volume_data_out, volume_data_out + newSize);
+
+    float range = volume_data_out[newSize-1] - volume_data_out[0];
+    float bucketSize = range / 30;
+    std::cout << bucketSize << std::endl;
+    
+    std::cout << volume_data_out[0] << std::endl;
+    std::cout << volume_data_out[newSize-1] << std::endl;
+    
+    for(int i = 1; i < newSize; i++) {
+        // std::cout << volume_data_out[i];
+        // std::cout << " ";
         mean += volume_data_out[i];
         if(volume_data_out[i] < min) min = volume_data_out[i];
         if(volume_data_out[i] > max) max = volume_data_out[i];
+
+        float bucketStart = floor(volume_data_out[i] / bucketSize) * bucketSize;
+        float bucketEnd = bucketStart + bucketSize;
+        distribution[bucketStart]++;
+
+        if (volume_data_out[i] != bucketEnd) {
+            distribution[bucketEnd]++;
+        }
     }
-    mean /= volume_data_length;
+    // std::cout << std::endl;
+    mean /= newSize;
 
     // determine which statistics are needed
     for(int i = 0; i < message.statistics_size(); i++) {
@@ -467,16 +496,31 @@ void Session::OnRegionStatsRequest(const VRDAVis::RegionStatsRequest& message, u
             mean_ptr->set_value(mean);
         } 
         if(VRDAVis::StatsType::Min == message.statistics(i)) {
-            spdlog::info("Min: {}", min);
+            spdlog::info("Min: {}", volume_data_out[0]);
             VRDAVis::StatisticsValue* min_ptr = stats_data_message.add_statistics();
             min_ptr->set_stats_type(VRDAVis::StatsType::Min);
-            min_ptr->set_value(min);
+            min_ptr->set_value(volume_data_out[0]);
         } 
-        if(VRDAVis::StatsType::Min == message.statistics(i)) {
-            spdlog::info("Max: {}", max);
+        if(VRDAVis::StatsType::Max == message.statistics(i)) {
+            spdlog::info("Max: {}", volume_data_out[newSize-1]);
             VRDAVis::StatisticsValue* max_ptr = stats_data_message.add_statistics();
             max_ptr->set_stats_type(VRDAVis::StatsType::Max);
-            max_ptr->set_value(max);
+            max_ptr->set_value(volume_data_out[newSize-1]);
+        }
+        if(VRDAVis::StatsType::Distribution == message.statistics(i)) {
+            
+            VRDAVis::StatisticsValue* distribution_ptr = stats_data_message.add_statistics();
+            distribution_ptr->set_stats_type(VRDAVis::StatsType::Distribution);
+            spdlog::info("Distribution of values in ranges:");
+            for (const auto& pair : distribution) {
+                // std::cout << "Range: [" << pair.first << ", " << pair.first + bucketSize
+                //     << "], Frequency: " << pair.second << std::endl;
+                // distribution_ptr->add_values(pair.second);
+                distribution_ptr->add_values(pair.second);
+                distribution_ptr->add_ranges(pair.first);
+            }
+            
+            // distribution_ptr->set_value(distribution);
         }
     }
     

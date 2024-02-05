@@ -99,4 +99,6 @@ message CubeletParams {
 message StatisticsValue {
     StatsType stats_type = 1;
     double value = 2;
+    repeated sfixed32 values = 3;
+    repeated float ranges = 4;
 }

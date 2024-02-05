@@ -5,9 +5,17 @@ import { CUBELET_SIZE_XY, CUBELET_SIZE_Z, Cubelet } from "./cubelet.store";
 import { workerScript } from "../utilities/reconstructionWorker"
 
 import { VRDAVis } from "vrdavis-protobuf";
+import { Subject } from "rxjs";
+
+export interface DataStreamDetails {
+    coord: string;
+    cubelet: Cubelet;
+}
 
 export class ReconstructionStore {
     rootStore: RootStore;
+
+    readonly dataStream: Subject<DataStreamDetails>;
 
     cubelets: Map<string, Cubelet>;
 
@@ -41,6 +49,15 @@ export class ReconstructionStore {
         this.rangeZ = [];
 
         this.cubeUpdated = false;
+
+        this.dataStream = new Subject<DataStreamDetails>();
+        this.dataStream.subscribe({
+            next: (v) => {
+                this.addCubelet(v.coord, v.cubelet)
+                this.reconstructCubeWithWorker()
+                // this.addCubeToTexture(v.coord, v.cubelet)
+            }
+        });
 
         this.worker = new Worker(workerScript);
         this.worker.onmessage = (e: any) => {
@@ -188,7 +205,12 @@ export class ReconstructionStore {
             [this.rangeY[0], this.rangeY[1]],
             [this.rangeZ[0], this.rangeZ[1]]
         ]);
-        this.rootStore.backendStore.getRegionStatsData([VRDAVis.StatsType.Mean, VRDAVis.StatsType.Min, VRDAVis.StatsType.Max])
+        this.rootStore.backendStore.getRegionStatsData([
+            VRDAVis.StatsType.Mean, 
+            VRDAVis.StatsType.Min, 
+            VRDAVis.StatsType.Max,
+            VRDAVis.StatsType.Distribution
+        ])
     }
 
     addToTextureDimensions = (coord: CubeletCoordinate, cubelet: Cubelet) => {
@@ -242,7 +264,6 @@ export class ReconstructionStore {
     // resizes data cube and adds new cubelet to the texture
     addCubeToTexture = (coord: CubeletCoordinate, cubelet: Cubelet) => {
         if(cubelet === undefined) return;
-        this.cubeUpdated = false;
         console.log(`adding cubelet ${coord.encode()}`);
         console.log(`start ${cubelet.width*coord.x} ${cubelet.height*coord.y} ${cubelet.length*coord.z}`);
         // console.log(`Contains data: ${this.hasData(cubelet)}`);
@@ -270,9 +291,39 @@ export class ReconstructionStore {
         }
         
         this.data = Float32Array.from(data);
-        console.log(this.data);
         console.log(`cubelet ${coord.encode()} added`)
-        this.cubeUpdated = true;
+    }
+
+    addCubeToTextureWithWorker = (coord: CubeletCoordinate, cubelet: Cubelet) => {
+        if(cubelet === undefined) return;
+        console.log(`adding cubelet ${coord.encode()}`);
+        console.log(`start ${cubelet.width*coord.x} ${cubelet.height*coord.y} ${cubelet.length*coord.z}`);
+        // console.log(`Contains data: ${this.hasData(cubelet)}`);
+        console.log(`previous dims ${this.width} ${this.height} ${this.length}`);
+        let prevWidth = this.width;
+        let prevHeight = this.height;
+        let prevLength = this.length;
+        // expand cube dimensions to accomidate new cubelet
+        this.addToTextureDimensions(coord, cubelet);
+        console.log(`cube dims ${this.width} ${this.height} ${this.length}`);
+        console.log(`cubelet dims ${cubelet.width} ${cubelet.height} ${cubelet.length}`)
+
+        const data = new Float32Array(this.width*this.height*this.length);
+        
+        // put old data into new array
+        // expand array
+        let m = 0;
+        for(let l = 0; l < prevLength; l++) {
+            for(let k = 0; k < prevHeight; k++) {
+                for(let j = 0; j < prevWidth; j++) {
+                    data[this.convertCoordToIndex(j, k, l)] = this.data[m];
+                    m++;
+                }
+            }
+        }
+        
+        this.data = Float32Array.from(data);
+        console.log(`cubelet ${coord.encode()} added`)
     }
 
     resetCube = () => {

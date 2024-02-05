@@ -91,7 +91,6 @@ export class CubeletStore {
         this.pendingRequests = new Map<string, Map<string, boolean>>();
         this.cacheMapCompressedCubelets = new Map<number, LRUCache<string, CompressedCubelet>>();
         this.pendingDecompressions = new Map<string, Map<string, boolean>>();
-        // this.cachedCubelets = new Map<string, Cubelet>();
 
         this.compressionRequestCounter = 0;
         this.remainingCubelets = 0;
@@ -113,8 +112,9 @@ export class CubeletStore {
                     const buffer = event.data[1];
                     const eventArgs = event.data[2] as CubeletMessageArgs;
                     const length = eventArgs.width * eventArgs.height * eventArgs.length;
-                    const resultArray = new Float32Array(buffer, 0, length);
+                    const resultArray = new Float32Array(buffer[0], 0, length);
                     this.updateStream(eventArgs.fileId, resultArray, eventArgs.width, eventArgs.height, eventArgs.length, eventArgs.layerXY, eventArgs.layerZ, eventArgs.cubeletCoordinate);
+                    this.rootStore.reconstructionStore.dataStream.next({coord: eventArgs.cubeletCoordinate, cubelet: {data: resultArray, width: eventArgs.width, height: eventArgs.height, length: eventArgs.length}} )
                 }
             };
         }
@@ -311,6 +311,7 @@ export class CubeletStore {
         
         const pendingCubelets = this.pendingSynchronisedCubelets.get(key);
         if (pendingCubelets?.length) {
+
             if (pendingCubelets) {
                 this.pendingSynchronisedCubelets.set(
                     key,
@@ -323,9 +324,8 @@ export class CubeletStore {
                 length,
                 data: decompressedData
             };
-            // for (let index = 0; index < decompressedData.length; index++) {
-            //     if(decompressedData[index] !== 0) console.log(decompressedData[index]); 
-            // }
+            // this.rootStore.reconstructionStore.addCubelet(encodedCoordinate, cubelet);
+            
             let receivedCubelets = this.receivedSynchronisedCubelets.get(key);
             if (!receivedCubelets) {
                 receivedCubelets = [];
@@ -333,6 +333,7 @@ export class CubeletStore {
             }
             receivedCubelets.push({coordinate: encodedCoordinate, cubelet: cubelet});
             pendingCompressionMap.delete(encodedCoordinate);
+            
 
             // If all tiles are in place, add them to the LRU and fire the stream observable
             if (!pendingCompressionMap.size) {
@@ -350,15 +351,10 @@ export class CubeletStore {
                 this.receivedSynchronisedCubelets.set(key, receivedCubelets);
                 // this.cachedCubelets.set(key, cubelet);
                 this.cubeletStream.next({cubeletCount, fileId });
-
-                this.rootStore.reconstructionStore.addCubelet(encodedCoordinate, cubelet);
-                if(this.remainingCubelets === 0) {
-                    // await this.rootStore.reconstructionStore.reconstructCube();
-                    await this.rootStore.reconstructionStore.reconstructCubeWithWorker();
-                }
             }
-            
         } else {
+            // await this.rootStore.reconstructionStore.reconstructCube();
+            // await this.rootStore.reconstructionStore.reconstructCubeWithWorker(); 
             // single cubelet
             // const rasterTile: RasterTile = {
             //     width,

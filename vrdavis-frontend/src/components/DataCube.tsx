@@ -10,7 +10,6 @@ import { observer } from 'mobx-react';
 const DataCubeView: React.FC = () => {
     const { rootStore } = useContext(RootContext);
     const reconstructionStore = rootStore.reconstructionStore;
-    const data = reconstructionStore.data;
     const width = reconstructionStore.width;
     const height = reconstructionStore.height;
     const length = reconstructionStore.length;
@@ -45,8 +44,9 @@ const DataCubeView: React.FC = () => {
     // @ts-ignore
     let texture: THREE.Data3DTexture = useMemo(() => {
         console.log('texture updated')
-        return new THREE.Data3DTexture(data, width, height, length)
-    }, [data, width, height, length]);
+        // console.log(rootStore.reconstructionStore.data)
+        return new THREE.Data3DTexture(rootStore.reconstructionStore.data, width, height, length)
+    }, [rootStore.reconstructionStore.data, width, height, length]);
     texture.format = THREE.RedFormat;
     texture.type = THREE.FloatType;
     texture.minFilter = THREE.LinearFilter;
