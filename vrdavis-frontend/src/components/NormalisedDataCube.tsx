@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useRef, useMemo } from 'react';
 
 import * as THREE from 'three';
 
@@ -101,7 +101,6 @@ const NormailsedDataCubeView: React.FC = () => {
             // @ts-ignore
             ref={ref}
             scale={[width/scaleFactor, height/scaleFactor, length/scaleFactor]}
-            // position={[0,1.5,-1.5]}
         ></group>
     )
 };

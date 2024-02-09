@@ -66,22 +66,6 @@ export class ReconstructionStore {
         }
     }
 
-    // setNewCubeDimensions() {
-    //     const max = {x: 0, y: 0, z: 0};
-    //     for(let i = 0; i < this.cubelets.length; i++) {
-    //         const cubelet = this.cubelets[i];
-    //         if(cubelet.x > max.x)
-    //             max.x = cubelet.x;
-    //         if(cubelet.y > max.y)
-    //             max.y = cubelet.y;
-    //         if(cubelet.z > max.z)
-    //             max.z = cubelet.z;
-    //     }
-    //     // this.setDimensions((max.x+1)*CUBELET_SIZE, (max.y+1)*CUBELET_SIZE, (max.z+1)*CUBELET_SIZE);
-    //     this.setDimensions((max.x+1), (max.y+1), (max.z+1));
-    //     this.setData(new Float32Array(this.width*this.height*this.length));
-    // }
-
     setData = (data: Float32Array) => {
         if(data != null && data !== undefined)
             this.data = Float32Array.from(data);
@@ -101,21 +85,14 @@ export class ReconstructionStore {
         this.rootStore.reconstructionStore.cubelets.set(key, cubelet);
     }
 
-    // setCubelets = (cubelets: CubeletCoordinate[]) => {
-    //     this.cubelets = [...cubelets];
-    // }
-
     // waits for all cubelets to arrive before constructing the texture
     reconstructCube = async () => {
         console.log('reconstruction in progress');
         this.getTextureDimensions();
-        // let min = 1;
-        // let max = 0;
         console.log(`cube dims ${this.width} ${this.height} ${this.length}`);
         console.log(`cube range ${this.rangeX} ${this.rangeY} ${this.rangeZ}`);
         const data = new Float32Array(this.width*this.height*this.length);
         this.cubelets.forEach((cubelet, key, map) => {
-            // this.addCubeToTexture(CubeletCoordinate.Decode(key), value);
             const coord = CubeletCoordinate.Decode(key);
             // add cubelet
             let n = 0;
@@ -152,20 +129,11 @@ export class ReconstructionStore {
                 for(let k = translatedY*CUBELET_SIZE_XY; k < (translatedY*CUBELET_SIZE_XY)+cubelet.height; k++) {
                     for(let j = translatedX*CUBELET_SIZE_XY; j < (translatedX*CUBELET_SIZE_XY)+cubelet.width; j++) {
                         data[this.convertCoordToIndex(j, k, l)] = cubelet.data[n];
-                        // if(cubelet.data[n] < min) min = cubelet.data[n];
-                        // if(cubelet.data[n] > max) max = cubelet.data[n];
                         n++;
                     }
                 }
             }
-            // this.data = Float32Array.from(cubelet.data);
         });
-        // fit data within range 0 - 1
-        // const normalised = new Float32Array(this.width*this.height*this.length);
-        // for (let index = 0; index < data.length; index++) {
-        //     normalised[index] = (data[index] - min) / (max - min);
-        // }
-        // this.data = Float32Array.from(normalised);
         this.data = Float32Array.from(data);
     }
 
@@ -257,7 +225,6 @@ export class ReconstructionStore {
     }
 
     convertCoordToIndex = (x: number, y: number, z: number) => {
-        // return x + this.height * (y + this.width* z);
         return x + (y*this.width) + (z * this.width * this.height);
     }
 
@@ -265,16 +232,16 @@ export class ReconstructionStore {
     addCubeToTexture = (coord: CubeletCoordinate, cubelet: Cubelet) => {
         if(cubelet === undefined) return;
         console.log(`adding cubelet ${coord.encode()}`);
-        console.log(`start ${cubelet.width*coord.x} ${cubelet.height*coord.y} ${cubelet.length*coord.z}`);
+        // console.log(`start ${cubelet.width*coord.x} ${cubelet.height*coord.y} ${cubelet.length*coord.z}`);
         // console.log(`Contains data: ${this.hasData(cubelet)}`);
-        console.log(`previous dims ${this.width} ${this.height} ${this.length}`);
+        // console.log(`previous dims ${this.width} ${this.height} ${this.length}`);
         let prevWidth = this.width;
         let prevHeight = this.height;
         let prevLength = this.length;
         // expand cube dimensions to accomidate new cubelet
         this.addToTextureDimensions(coord, cubelet);
-        console.log(`cube dims ${this.width} ${this.height} ${this.length}`);
-        console.log(`cubelet dims ${cubelet.width} ${cubelet.height} ${cubelet.length}`)
+        // console.log(`cube dims ${this.width} ${this.height} ${this.length}`);
+        // console.log(`cubelet dims ${cubelet.width} ${cubelet.height} ${cubelet.length}`)
 
         const data = new Float32Array(this.width*this.height*this.length);
         
@@ -297,9 +264,9 @@ export class ReconstructionStore {
     addCubeToTextureWithWorker = (coord: CubeletCoordinate, cubelet: Cubelet) => {
         if(cubelet === undefined) return;
         console.log(`adding cubelet ${coord.encode()}`);
-        console.log(`start ${cubelet.width*coord.x} ${cubelet.height*coord.y} ${cubelet.length*coord.z}`);
+        // console.log(`start ${cubelet.width*coord.x} ${cubelet.height*coord.y} ${cubelet.length*coord.z}`);
         // console.log(`Contains data: ${this.hasData(cubelet)}`);
-        console.log(`previous dims ${this.width} ${this.height} ${this.length}`);
+        // console.log(`previous dims ${this.width} ${this.height} ${this.length}`);
         let prevWidth = this.width;
         let prevHeight = this.height;
         let prevLength = this.length;
@@ -323,7 +290,7 @@ export class ReconstructionStore {
         }
         
         this.data = Float32Array.from(data);
-        console.log(`cubelet ${coord.encode()} added`)
+        // console.log(`cubelet ${coord.encode()} added`)
     }
 
     resetCube = () => {

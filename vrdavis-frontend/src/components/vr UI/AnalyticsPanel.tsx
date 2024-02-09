@@ -1,7 +1,7 @@
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useMemo, useRef, useState} from "react";
 import * as THREE from "three";
 
-import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, Tooltip, Legend, BasePlatform } from "chart.js";
+import { Chart, BarController, BarElement, LinearScale, CategoryScale, Title, Tooltip, Legend } from "chart.js";
 import { useController, useInteraction } from "@react-three/xr";
 import { useThree, useFrame } from "@react-three/fiber";
 import { Object3D, Raycaster, Vector2, Vector3 } from "three";

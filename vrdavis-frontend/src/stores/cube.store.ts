@@ -5,25 +5,17 @@ import { CubeView, Point3D } from "../models";
 import { minMax3D, subtract3D } from "../utilities";
 import { CUBELET_SIZE_XY, CUBELET_SIZE_Z } from "./cubelet.store";
 import { clamp } from "three/src/math/MathUtils";
-// import { clamp } from "three/src/math/MathUtils";
 
 export interface CubeInfo {
     fileId: number;
     directory: string;
-    // hdu: string;
     fileInfo: VRDAVis.FileInfo;
-    // fileInfoExtended: VRDAVis.FileInfoExtended;
-    // fileFeatureFlags: number;
-    // renderMode: CARTA.RenderMode;
-    // beamTable: CARTA.IBeam[];
 }
 
 export class CubeStore {
     rootStore: RootStore;
     cropMode: boolean;
     worldspaceCenter: Point3D = { x: 0, y: 1.5, z: -1 };
-    // public readonly cubeInfo: CubeInfo;
-    // private readonly cubeVoxelRatio: number;
 
     scaleFactor: number = 100;
 

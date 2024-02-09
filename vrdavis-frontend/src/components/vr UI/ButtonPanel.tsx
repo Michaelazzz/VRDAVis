@@ -86,7 +86,6 @@ const ButtonPanelView: React.FC<{position?: number[], text?: string, onSelect?: 
             handleToggle(!toggle)
         }
         
-        // buttonRef.current.position.z -= 0.035;
         onSelect();
     });
     // @ts-ignore
@@ -96,7 +95,6 @@ const ButtonPanelView: React.FC<{position?: number[], text?: string, onSelect?: 
             handleToggle(!toggle)
         }
         
-        // buttonRef.current.position.z -= 0.035;
         onSelect();
     });
     // @ts-ignore

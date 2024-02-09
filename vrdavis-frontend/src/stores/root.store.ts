@@ -1,9 +1,9 @@
 import { BackendStore } from "./backend.store";
-import { CUBELET_SIZE_XY, CUBELET_SIZE_Z, Cubelet, CubeletStore } from "./cubelet.store";
+import { CUBELET_SIZE_XY, CUBELET_SIZE_Z, CubeletStore } from "./cubelet.store";
 import { FileStore } from "./file.store";
 import { CubeStore } from "./cube.store";
 import { SignallingStore } from "./signalling.store";
-import { CubeView, CubeletCoordinate, Point3D } from "../models";
+import { CubeView, CubeletCoordinate } from "../models";
 import { GetRequiredCubelets } from "../utilities";
 import { ReconstructionStore } from "./reconstruction.store";
 import { StatsStore } from "./stats.store";
@@ -37,7 +37,6 @@ export class RootStore {
     }
 
     cropCube = () => {
-        // if(!this.cubeStore.getCropMode()) return;
         this.reconstructionStore.resetCube();
         console.log('crop cube');
         // get the coordinates of the crop cube coords within the world cube dimensions
@@ -69,7 +68,6 @@ export class RootStore {
         } else {
             const coord = new Array<CubeletCoordinate>();
             coord.push(new CubeletCoordinate(0, 0, 0, cubeCoords.mipXY, cubeCoords.mipZ));
-            // this.reconstructionStore.setCubelets(coord);
             this.cubeletStore.requestCubelets(coord, 0, midPointCubeletCoords);
         }
     }

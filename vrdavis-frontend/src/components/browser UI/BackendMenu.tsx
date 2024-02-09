@@ -19,7 +19,8 @@ const BackendMenuView: React.FC = () => {
                 <br/>
                 {backendStore.connectionStatus === ConnectionStatus.ACTIVE && backendStore.sessionId !== 0 && <span>Current Session ID: {backendStore.sessionId}</span>}
             </p>
-            {backendStore.connectionStatus === ConnectionStatus.ACTIVE && <DropdownSelect/>}
+            {backendStore.connectionStatus === ConnectionStatus.ACTIVE && !rootStore.backendStore.fileSelected && <DropdownSelect/>}
+            {backendStore.connectionStatus === ConnectionStatus.ACTIVE && rootStore.backendStore.fileSelected && <p>Refresh the webpage to select a new file</p>}
         </>
     )
 }

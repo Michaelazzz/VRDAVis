@@ -285,6 +285,13 @@ void Session::OnCloseFile(const VRDAVis::CloseFile& message) {
     // CheckCancelAnimationOnFileClose(message.file_id());
     // _file_settings.ClearSettings(message.file_id());
     // DeleteFrame(message.file_id());
+    // reset region
+    _loader->_xRegionStart = -1;
+    _loader->_xRegionEnd = -1;
+    _loader->_yRegionStart = -1;
+    _loader->_yRegionEnd = -1;
+    _loader->_zRegionStart = -1;
+    _loader->_zRegionEnd = -1;
 }
 
 void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint32_t request_id, VRDAVis::CompressionType compression_type, bool skip_data) {
@@ -311,14 +318,6 @@ void Session::OnAddRequiredCubes(const VRDAVis::AddRequiredCubes& message, uint3
     }
     spdlog::info("{}", dataset);
     _loader->OpenDataset(dataset);
-
-    // reset region
-    // _loader->_xRegionStart = -1;
-    // _loader->_xRegionEnd = -1;
-    // _loader->_yRegionStart = -1;
-    // _loader->_yRegionEnd = -1;
-    // _loader->_zRegionStart = -1;
-    // _loader->_zRegionEnd = -1;
 
     for (int i = 0; i < num_cubes; i++) {
         const std::string encoded_coordinate = message.cubelets(i);

@@ -38,7 +38,6 @@ interface CubeletMessageArgs {
     layerZ: number;
     fileId: number;
     size: number;
-    // data: number[];
     compression?: number;
     nanEncodings?: Int32Array;
 }
@@ -137,10 +136,6 @@ export class CubeletStore {
 
     // get cubelet from cache
     getCubelet(cubeCoordinateEncoded: string, fileId: number) {
-        // const gpuCacheCoordinate = CubeCoordinate.AddFileId(cubeCoordinateEncoded, fileId);
-        // if (peek) {
-        //     return this.cachedTiles.peek(gpuCacheCoordinate);
-        // }
         const key = `${cubeCoordinateEncoded}_${fileId}`
         return this.cachedCubelets.get(key);
     }
@@ -284,12 +279,10 @@ export class CubeletStore {
 
         const eventArgs: CubeletMessageArgs = {
             fileId,
-            // data: cubelet.volumeData!,
             width: cubelet.width!,
             height: cubelet.height!,
             length: cubelet.length!,
             compression: precision,
-            // nanEncodings: nanEncodings32,
             cubeletCoordinate,
             layerXY: cubelet.layerXY!,
             layerZ: cubelet.layerZ!,
@@ -324,7 +317,6 @@ export class CubeletStore {
                 length,
                 data: decompressedData
             };
-            // this.rootStore.reconstructionStore.addCubelet(encodedCoordinate, cubelet);
             
             let receivedCubelets = this.receivedSynchronisedCubelets.get(key);
             if (!receivedCubelets) {
@@ -352,25 +344,6 @@ export class CubeletStore {
                 // this.cachedCubelets.set(key, cubelet);
                 this.cubeletStream.next({cubeletCount, fileId });
             }
-        } else {
-            // await this.rootStore.reconstructionStore.reconstructCube();
-            // await this.rootStore.reconstructionStore.reconstructCubeWithWorker(); 
-            // single cubelet
-            // const rasterTile: RasterTile = {
-            //     width,
-            //     height,
-            //     textureCoordinate: 0,
-            //     data: decompressedData
-            // };
-            // const gpuCacheCoordinate = TileCoordinate.AddFileId(encodedCoordinate, fileId);
-            // const oldValue = this.cachedTiles.setpop(gpuCacheCoordinate, rasterTile);
-            // if (oldValue) {
-            //     this.clearTile(oldValue.value, oldValue.key);
-            // }
-            // rasterTile.textureCoordinate = this.textureCoordinateQueue.pop();
-
-            // pendingCompressionMap.delete(encodedCoordinate);
-            // this.tileStream.next({tileCount: 1, fileId, channel, stokes, flush: false});
         }
     }
 

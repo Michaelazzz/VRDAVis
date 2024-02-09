@@ -14,6 +14,7 @@ const DropdownSelectView: React.FC = () => {
     const onClick = (name: string) => {
         backendStore.getFileInfo(name);
         backendStore.loadFile(name);
+        backendStore.fileSelected = true;
     }
 
     const handleChange = (event: SelectChangeEvent) => {

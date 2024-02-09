@@ -13,7 +13,7 @@ import { DeviceCredentials } from "./components/browser UI/DeviceCredentials";
 import { WebRTCMenu } from "./components/browser UI/WebRTCMenu";
 import { FileCredentials } from "./components/browser UI/FileCredentials";
 import { DataCube } from "./components/DataCube";
-import HandMenuControls from "./components/vr UI/HandMenuControls";
+// import HandMenuControls from "./components/vr UI/HandMenuControls";
 import { CubeControls } from "./components/CubeControls";
 import { TextPanel } from "./components/vr UI/TextPanel";
 import { ButtonPanel } from "./components/vr UI/ButtonPanel";
@@ -29,8 +29,8 @@ const AppView: React.FC = () => {
     // const toggleHandMenu = () => { (minimize) ? setMinimize(false) : setMinimize(true) }
 
     useEffect(() => {
-        // rootStore.connectToServer('ws://localhost:3002'); // local testing
-        rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
+        rootStore.connectToServer('ws://localhost:3002'); // local testing
+        // rootStore.connectToServer('wss://vrdavis01.idia.ac.za/server');
         rootStore.connectToSignallingServer();
         rootStore.cubeletStore.setCache(CUBELET_SIZE_XY * CUBELET_SIZE_XY * CUBELET_SIZE_Z * 10, CUBELET_SIZE_XY * CUBELET_SIZE_XY * CUBELET_SIZE_Z * 10);
     }, [rootStore]);

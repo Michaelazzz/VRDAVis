@@ -28,9 +28,6 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
     const [minSize] = useState(0.5);
     const [maxSize] = useState(2.0);
 
-    let rightSqueeze = false;
-    let leftSqueeze = false;
-
     let rightSelect = false;
     let leftSelect = false;
 
@@ -39,7 +36,6 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
 
     let prevDistance = 0;
     const scaleFactor = 0.01;
-    const rotationMultiplier = 5;
     const movementMultiplier = 5;
 
     let prevRightPos = rightController?.controller.position;
@@ -97,7 +93,6 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
         } else {
             if(ref.current && (prevLeftPos && prevRightPos)) {
                 midpoint = leftPos.clone().sub(rightPos).divideScalar(2);
-                var leftDir = midpoint.clone().sub(leftPos).normalize();
                 var rightDir = midpoint.clone().sub(rightPos).normalize();
                 
                 let offsetLeft = leftPos.clone().sub(prevLeftPos);
@@ -107,9 +102,7 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
                 {
                     // rotation controls
                     let rightAngle = signedAngleTo(prevRightDir, rightDir);
-                    let leftAngle = signedAngleTo(prevLeftDir, leftDir);
                     ref.current.rotateOnAxis(new THREE.Vector3(0,1,0), rightAngle);
-                    // ref.current.rotateOnAxis(new THREE.Vector3(1,0,0), rightAngle);
 
                     // scale controls
                     const distance = leftPos.distanceTo(rightPos);
@@ -145,22 +138,6 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
 
     });
 
-    useXREvent('squeezestart', () => {
-        rightSqueeze = true;
-    }, {handedness: 'right'});
-
-    useXREvent('squeezestart', () => {
-        leftSqueeze = true;
-    }, {handedness: 'left'});
-
-    useXREvent('squeezeend', () => {
-        rightSqueeze = false;
-    }, {handedness: 'right'});
-
-    useXREvent('squeezeend', () => {
-        leftSqueeze = false;
-    }, {handedness: 'left'});
-
     useXREvent('selectstart', () => { 
         rightSelect = true; 
         crop.current!.position.set(
@@ -175,10 +152,7 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
 
     useXREvent('selectend', () => { 
         rightSelect = false; 
-        // console.log(`${Math.abs(crop.current!.scale.x)} ${Math.abs(crop.current!.scale.y)} ${Math.abs(crop.current!.scale.z)}`)
-        // console.log((subtract3D(crop.current!.position, {x: 0, y: 1.5, z:-1.5}).x*100) + rootStore.reconstructionStore.width/2)
         const localCenter = subtract3D(crop.current!.position, rootStore.cubeStore.worldspaceCenter /*{x: 0, y: 1.5, z:-1}*/)
-        // console.log(localCenter)
         rootStore.cubeStore.setCubeDims(
             {
                 x: Math.abs(crop.current!.scale.x),
@@ -191,9 +165,6 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
                 z: (localCenter.z / (rootStore.cubeStore.scaleFactor * ref.current!.scale.z)) + rootStore.reconstructionStore.length / 2
             }
         )
-
-        // controls.current?.clear();
-        // console.log(rootStore.cubeStore.cropCube)
     }, {handedness: 'right'});
 
     useXREvent('selectend', () => {
@@ -213,7 +184,6 @@ const CubeControlsView: React.FC<PropsWithChildren> = ({children}) => {
             <group 
                 // @ts-ignore
                 ref={ref}
-                // position={[rootStore.cubeStore.worldspaceCenter.x, rootStore.cubeStore.worldspaceCenter.y, rootStore.cubeStore.worldspaceCenter.z]}
                 position={[0, 1.5, -1]}
             >
                 {children}

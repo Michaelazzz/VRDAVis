@@ -44,7 +44,6 @@ const DataCubeView: React.FC = () => {
     // @ts-ignore
     let texture: THREE.Data3DTexture = useMemo(() => {
         console.log('texture updated')
-        // console.log(rootStore.reconstructionStore.data)
         return new THREE.Data3DTexture(rootStore.reconstructionStore.data, width, height, length)
     }, [rootStore.reconstructionStore.data, width, height, length]);
     texture.format = THREE.RedFormat;

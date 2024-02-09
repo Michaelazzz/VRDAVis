@@ -70,7 +70,7 @@ export class SignallingStore {
         }
 
         this.socket = new WebSocket('wss://vrdavis01.idia.ac.za/signal');
-        // this.socket = new WebSocket('ws://localhost:3003');
+        // this.socket = new WebSocket('ws://localhost:3003'); // for testing purposes
 
         this.socket.onopen = (event) => {
             console.log('[info] connection established');
@@ -277,7 +277,6 @@ export class SignallingStore {
 
     createPeerConnection = async () => {
         this.peerConnection = new RTCPeerConnection();
-        // this.peerConnection = new RTCPeerConnection(this.servers);
         this.peerConnection.onicecandidate = (event: any) => {
             // send ice candidate to paired device
             if (event.candidate) {
@@ -379,37 +378,17 @@ export class SignallingStore {
         const readyState = this.sendChannel.readyState;
         console.log('send channel state is: ' + readyState);
         this.sendChannelState = readyState;
-        if (readyState === 'open') {
-            // dataChannelSend.disabled = false;
-            // dataChannelSend.focus();
-            // sendButton.disabled = false;
-            // closeButton.disabled = false;
-        } else {
-            // dataChannelSend.disabled = true;
-            // sendButton.disabled = true;
-            // closeButton.disabled = true;
-        }
     }
 
     onSendChannelMessageCallback = (event: any) => {
         console.log('received message');
         this.dataChannelReceive = event.data;
-
     }
 
     onReceiveChannelStateChange = () => {
         const readyState = this.receiveChannel.readyState;
         console.log(`receive channel state is: ${readyState}`);
         this.receiveChannelState = readyState;
-        if (readyState === 'open') {
-            // dataChannelSend.disabled = false;
-            // sendButton.disabled = false;
-            // closeButton.disabled = false;
-        } else {
-            // dataChannelSend.disabled = true;
-            // sendButton.disabled = true;
-            // closeButton.disabled = true;
-        }
       }
 
     onReceiveChannelMessageCallback = (event: any) => {

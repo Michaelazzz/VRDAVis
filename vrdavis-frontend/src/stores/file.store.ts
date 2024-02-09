@@ -1,7 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { VRDAVis } from "vrdavis-protobuf";
 import { RootStore } from "./root.store";
-import { BackendStore } from "./backend.store";
 
 export class FileStore {
     rootStore: RootStore;

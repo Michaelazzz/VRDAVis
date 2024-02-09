@@ -58,6 +58,8 @@ export class BackendStore {
     public sessionId: number;
     public serverUrl: string = '';
 
+    public fileSelected: boolean = false;
+
     private connection: WebSocket;
     private lastPingTime: number;
     private lastPongTime: number;
@@ -70,16 +72,8 @@ export class BackendStore {
 
     private readonly decoderMap: Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>;
 
-    // directory: string = '../../test-data'; // test directory route
-    directory: string = '/data/cubes1/hdf5';
-
-    // remove
-    // volumeData: Float32Array;
-    // layerXY: number = 0;
-    // layerZ: number = 0;
-    // height: number = 0;
-    // width: number = 0;
-    // length: number = 0;
+    directory: string = '../../test-data'; // test directory route
+    // directory: string = '/data/cubes1/hdf5';
 
     constructor (rootStore: RootStore) {
         makeAutoObservable(this, {rootStore: false});
@@ -88,6 +82,7 @@ export class BackendStore {
         this.loggingEnabled = true;
         this.connectionDropped = false;
         this.serverUrl = 'wss://vrdavis01.idia.ac.za/server';
+
 
         this.connection = new WebSocket(this.serverUrl);
         this.endToEndPing = NaN;
@@ -164,18 +159,6 @@ export class BackendStore {
         this.connection.onopen = () => {
             if (this.connectionStatus === ConnectionStatus.CLOSED) {
                 this.connectionDropped = true;
-                // reset values
-                // this.fileList = [];
-                // this.fileName = '';
-                // this.fileSize = 0;
-
-                // remove
-                // this.volumeData = new Float32Array();
-                // this.layerXY = 0;
-                // this.layerZ = 0;
-                // this.height = 0;
-                // this.width = 0;
-                // this.length = 0;
 
                 this.eventCounter = 1;
                 this.sessionId = 0;
@@ -183,11 +166,6 @@ export class BackendStore {
             }
             this.connectionStatus = ConnectionStatus.ACTIVE;
             const message = VRDAVis.RegisterViewer.create({sessionId: this.sessionId});
-            // observer map is cleared, so that old subscriptions don't get incorrectly fired
-            // this.logEvent(VRDAVis.EventType.REGISTER_VIEWER, requestId, message, false);
-            
-            // console.log("session id: " + this.sessionId);
-            // console.log(message);
 
             if (this.sendEvent(VRDAVis.EventType.REGISTER_VIEWER, VRDAVis.RegisterViewer.encode(message).finish())) {
                 this.deferredMap.set(requestId, deferredResponse);
@@ -243,9 +221,6 @@ export class BackendStore {
             } else {
                 throw new Error("Could not send FILE_INFO_REQUEST event");
             }
-
-            // load file on backend
-            // this.loadFile(file);
         }
     }
 
@@ -367,7 +342,6 @@ export class BackendStore {
     private onRegisterViewerAck = (eventId: number, ack: VRDAVis.RegisterViewerAck) => {
         this.sessionId = ack.sessionId;
         this.onDeferredResponse(eventId, ack);
-        // const directory = this.rootStore.fileStore.directory;
         this.getFileList(this.directory)
     }
 
@@ -386,8 +360,6 @@ export class BackendStore {
             ack.fileInfo.length || 0)
         this.onDeferredResponse(eventId, ack);
         
-        // const dims = { x: ack.fileInfo.width, y: ack.fileInfo.height, z: ack.fileInfo.length }
-        // const center = { x: ack.fileInfo.width / 2, y: ack.fileInfo.height / 2, z: ack.fileInfo.length / 2 }
         this.rootStore.cubeStore.worldspaceCenter = {
             x: ( ack.fileInfo.width / 2.0 ), 
             y: ( ack.fileInfo.height / 2.0),
@@ -400,24 +372,17 @@ export class BackendStore {
         this.rootStore.cubeStore.setLocalCube();
         this.rootStore.fileStore.setFileOpen(true);
         // get initial cubes
-        // this.rootStore.initialCube();
-        // change to crop cube later
         this.rootStore.cropCube();
     }
 
     private onFileInfoResponse = (eventId: number, res: VRDAVis.FileInfoResponse) => {
         if(!res.fileInfo)
             return;
-        // this.rootStore.fileStore.setFileName(res.fileInfo.name || '');
         this.rootStore.fileStore.setFileSize(Number(res.fileInfo.size) || 0);
         this.onDeferredResponse(eventId, res);
     }
 
     private onStreamedCubeletData = (_eventId: number, cubeletData: VRDAVis.CubeletData) => {
-        // this.rootStore.reconstructionStore.setDimensions(cubeletData.cubelets[0].width || 0, cubeletData.cubelets[0].height || 0, cubeletData.cubelets[0].length || 0)
-        // if(cubeletData.cubelets[0].volumeData != null && cubeletData.cubelets[0].volumeData !== undefined)
-        // this.rootStore.reconstructionStore.setData(cubeletData.cubelets[0].volumeData)
-        
         this.cubeletStream.next(cubeletData)
     }
 
