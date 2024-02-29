@@ -1,0 +1,23 @@
+The target system is: Emscripten - 1 - x86
+The host system is: Linux - 5.15.0-89-generic - x86_64
+Performing C SOURCE FILE Test HAVE_MATH succeeded with the following output:
+Change Dir: /home/michaela/Desktop/VRDAVis/vrdavis-frontend/wasm_libs/zfp/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_1ea35/fast && /usr/bin/make -f CMakeFiles/cmTC_1ea35.dir/build.make CMakeFiles/cmTC_1ea35.dir/build
+make[1]: Entering directory '/home/michaela/Desktop/VRDAVis/vrdavis-frontend/wasm_libs/zfp/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_1ea35.dir/src.c.o
+/home/michaela/Desktop/VRDAVis/vrdavis-frontend/emsdk/upstream/emscripten/emcc   -s WASM=1 -DHAVE_MATH   -o CMakeFiles/cmTC_1ea35.dir/src.c.o   -c /home/michaela/Desktop/VRDAVis/vrdavis-frontend/wasm_libs/zfp/build/CMakeFiles/CMakeTmp/src.c
+emcc: warning: linker setting ignored during compilation: 'WASM' [-Wunused-command-line-argument]
+/home/michaela/Desktop/VRDAVis/vrdavis-frontend/wasm_libs/zfp/build/CMakeFiles/CMakeTmp/src.c:2:21: warning: ignoring return value of function declared with const attribute [-Wunused-value]
+    2 | float f; int main(){sqrt(f);return 0;}
+      |                     ^~~~ ~
+1 warning generated.
+Linking C executable cmTC_1ea35.js
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1ea35.dir/link.txt --verbose=1
+/home/michaela/Desktop/VRDAVis/vrdavis-frontend/emsdk/upstream/emscripten/emcc -s WASM=1 -DHAVE_MATH    @CMakeFiles/cmTC_1ea35.dir/objects1.rsp  -o cmTC_1ea35.js 
+make[1]: Leaving directory '/home/michaela/Desktop/VRDAVis/vrdavis-frontend/wasm_libs/zfp/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+#include<math.h>
+float f; int main(){sqrt(f);return 0;}
