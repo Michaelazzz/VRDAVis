@@ -34,7 +34,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "npm-run-all build-wrappers build-protobuf build-ts",
+    "build": "npm-run-all build-protobuf build-ts",
     "build-ts": "react-scripts build",
     "build-libs": "./wasm_libs/build_libs.sh",
     "build-libs-docker": "./build_wasm_libs_docker.sh",
