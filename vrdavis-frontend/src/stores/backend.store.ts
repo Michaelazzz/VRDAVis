@@ -72,8 +72,8 @@ export class BackendStore {
 
     private readonly decoderMap: Map<VRDAVis.EventType, {decoder: any; handler: HandlerFunction}>;
 
-    directory: string = '../../test-data'; // test directory route
-    // directory: string = '/data/cubes1/hdf5';
+    // directory: string = '../../test-data'; // test directory route
+    directory: string = '/data/cubes1/hdf5';
 
     constructor (rootStore: RootStore) {
         makeAutoObservable(this, {rootStore: false});
