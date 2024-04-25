@@ -87,8 +87,6 @@ export class RootStore {
     resumeState = (data: any) => {
         // set cube state
         this.cubeStore.setCubeState(
-            data.cubeState.prevCenter, 
-            data.cubeState.prevCube, 
             data.cubeState.cropCenter, 
             data.cubeState.cropCube
         );
