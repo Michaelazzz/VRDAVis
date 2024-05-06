@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16.3)
 project(vrdavis_backend)
 
 include_directories(src)
+
+set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/third-party/zfp)
 include_directories(${CMAKE_SOURCE_DIR}/third-party/zfp/include)
 include_directories(${CMAKE_SOURCE_DIR}/third-party/zfp/build/lib)
 
@@ -10,8 +12,6 @@ set(CMAKE_INCLUDE_DIRECTORIES_BEFORE ON)
 set(CMAKE_LINK_DIRECTORIES_BEFORE ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/third-party/install)
-
-message(WARNING "${CMAKE_SOURCE_DIR}")
 
 include(uWebSockets)
 
