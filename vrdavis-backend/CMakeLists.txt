@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.16.3)
 project(vrdavis_backend)
 
 include_directories(src)
-include_directories(third-party/zfp/include)
-include_directories(third-party/zfp/build/lib)
+include_directories(${CMAKE_SOURCE_DIR}/third-party/zfp/include)
+include_directories(${CMAKE_SOURCE_DIR}/third-party/zfp/build/lib)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_DIRECTORIES_BEFORE ON)
