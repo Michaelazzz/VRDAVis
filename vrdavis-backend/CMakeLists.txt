@@ -10,6 +10,8 @@ set(CMAKE_LINK_DIRECTORIES_BEFORE ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/third-party/install)
 
+message(WARNING "${CMAKE_SOURCE_DIR}")
+
 include(uWebSockets)
 
 # Enable OpenMP if package is found
