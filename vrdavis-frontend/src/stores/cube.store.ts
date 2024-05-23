@@ -132,9 +132,7 @@ export class CubeStore {
         }
     }
 
-    setCubeState = (localCenter: Point3D, localCube: Point3D, cropCenter: Point3D, cropCube: Point3D) => {
-        this.localCenter = localCenter;
-        this.localCube = localCube;
+    setCubeState = (cropCenter: Point3D, cropCube: Point3D) => {
         this.cropCenter = cropCenter;
         this.cropCube = cropCube;
     }
