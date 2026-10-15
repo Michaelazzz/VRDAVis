@@ -1,11 +1,13 @@
+# VRDAVis
+[![DOI](https://zenodo.org/badge/508310388.svg)](https://doi.org/10.5281/zenodo.23396170)
 This is a full‑stack prototype for interactive radio‑astronomy data visualisation (C/C++ backend, React + TypeScript frontend) that uses protobufs for the client/server protocol — intended as a proof‑of‑concept for CARTAvis.
 
-# Stack
+## Stack
 Language(s): C++ (backend), C (some parts), TypeScript/JavaScript (frontend), Make/CMake, WebAssembly artifacts in frontend
 Framework / runtime: C++ server built with CMake; frontend bootstrapped with Create React App (TypeScript)
 Notable libraries & dependencies: Protobuf (protobuf-generated messages / RPC), HDF5 (data IO), uWebSockets (HTTP / socket server), zfp (compression), spdlog (logging). The backend CMake also references GSL, OpenMP and z/lib.
 
-# How it's organized
+## How it's organized
 
 Top-level entries (important ones):
 - README.md — high level instructions
@@ -52,7 +54,7 @@ vrdavis-signalling-server/
 How it fits together:
 The backend is a standalone C++ server (vrdavis_backend) built with CMake. Main.cpp creates a ProgramSettings instance, starts ThreadManager event threads, creates a FileListHandler and SessionManager, and runs the application loop. The HttpServer module exposes the network interface (uWebSockets) used by the frontend to exchange protobuf messages. The protobuf package defines the message schema shared by frontend and backend. The frontend is a Create React App TypeScript application that renders the visualisation, uses WebAssembly helpers for performance, and communicates with the backend through the protobuf-defined messages (via the signalling server / HTTP/socket endpoints).
 
-# How to run it
+## How to run it
 
 Shortest path from a fresh clone to start both sides (as described in README):
 
