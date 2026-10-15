@@ -1,5 +1,6 @@
 # VRDAVis
 [![DOI](https://zenodo.org/badge/508310388.svg)](https://doi.org/10.5281/zenodo.23396170)
+
 This is a full‑stack prototype for interactive radio‑astronomy data visualisation (C/C++ backend, React + TypeScript frontend) that uses protobufs for the client/server protocol — intended as a proof‑of‑concept for CARTAvis.
 
 ## Stack
